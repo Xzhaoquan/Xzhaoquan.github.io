@@ -1,2 +1,4 @@
+http://example.com/2022/08/27/hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/
 http://example.com/2022/08/26/hello-world/
 http://example.com/
+http://example.com/tags/hexo/
