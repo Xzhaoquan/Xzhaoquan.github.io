@@ -1,3 +1,4 @@
+http://example.com/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/
 http://example.com/2022/08/30/hello-world/
 http://example.com/2022/08/29/%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84/
 http://example.com/2022/08/25/markdown%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/
