@@ -8,8 +8,8 @@ http://example.com/2022/08/26/git%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%9E%E6%8E%A5%E
 http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/
 http://example.com/
 http://example.com/tags/git/
-http://example.com/tags/md/
 http://example.com/tags/hexo/
-http://example.com/tags/linux/
+http://example.com/tags/md/
 http://example.com/tags/C%E8%AF%AD%E8%A8%80/
+http://example.com/tags/linux/
 http://example.com/categories/hexo/
