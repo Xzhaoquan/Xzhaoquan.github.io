@@ -17,23 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>hexo如何在网页上面显示图片 | Hexo</title>
-  <meta name="description" content="hexo如何在网页上面显示图片1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径 2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。1npm install https:&#x2F;&#x2F;github.com&#x2F;CodeFalling&#x2F;hexo-asset-image --save  3、配置_config_yml文件12&#x2F;&#x2F;设置 post_asse">
+  <title>LED字符设备 | Hexo</title>
+  <meta name="description" content="LED字符设备1、实现虚拟IO映射和读写 虚拟地址映射 12345678910111213使用ioremap函数进行虚拟地址映射函数原型：void __iomem *ioremap(resource_size_t res_cookie, size_t size);参数：res_cookie：实际的物理地址size：映射长度(一般4个字节)返回值： void __iomem*类型的指针，指向被映射的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hexo如何在网页上面显示图片">
-<meta property="og:url" content="http://example.com/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/index.html">
+<meta property="og:title" content="LED字符设备">
+<meta property="og:url" content="http://example.com/2022/09/14/LED%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="hexo如何在网页上面显示图片1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径 2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。1npm install https:&#x2F;&#x2F;github.com&#x2F;CodeFalling&#x2F;hexo-asset-image --save  3、配置_config_yml文件12&#x2F;&#x2F;设置 post_asse">
+<meta property="og:description" content="LED字符设备1、实现虚拟IO映射和读写 虚拟地址映射 12345678910111213使用ioremap函数进行虚拟地址映射函数原型：void __iomem *ioremap(resource_size_t res_cookie, size_t size);参数：res_cookie：实际的物理地址size：映射长度(一般4个字节)返回值： void __iomem*类型的指针，指向被映射的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/image-20220829172657020.png">
-<meta property="article:published_time" content="2022-08-29T09:24:28.000Z">
-<meta property="article:modified_time" content="2022-08-30T12:16:49.877Z">
+<meta property="article:published_time" content="2022-09-14T14:01:58.000Z">
+<meta property="article:modified_time" content="2022-09-14T15:54:50.272Z">
 <meta property="article:author" content="xZhaoquan">
-<meta property="article:tag" content="hexo">
+<meta property="article:tag" content="linux驱动开发">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/image-20220829172657020.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/index.html">
+  <link rel="canonical" href="http://example.com/2022/09/14/LED%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/index.html">
   
     <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -350,14 +348,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-hexo如何在网页上面显示图片" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-LED字符设备" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      hexo如何在网页上面显示图片
+      LED字符设备
     </h1>
   
 
@@ -365,36 +363,57 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/" class="article-date">
-	  <time datetime="2022-08-29T09:24:28.000Z" itemprop="datePublished">2022-08-29</time>
+	<a href="/2022/09/14/LED%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/" class="article-date">
+	  <time datetime="2022-09-14T14:01:58.000Z" itemprop="datePublished">2022-09-14</time>
 	</a>
 </span>
         
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/hexo/">hexo</a>
-  </span>
-
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/hexo/" rel="tag">hexo</a>
+	<a class="article-tag-link-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/09/14/LED%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="hexo如何在网页上面显示图片"><a href="#hexo如何在网页上面显示图片" class="headerlink" title="hexo如何在网页上面显示图片"></a>hexo如何在网页上面显示图片</h2><h5 id="1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径"><a href="#1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径" class="headerlink" title="1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径"></a>1、将typora的图像设置设置成复制到指定路径，和优先使用相对路径</h5><p><img src="/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/image-20220829172657020.png" alt="image-20220829172657020"></p>
-<h5 id="2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。"><a href="#2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。" class="headerlink" title="2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。"></a>2、在根目录安装hexo-asset-image，就能按照markdown的格式进行图片的插入。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install https://github.com/CodeFalling/hexo-asset-image --save</span><br></pre></td></tr></table></figure>
-
-<h5 id="3、配置-config-yml文件"><a href="#3、配置-config-yml文件" class="headerlink" title="3、配置_config_yml文件"></a>3、配置_config_yml文件</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//设置 post_asset_folder 为true</span><br><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
-
+        <h2 id="LED字符设备"><a href="#LED字符设备" class="headerlink" title="LED字符设备"></a>LED字符设备</h2><h5 id="1、实现虚拟IO映射和读写"><a href="#1、实现虚拟IO映射和读写" class="headerlink" title="1、实现虚拟IO映射和读写"></a>1、实现虚拟IO映射和读写</h5><ul>
+<li><p>虚拟地址映射</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">使用ioremap函数进行虚拟地址映射</span><br><span class="line">函数原型：void __iomem *ioremap(resource_size_t res_cookie, size_t size);</span><br><span class="line">参数：</span><br><span class="line">res_cookie：实际的物理地址</span><br><span class="line">size：映射长度(一般4个字节)</span><br><span class="line">返回值： void __iomem*类型的指针，指向被映射的虚拟地址</span><br><span class="line"></span><br><span class="line">__iomem:主要是用于编译器的检查地址在内核空间的有效性</span><br><span class="line"></span><br><span class="line">example:</span><br><span class="line">#define CCM_CCGR1_BASE     (0x020C406C)</span><br><span class="line">static void __iomem *IMX6ULL_CCM_CCGR1;</span><br><span class="line">IMX6ULL_CCM_CCGR1 = ioremap(CCM_CCGR1_BASE,4);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>虚拟地址映射的取消</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">使用iounmap函数取消虚拟地址映射</span><br><span class="line">函数原型：void iounmap(volatile void __iomem *iomem_cookie);</span><br><span class="line">参数：</span><br><span class="line">iomem_cookie：指向虚拟地址的指针</span><br><span class="line"></span><br><span class="line">example：</span><br><span class="line">iounmap(IMX6ULL_CCM_CCGR1);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>虚拟地址的读写</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//虚拟地址的读取 8 16 32</span><br><span class="line">static inline u8 ioread8(const volatile void __iomem *addr) //8位的读取</span><br><span class="line">static inline u16 ioread16(const volatile void __iomem *addr) //16位的读取</span><br><span class="line">static inline u32 ioread32(const volatile void __iomem *addr) //32位的读取</span><br><span class="line"></span><br><span class="line">参数：</span><br><span class="line">addr：void __iomem *类型的虚拟地址</span><br><span class="line">返回值：u32/u16/u8类型的数据</span><br><span class="line"></span><br><span class="line">//虚拟地址的写 8 16 32</span><br><span class="line">static inline void iowrite8(u8 value, volatile void __iomem *addr)//写入8位数据</span><br><span class="line">static inline void iowrite16(u8 value, volatile void __iomem *addr)//写入16位数据</span><br><span class="line">static inline void iowrite32(u32 value, volatile void __iomem *addr)//写入32位数据</span><br><span class="line"></span><br><span class="line">参数：</span><br><span class="line">value：写入一个u32/u16/u8类型的数据</span><br><span class="line">addr：void __iomem *类型的虚拟地址</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、实现驱动接口"><a href="#2、实现驱动接口" class="headerlink" title="2、实现驱动接口"></a>2、实现驱动接口</h5><ul>
+<li><p>file_operations 结构体的实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//实现file_operation结构体</span><br><span class="line">static struct file_operations led_chrdev_fops = &#123;</span><br><span class="line">    .owner = THIS_MODULE,</span><br><span class="line">    .open = led_open,</span><br><span class="line">    .write = led_write,</span><br><span class="line">    .release = led_release,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>操作接口函数的实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//write release open函数的实现</span><br><span class="line">static int led_open(struct inode *inode, struct file *filp)</span><br><span class="line">static int led_release(struct inode *inode, struct file *filp)</span><br><span class="line">static ssize_t led_write(struct file *filp, const char __user *buf,size_t count, loff_t *ppos)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、数据的拷贝"><a href="#3、数据的拷贝" class="headerlink" title="3、数据的拷贝"></a>3、数据的拷贝</h5><ul>
+<li><p>copy_from_user拷贝用户空间的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">copy_from_user(void *to, const void __user *from, unsigned long n);</span><br><span class="line">参数：</span><br><span class="line">to：将数据拷贝到内核地址</span><br><span class="line">from：需要拷贝的用户空间的地址</span><br><span class="line">n：需要拷贝数据的长度</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4、添加、删除LED字符设备"><a href="#4、添加、删除LED字符设备" class="headerlink" title="4、添加、删除LED字符设备"></a>4、添加、删除LED字符设备</h5><ul>
+<li><p>使用register_chrdev函数添加LED字符设备（用mknod 创建字符设备文件）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//字符设备注册添加</span><br><span class="line">static inline int register_chrdev(unsigned int major, const char *name,</span><br><span class="line">				  const struct file_operations *fops)</span><br><span class="line">参数：</span><br><span class="line">major：主设备号</span><br><span class="line">name：设备名字</span><br><span class="line">fops：file_operations的指针指向操作接口</span><br><span class="line"></span><br><span class="line">使用mknod /dev/led c 200 0 //创建一个字符设备/dev/led 主设备号为200 次设备号为0</span><br><span class="line"></span><br><span class="line">//字符设备注销</span><br><span class="line">static inline void unregister_chrdev(unsigned int major, const char *name)</span><br><span class="line">参数：</span><br><span class="line">major：主设备号</span><br><span class="line">name：设备名字</span><br><span class="line"></span><br><span class="line">//使用register_chrdev函数注册添加字符设备 注册成功会占用1个主设备号和256多个次设备号</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用其他方式添加字符设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//动态申请主设备号</span><br><span class="line">alloc_chrdev_region();</span><br><span class="line">//创建class类</span><br><span class="line">class_create(); </span><br><span class="line">//cdev设备结构体与file_operations相关联</span><br><span class="line">cdev_init();</span><br><span class="line">//设备注册-添加设备到cdev_map哈希表中</span><br><span class="line">ret = cdev_add();</span><br><span class="line">//创建字符设备文件</span><br><span class="line">device_create();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用其他方式删除字符设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//删除字符设备文件</span><br><span class="line">device_destroy();</span><br><span class="line">//删除注册的字符设备（注销设备）</span><br><span class="line">cdev_del();</span><br><span class="line">//注销设备号</span><br><span class="line">unregister_chrdev_region();</span><br><span class="line">//删除设备逻辑类</span><br><span class="line">class_destroy();</span><br></pre></td></tr></table></figure></li>
+</ul>
 
       
     </div>
@@ -404,7 +423,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2022/08/29/hexo%E5%A6%82%E4%BD%95%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%8A%E9%9D%A2%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87/" title="hexo如何在网页上面显示图片" target="_blank" rel="external">http://example.com/2022/08/29/hexo如何在网页上面显示图片/</a>
+      <a href="http://example.com/2022/09/14/LED%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/" title="LED字符设备" target="_blank" rel="external">http://example.com/2022/09/14/LED字符设备/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -450,13 +469,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2022/08/30/hello-world/" title="Hello World"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2022/08/29/%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84/" title="数组指针和指针数组"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2022/09/14/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/" title="字符设备"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
