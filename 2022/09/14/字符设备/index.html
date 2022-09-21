@@ -18,18 +18,18 @@
   
   
   <title>字符设备 | Hexo</title>
-  <meta name="description" content="字符设备驱动设备驱动框架 1、设备号的申请和注销 设备号的定义 1static struct cdev chrdev;  使用register_chrdev_region函数静态申请设备号 1234567register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。函数原型：int register_chrdev_region(dev_t from, unsign">
+  <meta name="description" content="字符设备驱动设备驱动框架 1、设备号的申请和注销 设备号的定义 1static struct cdev chrdev;  使用register_chrdev_region函数静态申请设备号 1234567register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。一般用于指定手动分配主设备号。函数原型：int register_chrdev_region(dev">
 <meta property="og:type" content="article">
 <meta property="og:title" content="字符设备">
 <meta property="og:url" content="http://example.com/2022/09/14/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="字符设备驱动设备驱动框架 1、设备号的申请和注销 设备号的定义 1static struct cdev chrdev;  使用register_chrdev_region函数静态申请设备号 1234567register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。函数原型：int register_chrdev_region(dev_t from, unsign">
+<meta property="og:description" content="字符设备驱动设备驱动框架 1、设备号的申请和注销 设备号的定义 1static struct cdev chrdev;  使用register_chrdev_region函数静态申请设备号 1234567register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。一般用于指定手动分配主设备号。函数原型：int register_chrdev_region(dev">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/09/14/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/image-20220914145604037.png">
 <meta property="og:image" content="http://example.com/2022/09/14/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/image-20220914184025132.png">
 <meta property="og:image" content="http://example.com/2022/09/14/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87/image-20220914184103046.png">
 <meta property="article:published_time" content="2022-09-14T10:36:18.000Z">
-<meta property="article:modified_time" content="2022-09-14T14:18:42.950Z">
+<meta property="article:modified_time" content="2022-09-21T13:18:41.416Z">
 <meta property="article:author" content="xZhaoquan">
 <meta property="article:tag" content="linux驱动开发">
 <meta name="twitter:card" content="summary">
@@ -393,7 +393,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static struct cdev chrdev;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>使用register_chrdev_region函数静态申请设备号</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。</span><br><span class="line">函数原型：int register_chrdev_region(dev_t from, unsigned count, const char *name)</span><br><span class="line">参数：</span><br><span class="line">from：需要注册的设备号，不能与被注册的设备号相同</span><br><span class="line">count：需要申请的设备号个数</span><br><span class="line">name：申请的设备号名称 在 &quot;cat /proc/devices&quot;下可查看到设备名称和设备号</span><br><span class="line">返回值：0成功 其他失败</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">register_chrdev_region函数用于静态地为一个字符设备申请一个或多个设备编号。一般用于指定手动分配主设备号。</span><br><span class="line">函数原型：int register_chrdev_region(dev_t from, unsigned count, const char *name)</span><br><span class="line">参数：</span><br><span class="line">from：需要注册的设备号，不能与被注册的设备号相同</span><br><span class="line">count：需要申请的设备号个数</span><br><span class="line">name：申请的设备号名称 在 &quot;cat /proc/devices&quot;下可查看到设备名称和设备号</span><br><span class="line">返回值：0成功 其他失败</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>调用alloc_chrdev_region函数动态的申请设备号</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">调用alloc_chrdev_region函数，内核会自动分配给我们一个尚未使用的主设备号。</span><br><span class="line">函数原型：int alloc_chrdev_region(dev_t *dev, unsigned baseminor, unsigned count, const char *name)</span><br><span class="line">参数：</span><br><span class="line">dev：指向dev_t类型数据的指针变量，用于存放分配到的设备编号的起始值；</span><br><span class="line">baseminor：次设备号的起始值，通常为0</span><br><span class="line">count：指定需要分配的设备编号个数</span><br><span class="line">name：设备名称</span><br><span class="line">返回值：返回0成功</span><br></pre></td></tr></table></figure>
