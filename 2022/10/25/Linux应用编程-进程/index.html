@@ -26,9 +26,9 @@
 <meta property="og:description" content="Linux应用编程-进程fork()进程函数：fork()进程函数用于从一个已存在的进程中去启动一个新进程，新进程成为子进程，原来的进程称为父进程。fork()函数的本质是直接将父进程的内容复制一份，但是子进程与父进程也有不一样的地方。 子进程与父进程相同的内容：  进程的地址空间 进程上下文，代码段 进程的堆栈空间，和内存信息 进程的环境变量，标准的IO缓冲区 打开的文件描述符，信号响应函数，当">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/image-20221025225022643.png">
-<meta property="og:image" content="http://example.com/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/image-20221025225044367.png">
+<meta property="og:image" content="http://example.com/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/image-20221025230037584.png">
 <meta property="article:published_time" content="2022-10-25T14:48:47.000Z">
-<meta property="article:modified_time" content="2022-10-25T14:50:52.105Z">
+<meta property="article:modified_time" content="2022-10-25T15:00:48.301Z">
 <meta property="article:author" content="xZhaoquan">
 <meta property="article:tag" content="Linux应用开发">
 <meta name="twitter:card" content="summary">
@@ -415,7 +415,7 @@
 <p>execv函数：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int execv(const char *path, char *const argv[])</span><br><span class="line">path:指定文件路径</span><br><span class="line">argv：执行文件所传递的参数是一个数组指针,最后一个参数必须是NULL做结束标志</span><br><span class="line"></span><br><span class="line">该函数一般不会返回，除非遇到错误会返回-1</span><br></pre></td></tr></table></figure>
 
-<h5 id="进程的生老病死"><a href="#进程的生老病死" class="headerlink" title="进程的生老病死"></a>进程的生老病死</h5><p><img src="/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/image-20221025225044367.png" alt="image-20221025225044367"></p>
+<h5 id="进程的生老病死"><a href="#进程的生老病死" class="headerlink" title="进程的生老病死"></a>进程的生老病死</h5><p><img src="/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/image-20221025230037584.png" alt="image-20221025230037584"></p>
 <h5 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h5><ul>
 <li><p>正常终止</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-main 函数返回</span><br><span class="line">-调用_exit()函数终止</span><br><span class="line">-调用exit()函数终止</span><br></pre></td></tr></table></figure>
