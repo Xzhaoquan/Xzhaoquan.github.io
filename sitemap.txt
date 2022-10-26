@@ -17,7 +17,6 @@ http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E
 http://example.com/
 http://example.com/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/
 http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/
-http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B/
 http://example.com/tags/git/
 http://example.com/tags/hexo/
 http://example.com/tags/md/
