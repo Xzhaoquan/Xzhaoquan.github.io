@@ -1,3 +1,4 @@
+http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E7%AE%A1%E9%81%93/
 http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E4%BF%A1%E5%8F%B7/
 http://example.com/2022/10/25/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E8%BF%9B%E7%A8%8B/
 http://example.com/2022/10/22/%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E5%9C%B0%E5%9D%80/
@@ -16,8 +17,9 @@ http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E
 http://example.com/
 http://example.com/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/
 http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/
+http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B/
 http://example.com/tags/git/
-http://example.com/tags/md/
 http://example.com/tags/hexo/
+http://example.com/tags/md/
 http://example.com/tags/C%E8%AF%AD%E8%A8%80/
 http://example.com/categories/hexo/
