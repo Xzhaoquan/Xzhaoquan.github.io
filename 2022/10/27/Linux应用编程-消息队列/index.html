@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>使用hexo搭建个人博客 | Hexo</title>
-  <meta name="description" content="使用hexo搭建个人博客1、安装环境依赖 安装git（按照默认操作即可） 1如果点击鼠标右键 能够打开git bash 说明git 安装成功  安装node.js 123鼠标右键打开git bash查看node 是否安装成功node -v  安装hexo 12345安装hexo1、桌面新建一个文件夹 blog，git bash 进入文件夹2、设置淘宝镜像原（npm config set regis">
+  <title>Linux应用编程-消息队列 | Hexo</title>
+  <meta name="description" content="Linux应用编程-消息队列消息队列的基本概念消息队列提供了一种从一个进程向另一个进程发送一个数据块的方法。每个数据块都被认为含有一个类型，接收进程可以独立地接收含有不同类型的数据结构。   消息队列特点： 12345- 在消息队列中，发送数据用 msgsnd()，接收数据用msgrcv()，消息队列对每个数据都有一个最大长度的限制。- 消息队列也可以独立于发送和接收进程而存在，在进程终止时，消息">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用hexo搭建个人博客">
-<meta property="og:url" content="http://example.com/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:title" content="Linux应用编程-消息队列">
+<meta property="og:url" content="http://example.com/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="使用hexo搭建个人博客1、安装环境依赖 安装git（按照默认操作即可） 1如果点击鼠标右键 能够打开git bash 说明git 安装成功  安装node.js 123鼠标右键打开git bash查看node 是否安装成功node -v  安装hexo 12345安装hexo1、桌面新建一个文件夹 blog，git bash 进入文件夹2、设置淘宝镜像原（npm config set regis">
+<meta property="og:description" content="Linux应用编程-消息队列消息队列的基本概念消息队列提供了一种从一个进程向另一个进程发送一个数据块的方法。每个数据块都被认为含有一个类型，接收进程可以独立地接收含有不同类型的数据结构。   消息队列特点： 12345- 在消息队列中，发送数据用 msgsnd()，接收数据用msgrcv()，消息队列对每个数据都有一个最大长度的限制。- 消息队列也可以独立于发送和接收进程而存在，在进程终止时，消息">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-09-08T16:21:19.000Z">
-<meta property="article:modified_time" content="2022-09-08T16:21:56.763Z">
+<meta property="article:published_time" content="2022-10-27T13:54:25.000Z">
+<meta property="article:modified_time" content="2022-10-27T13:58:11.677Z">
 <meta property="article:author" content="Napat">
-<meta property="article:tag" content="hexo">
+<meta property="article:tag" content="Linux应用开发">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/index.html">
+  <link rel="canonical" href="http://example.com/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.html">
   
     <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -348,14 +348,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-使用hexo搭建个人博客" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-Linux应用编程-消息队列" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      使用hexo搭建个人博客
+      Linux应用编程-消息队列
     </h1>
   
 
@@ -363,138 +363,49 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" class="article-date">
-	  <time datetime="2022-09-08T16:21:19.000Z" itemprop="datePublished">2022-09-09</time>
+	<a href="/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="article-date">
+	  <time datetime="2022-10-27T13:54:25.000Z" itemprop="datePublished">2022-10-27</time>
 	</a>
 </span>
         
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/hexo/" rel="tag">hexo</a>
+	<a class="article-tag-link-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="使用hexo搭建个人博客"><a href="#使用hexo搭建个人博客" class="headerlink" title="使用hexo搭建个人博客"></a>使用hexo搭建个人博客</h2><h3 id="1、安装环境依赖"><a href="#1、安装环境依赖" class="headerlink" title="1、安装环境依赖"></a>1、安装环境依赖</h3><ul>
-<li><p>安装git（按照默认操作即可）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果点击鼠标右键 能够打开git bash 说明git 安装成功</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装node.js</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">鼠标右键打开git bash</span><br><span class="line">查看node 是否安装成功</span><br><span class="line">node -v</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装hexo</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">安装hexo</span><br><span class="line">1、桌面新建一个文件夹 blog，git bash 进入文件夹</span><br><span class="line">2、设置淘宝镜像原（npm config set registry http://registry.npm.taobao.org）//可要可不要</span><br><span class="line">3、安装hexo npm install hexo-cli -g</span><br><span class="line">4、检测hexo是否安装完成 hexo -v </span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="生成博客文件"><a href="#生成博客文件" class="headerlink" title="生成博客文件"></a>生成博客文件</h3><ul>
-<li><p>生成博客文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">打开git</span><br><span class="line">hexo init blog(如果没有进入到blog文件夹)</span><br><span class="line">hexo init (如果进入到blog文件夹)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>预览博客文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br><span class="line">将生成的网址复制到网页执行，可以看到博客文件</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="部署博客到gitee平台"><a href="#部署博客到gitee平台" class="headerlink" title="部署博客到gitee平台"></a>部署博客到gitee平台</h3><ul>
-<li><p>在gitee创建一个仓库，创建仓库名称使用gitee用户名。（如果不适用用户名，需要再仓库名后面加.gitee.io）</p>
-</li>
-<li><p>仓库创建成功后，复制HTTP 链接网址。</p>
-</li>
-<li><p>配置博客配置文件 _config.yml</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: &#x27;git&#x27; //选择git</span><br><span class="line">  repo: https://gitee.com/yys_cn_ccs/zhaoqaun.git //gitee http 链接地址</span><br><span class="line">  branch: master	//git 分支的配置</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装hexo部署工具</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>生成静态链接文件（public）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>部署（需要输入gitee用户名字加密码）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="开启gitee服务"><a href="#开启gitee服务" class="headerlink" title="开启gitee服务"></a>开启gitee服务</h3><ul>
-<li>打开gitee 点击右上角“服务”—-选择Gitee Pages 点击部署。</li>
-</ul>
-<h3 id="设置hexo主题"><a href="#设置hexo主题" class="headerlink" title="设置hexo主题"></a>设置hexo主题</h3><p>1、去找到自己希望的 hexi主题，搜索主题名字。</p>
-<p>2、将下载好的主题下载后放在 themes 文件下面 ，然后配置博客配置文件 _config.yml，将langscape修改成需要配置的主题名字。如果主题需要一些依赖，根据作者下面提示安装</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: landscape</span><br></pre></td></tr></table></figure>
+        <h2 id="Linux应用编程-消息队列"><a href="#Linux应用编程-消息队列" class="headerlink" title="Linux应用编程-消息队列"></a>Linux应用编程-消息队列</h2><h5 id="消息队列的基本概念"><a href="#消息队列的基本概念" class="headerlink" title="消息队列的基本概念"></a>消息队列的基本概念</h5><p>消息队列提供了一种从一个进程向另一个进程发送一个数据块的方法。每个数据块都被认为含有一个类型，接收进程可以独立地接收含有不同类型的数据结构。  </p>
+<p>消息队列特点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- 在消息队列中，发送数据用 msgsnd()，接收数据用msgrcv()，消息队列对每个数据都有一个最大长度的限制。</span><br><span class="line">- 消息队列也可以独立于发送和接收进程而存在，在进程终止时，消息队列及其内容并不会被删除。</span><br><span class="line">- 消息队列提供有格式的字节流。</span><br><span class="line">- 消息队列是面向记录的，其中的消息具有特定的格式以及特定的优先级，接收程序可以通过消息类型有选择地接收数据</span><br><span class="line">- 消息队列可以实现消息的随机查询，消息不一定要以先进先出的顺序接收，也可以按消息的类型接收。</span><br></pre></td></tr></table></figure>
 
-<p>3、安装pure</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/cofess/hexo-theme-pure.git themes/pure</span><br></pre></td></tr></table></figure>
-
-<p>4、pure的依赖</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-wordcount --save</span><br><span class="line">npm install hexo-generator-json-content --save</span><br><span class="line">npm install hexo-generator-feed --save</span><br><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
+<h5 id="消息队列API函数"><a href="#消息队列API函数" class="headerlink" title="消息队列API函数"></a>消息队列API函数</h5><ul>
+<li><p>创建或打开消息队列API函数msgget()  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">msgget() 函数创建的消息队列的数量会受到系统可支持的消息队列数量的限制；</span><br><span class="line">msgget() 函数的作用是创建或获取一个消息队列对象，并返回消息队列标识符。</span><br><span class="line">int msgget(key_t key, int msgflg);</span><br><span class="line">- key：消息队列的关键字值，多个进程可以通过它访问同一个消息队列。可通过ftok函数创建</span><br><span class="line">- msgflg：表示创建的消息队列的标志参数</span><br><span class="line">	•  IPC_CREAT</span><br><span class="line">	•  IPC_EXCL</span><br><span class="line">	•  mode</span><br><span class="line">	这些参数是可以通过“｜”运算符联合起来的，因为它始终是 int 类型的参数。如 msgflag使用参数 		IPC_CREAT | 0666 时表示，创建或返回已经存在的消息队列的标识符，且该消息队列的存取权限为0666。</span><br><span class="line">如果是 IPC_CREAT 为真表示：如果内核中不存在关键字与 key 相等的消息队列，则新建一个消息队列；如果存在这样的消息队列，返回此消息队列的标识符。</span><br><span class="line">而如果为 IPC_CREAT | IPC_EXCL 表示如果内核中不存在键值与 key 相等的消息队列，则新建一个消息队列；如果存在这样的消息队列则报错。</span><br><span class="line">mode 指 IPC 对象存取权限，它使用 Linux 文件的数字权限表示方式，如 0600， 0666等。</span><br><span class="line"></span><br><span class="line">返回值： 成功返回队列表示符，失败返回 -1</span><br><span class="line">记录在error中的错误代码：</span><br><span class="line">– EACCES：指定的消息队列已存在，但调用进程没有权限访问它</span><br><span class="line">– EEXIST： key 指定的消息队列已存在，而 msgflg 中同时指定 IPC_CREAT 和 IPC_EXCL标志</span><br><span class="line">– ENOENT： key 指定的消息队列不存在同时 msgflg 中没有指定 IPC_CREAT 标志</span><br><span class="line">– ENOMEM：需要建立消息队列，但内存不足</span><br><span class="line">– ENOSPC：需要建立消息队列，但已达到系统的限制</span><br><span class="line"></span><br><span class="line">注意：当 key 被指定为 IPC_PRIVATE 时，系统会自动产生一个未用的 key 来对应一个新的消息队列对象，这个消息队列一般用于进程内部间的通信。</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
-
-<h3 id="使用hexo开始写博客"><a href="#使用hexo开始写博客" class="headerlink" title="使用hexo开始写博客"></a>使用hexo开始写博客</h3><ul>
-<li><p>开始写博客</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new newpapername</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>博客写完之后</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></li>
+<li><p>发送消息使用的API函数是 msgsnd() </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">msgsnd() 函数把消息发送到已打开的消息队列末尾;  </span><br><span class="line">int msgsnd(int msqid, const void *msgp, size_t msgsz, int msgflg);</span><br><span class="line">- msqid：消息队列标识符。</span><br><span class="line">- msgp：消息队列结构体，msgp 可以是任何类型的结构体，但第一个字段必须为 long 类型。</span><br><span class="line">	• struct s_msg&#123;</span><br><span class="line">        long type; /* 必须大于 0, 消息类型 */</span><br><span class="line">        char mtext[１ ]; /* 消息正文，可以是其他任何类型 */</span><br><span class="line">      &#125; msgp;</span><br><span class="line">– msgsz：要发送消息的大小，不包含消息类型占用的 4 个字节，即 mtext 的长度。</span><br><span class="line">- msgflg：消息队列标志位参数</span><br><span class="line">	• 0：当消息队列满时， msgsnd() 函数将会阻塞，直到消息能写进消息队列；</span><br><span class="line">	• IPC_NOWAIT：当消息队列已满的时候， msgsnd() 函数不等待立即返回；</span><br><span class="line">	• IPC_NOERROR：若发送的消息大于 size 字节，则把该消息截断，截断部分将被丢弃，且不通知发送进程。</span><br><span class="line">返回值：成功返回0，失败返回-1</span><br><span class="line">记录在error中的错误代码：</span><br><span class="line">– EAGAIN：参数 msgflg 设为 IPC_NOWAIT，而消息队列已满。</span><br><span class="line">– EIDRM：标识符为 msqid 的消息队列已被删除。</span><br><span class="line">– EACCESS：无权限写入消息队列。</span><br><span class="line">– EFAULT：参数 msgp 指向无效的内存地址。</span><br><span class="line">– EINTR：队列已满而处于等待情况下被信号中断。</span><br><span class="line">– EINVAL：无效的参数 msqid、 msgsz 或参数消息类型 type 小于 0。</span><br><span class="line"></span><br><span class="line">msgsnd() 解除阻塞的条件有以下三个条件：</span><br><span class="line">- 消息队列中有容纳该消息的空间。</span><br><span class="line">- msqid 代表的消息队列被删除。</span><br><span class="line">- 调用 msgsnd 函数的进程被信号中断。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>接收消息使用的API函数是 msgrcv()  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">msgrcv() 函数是从标识符为 msqid 的消息队列读取消息并将消息存储到 msgp 中，读取后把此消息从消息队列中删除.</span><br><span class="line">ssize_t msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, int␣,msgflg);</span><br><span class="line">msqid：消息队列标识符。</span><br><span class="line">- msgp：存放消息的结构体，结构体类型要与 msgsnd() 函数发送的类型相同。</span><br><span class="line">- msgsz：要接收消息的大小，不包含消息类型占用的 4 个字节。</span><br><span class="line">- msgtyp 有多个可选的值：如果为 0 则表示接收第一个消息，如果大于 0 则表示接收类型等于 msgtyp 的第一个消息，而如果小于 0 则表示接收类型等于或者小于 msgtyp 绝对值的第一个消息。</span><br><span class="line">- msgflg 用于设置接收的处理方式，取值情况如下：</span><br><span class="line">    • IPC_EXCEPT：与 msgtype 配合使用返回队列中第一个类型不为 msgtype 的消息</span><br><span class="line">    • IPC_NOWAIT：若在消息队列中并没有相应类型的消息可以接收，则函数立即返回，此时错误码为 ENOMSG</span><br><span class="line">    • 0: 阻塞式接收消息，没有该类型的消息 msgrcv 函数一直阻塞等待</span><br><span class="line">    • IPC_NOERROR：如果队列中满足条件的消息内容大于所请求的 size 字节，则把该消息截断，截断部分将被丢弃</span><br><span class="line">返回值： msgrcv() 函数如果接收消息成功则返回实际读取到的消息数据长度，否则返回-1</span><br><span class="line">错误代码：存放在error中</span><br><span class="line">– E2BIG：消息数据长度大于 msgsz 而 msgflag 没有设置 IPC_NOERROR</span><br><span class="line">– EIDRM：标识符为 msqid 的消息队列已被删除</span><br><span class="line">– EACCESS：无权限读取该消息队列</span><br><span class="line">– EFAULT：参数 msgp 指向无效的内存地址</span><br><span class="line">– ENOMSG：参数 msgflg 设为 IPC_NOWAIT，而消息队列中无消息可读</span><br><span class="line">– EINTR：等待读取队列内的消息情况下被信号中断</span><br><span class="line"></span><br><span class="line">msgrcv() 函数解除阻塞的条件也有三个：</span><br><span class="line">- 消息队列中有了满足条件的消息。</span><br><span class="line">- msqid 代表的消息队列被删除。</span><br><span class="line">- 调用 msgrcv() 函数的进程被信号中断。</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>控制消息队列使用的APIs函数是 msgctl()  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">消息队列是可以被用户操作的，比如设置或者获取消息队列的相关属性，那么可以通过 msgctl()函数去处理它。</span><br><span class="line">int msgctl(int msqid, int cmd, struct msqid_ds *buf);</span><br><span class="line">- msqid：消息队列标识符。</span><br><span class="line">- cmd 用于设置使用什么操作命令</span><br><span class="line">    • IPC_SET 设置消息队列的属性，要设置的属性需先存储在结构体 msqid_ds 类型的 buf中，可设置的属性包括： msg_perm.uid、 msg_perm.gid、 msg_perm.mode 以及 msg_qbytes，储存在结构msqid_ds 中。</span><br><span class="line">    • IPC_RMID 立即删除该 MSG，并且唤醒所有阻塞在该 MSG 上的进程，同时忽略第三个参数。</span><br><span class="line">    • IPC_STAT 获取该 MSG 的信息，获取到的信息会储存在结构体 msqid_ds 类型的 buf 中。</span><br><span class="line">    • IPC_INFO 获得关于当前系统中 MSG 的限制值信息。</span><br><span class="line">    • MSG_INFO 获得关于当前系统中 MSG 的相关资源消耗信息。</span><br><span class="line">    • MSG_STAT 同 IPC_STAT，但 msgid 为该消息队列在内核中记录所有消息队列信息的数组的下标，因此通过迭代所有的下标可以获得系统中所有消息队列的相关信息。</span><br><span class="line">- buf：相关信息结构体缓冲区。</span><br><span class="line">    • 返回值：</span><br><span class="line">    • 成功： 0</span><br><span class="line">    • 出错： -1</span><br><span class="line">错误代码：</span><br><span class="line">- EACCESS：参数 cmd 为 IPC_STAT，确无权限读取该消息队列。</span><br><span class="line">- EFAULT：参数 buf 指向无效的内存地址。</span><br><span class="line">- EIDRM：标识符为 msqid 的消息队列已被删除。</span><br><span class="line">- EINVAL：无效的参数 cmd 或 msqid。</span><br><span class="line">- EPERM：参数 cmd 为 IPC_SET 或 IPC_RMID，却无足够的权限执行。</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h3 id="hexo基本配置"><a href="#hexo基本配置" class="headerlink" title="hexo基本配置"></a>hexo基本配置</h3><h4 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h4><table>
-<thead>
-<tr>
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>title</code></td>
-<td>网站标题</td>
-</tr>
-<tr>
-<td><code>subtitle</code></td>
-<td>网站副标题</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>网站描述</td>
-</tr>
-<tr>
-<td><code>author</code></td>
-<td>您的名字</td>
-</tr>
-<tr>
-<td><code>language</code></td>
-<td>网站使用的语言</td>
-</tr>
-<tr>
-<td><code>timezone</code></td>
-<td>网站时区。Hexo 默认使用您电脑的时区。<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">时区列表</a>。比如说：<code>America/New_York</code>, <code>Japan</code>, 和 <code>UTC</code> 。</td>
-</tr>
-</tbody></table>
-<h4 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h4><table>
-<thead>
-<tr>
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>url</code></td>
-<td>网址</td>
-</tr>
-<tr>
-<td><code>root</code></td>
-<td>网站根目录</td>
-</tr>
-<tr>
-<td><code>permalink</code></td>
-<td>文章的 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/permalinks">永久链接</a> 格式</td>
-</tr>
-<tr>
-<td><code>permalink_defaults</code></td>
-<td>永久链接中各部分的默认值</td>
-</tr>
-</tbody></table>
 
       
     </div>
@@ -504,7 +415,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2022/09/09/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" title="使用hexo搭建个人博客" target="_blank" rel="external">http://example.com/2022/09/09/使用hexo搭建个人博客/</a>
+      <a href="http://example.com/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="Linux应用编程-消息队列" target="_blank" rel="external">http://example.com/2022/10/27/Linux应用编程-消息队列/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -550,13 +461,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2022/09/10/%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97/" title="内核模块"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2022/08/30/hello-world/" title="Hello World"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E7%AE%A1%E9%81%93/" title="Linux应用编程-管道"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
