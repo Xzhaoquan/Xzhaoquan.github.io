@@ -70,8 +70,8 @@ mkfifo函数：
 int mkfifo(const char * pathname,mode_t mode);
 - pathname 需要创建的FIFO文件名
 - mode mode模式及权限参数说明
-	• O_RDONLY：读管道。
     • O_WRONLY：写管道。
+    • O_RDONLY：读管道。
     • O_RDWR：读写管道。
     • O_NONBLOCK：非阻塞。
     • O_CREAT：如果该文件不存在，那么就创建一个新的文件，并用第三个参数为其设置权限。

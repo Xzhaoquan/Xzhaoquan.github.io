@@ -142,10 +142,10 @@ unsigned int alarm(unsigned int seconds);
 
   ```
   int sigemptyset(sigset_t *set); //将信号集合初始化为0函数 不屏蔽信号
-  int sigemptyset(sigset_t *set); //将信号集合初始化为1函数 屏蔽信号
-  int sigemptyset(sigset_t *set); //将信号集合某一位设置为1
-  int sigemptyset(sigset_t *set); //将信号集合某一位设置为0
-  
+  int sigfillset(sigset_t *set); //将信号集合初始化为1函数 屏蔽信号
+  int sigaddset(sigset_t *set); //将信号集合某一位设置为1
+  int sigdelset(sigset_t *set); //将信号集合某一位设置为0
+  int sigismember(const sigset_t *set, int signum); //判断某信号是否在屏蔽信号集里面
   //该函数可以根据参数指定的方法修改进程的信号屏蔽字
   //将屏蔽信号赋值给屏蔽信号集
   int sigprocmask(int how, const old_kernel_sigset_t *set,old_kernel_sigset_t *oldset);
