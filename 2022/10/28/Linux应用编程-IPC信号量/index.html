@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>git的一些常用操作 | Hexo</title>
-  <meta name="description" content="git常用命令1、单个文件加入缓存区12git add +需要加入缓存的文件git add . &#x2F;&#x2F;将所有文件加入跟踪  2、撤销add添加缓存命令12git reset + 想要撤销的文件git reset . &#x2F;&#x2F;撤销add 的所有文件  3、将缓存区里面的内容提交&#x2F;修改1234&#x2F;&#x2F;提交git commit -m &quot;需要添加的注释&quot;&#x2F;&#x2F;修改commit提交的信息g">
+  <title>Linux应用编程-IPC信号量 | Hexo</title>
+  <meta name="description" content="Linux应用编程-信号量信号量的工作原理信号量的PV操作信号量只能进行两种操作：等待和发送信号，即 P 操作和 V 操作，锁行为就是 P 操作，解锁就是 V 操作，可以直接理解为 P 操作是申请资源， V 操作是释放资源。    ipcs -l  查看ipc信息 信号量的P操作： 123P 操作：如果有可用的资源（信号量值大于 0），则占用一个资源（给信号量值减去一，进入临界区代码） ; 如果没">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git的一些常用操作">
-<meta property="og:url" content="http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:title" content="Linux应用编程-IPC信号量">
+<meta property="og:url" content="http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="git常用命令1、单个文件加入缓存区12git add +需要加入缓存的文件git add . &#x2F;&#x2F;将所有文件加入跟踪  2、撤销add添加缓存命令12git reset + 想要撤销的文件git reset . &#x2F;&#x2F;撤销add 的所有文件  3、将缓存区里面的内容提交&#x2F;修改1234&#x2F;&#x2F;提交git commit -m &quot;需要添加的注释&quot;&#x2F;&#x2F;修改commit提交的信息g">
+<meta property="og:description" content="Linux应用编程-信号量信号量的工作原理信号量的PV操作信号量只能进行两种操作：等待和发送信号，即 P 操作和 V 操作，锁行为就是 P 操作，解锁就是 V 操作，可以直接理解为 P 操作是申请资源， V 操作是释放资源。    ipcs -l  查看ipc信息 信号量的P操作： 123P 操作：如果有可用的资源（信号量值大于 0），则占用一个资源（给信号量值减去一，进入临界区代码） ; 如果没">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-26T13:42:20.000Z">
-<meta property="article:modified_time" content="2022-08-30T12:16:49.876Z">
+<meta property="article:published_time" content="2022-10-28T12:30:16.000Z">
+<meta property="article:modified_time" content="2022-10-28T12:30:57.024Z">
 <meta property="article:author" content="Napat">
-<meta property="article:tag" content="git">
+<meta property="article:tag" content="Linux应用开发">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/index.html">
+  <link rel="canonical" href="http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/index.html">
   
     <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -348,14 +348,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-git的一些常用操作" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-Linux应用编程-IPC信号量" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      git的一些常用操作
+      Linux应用编程-IPC信号量
     </h1>
   
 
@@ -363,53 +363,44 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" class="article-date">
-	  <time datetime="2022-08-26T13:42:20.000Z" itemprop="datePublished">2022-08-26</time>
+	<a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/" class="article-date">
+	  <time datetime="2022-10-28T12:30:16.000Z" itemprop="datePublished">2022-10-28</time>
 	</a>
 </span>
         
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/git/" rel="tag">git</a>
+	<a class="article-tag-link-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h2><h5 id="1、单个文件加入缓存区"><a href="#1、单个文件加入缓存区" class="headerlink" title="1、单个文件加入缓存区"></a>1、单个文件加入缓存区</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add +需要加入缓存的文件</span><br><span class="line">git add . //将所有文件加入跟踪</span><br></pre></td></tr></table></figure>
+        <h2 id="Linux应用编程-信号量"><a href="#Linux应用编程-信号量" class="headerlink" title="Linux应用编程-信号量"></a>Linux应用编程-信号量</h2><h4 id="信号量的工作原理"><a href="#信号量的工作原理" class="headerlink" title="信号量的工作原理"></a>信号量的工作原理</h4><h5 id="信号量的PV操作"><a href="#信号量的PV操作" class="headerlink" title="信号量的PV操作"></a>信号量的PV操作</h5><p>信号量只能进行两种操作：等待和发送信号，即 P 操作和 V 操作，锁行为就是 P 操作，解锁就是 V 操作，可以直接理解为 P 操作是申请资源， V 操作是释放资源。   </p>
+<p>ipcs -l  查看ipc信息</p>
+<p>信号量的P操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">P 操作：如果有可用的资源（信号量值大于 0），则占用一个资源（给信号量值减去一，进</span><br><span class="line">入临界区代码） ; 如果没有可用的资源（信号量值等于 0），则阻塞，直到系统将资源分配</span><br><span class="line">给该进程（进入等待队列，一直等到资源轮到该进程）。</span><br></pre></td></tr></table></figure>
 
-<h5 id="2、撤销add添加缓存命令"><a href="#2、撤销add添加缓存命令" class="headerlink" title="2、撤销add添加缓存命令"></a>2、撤销add添加缓存命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset + 想要撤销的文件</span><br><span class="line">git reset . //撤销add 的所有文件</span><br></pre></td></tr></table></figure>
+<p>信号量的V操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">V 操作：如果在该信号量的等待队列中有进程在等待资源，则唤醒一个阻塞的进程。如果</span><br><span class="line">没有进程等待它，则释放一个资源（给信号量值加一）。</span><br></pre></td></tr></table></figure>
 
-<h5 id="3、将缓存区里面的内容提交-x2F-修改"><a href="#3、将缓存区里面的内容提交-x2F-修改" class="headerlink" title="3、将缓存区里面的内容提交&#x2F;修改"></a>3、将缓存区里面的内容提交&#x2F;修改</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//提交</span><br><span class="line">git commit -m &quot;需要添加的注释&quot;</span><br><span class="line">//修改commit提交的信息</span><br><span class="line">git commit --amend + 修改commit提交的信息</span><br></pre></td></tr></table></figure>
+<p>在信号量进行 PV 操作时都为原子操作（因为它需要保护临界资源）。  </p>
+<p>原子操作：单指令的操作称为原子的，单条指令的执行是不会被打断的  </p>
+<h4 id="IPC信号量函数"><a href="#IPC信号量函数" class="headerlink" title="IPC信号量函数"></a>IPC信号量函数</h4><h5 id="创建或获取一个信号量"><a href="#创建或获取一个信号量" class="headerlink" title="创建或获取一个信号量"></a>创建或获取一个信号量</h5><p>semget 函数的功能是创建或者获取一个已经创建的信号量，如果成功则返回对应的信号量标识符，失败则返回-1。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">int semget(key_t key, int nsems, int semflg);</span><br><span class="line">- key：参数 key 用来标识系统内的信号量可以使用ftok函数创建或者是类似（key_t）123</span><br><span class="line">- nsems：参数用于在创建信号量的时候，表示可用的信号量数目。</span><br><span class="line">- semflg：参数用来指定标志位</span><br><span class="line">	* PC_CREAT：IPC_CREAT 标志创建新的信号量，即使该信号量已经存在（具有同一个键值的信号量已在系统中存在），也不会出错。</span><br><span class="line">	* IPC_EXCL：同时使用 IPC_EXCL 标志可以创建一个新的唯一的信号量，此时如果该信号量已经存在，该函数会返回出错。</span><br><span class="line">	* mode：创建文件模式 0666</span><br><span class="line">	</span><br><span class="line">创建信号量时，还受到以下系统信息的影响:</span><br><span class="line">• SEMMNI：系统中信号量总数的最大值。</span><br><span class="line">• SEMMSL：每个信号量中信号量元素个数的最大值。</span><br><span class="line">• SEMMNS：系统中所有信号量中的信号量元素总数的最大值。</span><br></pre></td></tr></table></figure>
 
-<h5 id="4、创建分支-x2F-查看分支-x2F-切换分支-x2F-合并分支"><a href="#4、创建分支-x2F-查看分支-x2F-切换分支-x2F-合并分支" class="headerlink" title="4、创建分支&#x2F;查看分支&#x2F;切换分支&#x2F;合并分支"></a>4、创建分支&#x2F;查看分支&#x2F;切换分支&#x2F;合并分支</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//创建分支</span><br><span class="line">git branch + 创建分支名</span><br><span class="line">//查看分支</span><br><span class="line">git branch</span><br><span class="line">//切换分支</span><br><span class="line">git checkout + 切换分支名</span><br><span class="line"></span><br><span class="line">//切换分支 如果没有分支就创建分支 </span><br><span class="line">git checkout -b +分支名</span><br><span class="line"></span><br><span class="line">//分支合并</span><br><span class="line">git merge + 分支名称</span><br></pre></td></tr></table></figure>
+<h4 id="信号量PV操作"><a href="#信号量PV操作" class="headerlink" title="信号量PV操作"></a>信号量PV操作</h4><h5 id="信号量的PV操作-1"><a href="#信号量的PV操作-1" class="headerlink" title="信号量的PV操作"></a>信号量的PV操作</h5><p>semop() 函数对信号量进行 PV 操作 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">int semop(int semid, struct sembuf *sops, size_t nsops);</span><br><span class="line">- semid： System V 信号量的标识符，用来标识一个信号量</span><br><span class="line">- sops：指向一个 struct sembuf 结构体数组的指针，该数组是一个信号量操作数组</span><br><span class="line">	struct sembuf</span><br><span class="line">    &#123;</span><br><span class="line">        unsigned short int sem_num; /* 信号量的序号从 0 ~ nsems-1 */</span><br><span class="line">        short int sem_op; /* 对信号量的操作， &gt;0, 0, &lt;0 */</span><br><span class="line">        short int sem_flg; /* 操作标识： 0， IPC_WAIT, SEM_UNDO */</span><br><span class="line">    &#125;;</span><br><span class="line">    * set_num：用于标识信号量中的第几个信号量， 0 表示第 1 个， 1 表示第 2 个， nsems -1表示最后一个。</span><br><span class="line">    * sem_op：sem_op 标识对信号量的所进行的操作类型</span><br><span class="line">    	~ sem_op &gt; 0 表示进程未使用或者使用完毕交回资源，表示信号量V(释放操作)，sem_op 的值加到该信号量的信号量当前值 semval</span><br><span class="line">    	~ sem_op &lt; 0 表示进程需要使用资源，表示信号量P操作（获取资源），当信号量当前值 semval 大于或者等于 -sem_op 时， semval 减掉 sem_op 的绝对值，为该进程分配对应数目的资源。</span><br><span class="line">    	~ sem_op = 0 表示进程要阻塞等待，直至信号量当前值 semval 变为 0</span><br><span class="line">	* sem_flg，信号量操作的属性标志</span><br><span class="line">        ~ IPC_NOWAIT 使对信号量的操作是非阻塞的</span><br><span class="line">        ~ IPC_WAIT 使对信号量的操作是阻塞的</span><br><span class="line">        ~ SEM_UNDO 维护进程对信号量的调整值，进程退出的时候会自动还原它对信号量的操作</span><br><span class="line">        ~ 0 表示正常操作</span><br><span class="line">- nsops：表示上面 sops 数组的数量，如只有一个 sops 数组， nsops 就设置为 1</span><br></pre></td></tr></table></figure>
 
-<h5 id="5、删除分支"><a href="#5、删除分支" class="headerlink" title="5、删除分支"></a>5、删除分支</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//删除时需要做检查</span><br><span class="line">git branch -d +分支名称 （要做检查的删除分支）</span><br><span class="line">//删除时不需要做任何检查</span><br><span class="line">git branch -D +分支名称 （不做任何检查的强制删除）</span><br></pre></td></tr></table></figure>
-
-<h5 id="6、查看提交的历史信息"><a href="#6、查看提交的历史信息" class="headerlink" title="6、查看提交的历史信息"></a>6、查看提交的历史信息</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//查看提交的详细历史信息</span><br><span class="line">git log git log --graph --oneline (以图形化界面查看)</span><br><span class="line">//获取每条日志的简要信息</span><br><span class="line">git log --pretty=oneline</span><br><span class="line">//查看本地的操作历史</span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
-
-<h5 id="7、配置SSH公钥"><a href="#7、配置SSH公钥" class="headerlink" title="7、配置SSH公钥"></a>7、配置SSH公钥</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//生成公钥</span><br><span class="line">ssh-keygen -t rsa -C &quot;youremail@example.com&quot;</span><br><span class="line">//获取公钥</span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br><span class="line">//查看公钥是否添加成功</span><br><span class="line"> ssh -T git@gitee.com</span><br></pre></td></tr></table></figure>
-
-<h5 id="8、远程仓库的添加-x2F-推送-x2F-查看-x2F-删除-x2F-拉取"><a href="#8、远程仓库的添加-x2F-推送-x2F-查看-x2F-删除-x2F-拉取" class="headerlink" title="8、远程仓库的添加&#x2F;推送&#x2F;查看&#x2F;删除&#x2F;拉取"></a>8、远程仓库的添加&#x2F;推送&#x2F;查看&#x2F;删除&#x2F;拉取</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//远程仓库的添加</span><br><span class="line">git remote add origin +(远程仓库地址)</span><br><span class="line">//远程仓库的查看</span><br><span class="line"> git remote</span><br><span class="line">//远程仓库的推送</span><br><span class="line"> git push origin master</span><br><span class="line"> git pull --rebase origin master（如果推送不成功使用这个）（保持远端和本地数据同步）</span><br><span class="line"> //与远端分支关系绑定</span><br><span class="line">  git push --set-upstream origin master:master （与远端关系绑定） （本地master） (远端master)</span><br><span class="line"> //删除指定远程分支</span><br><span class="line">  git push origin --delete master git push origin :master</span><br><span class="line"> //指定拉取分支</span><br><span class="line"> git pull origin master（如果pull出现冲突，可以版本回退和 封存修改，pull之后在还原）</span><br></pre></td></tr></table></figure>
-
-<h5 id="9、查看本地分支与远程分支的对应关系"><a href="#9、查看本地分支与远程分支的对应关系" class="headerlink" title="9、查看本地分支与远程分支的对应关系"></a>9、查看本地分支与远程分支的对应关系</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -vv</span><br></pre></td></tr></table></figure>
-
-<h5 id="10、git克隆"><a href="#10、git克隆" class="headerlink" title="10、git克隆"></a>10、git克隆</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone + 克隆地址</span><br></pre></td></tr></table></figure>
-
-<h5 id="11、git版本回退"><a href="#11、git版本回退" class="headerlink" title="11、git版本回退"></a>11、git版本回退</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//git 回退到你想要回退的版本号</span><br><span class="line">git reset --hard + 版本对应的id</span><br></pre></td></tr></table></figure>
-
-<h5 id="12、强制拉取合并分支"><a href="#12、强制拉取合并分支" class="headerlink" title="12、强制拉取合并分支"></a>12、强制拉取合并分支</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master --allow-unrelated-histories</span><br></pre></td></tr></table></figure>
-
-<h5 id="13、删除远程仓库"><a href="#13、删除远程仓库" class="headerlink" title="13、删除远程仓库"></a>13、删除远程仓库</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote rm origin </span><br></pre></td></tr></table></figure>
-
-<h5 id="14、创建远端仓库分支"><a href="#14、创建远端仓库分支" class="headerlink" title="14、创建远端仓库分支"></a>14、创建远端仓库分支</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin + 本地分支</span><br></pre></td></tr></table></figure>
+<h5 id="semctl属性函数"><a href="#semctl属性函数" class="headerlink" title="semctl属性函数"></a>semctl属性函数</h5><p>semctl 函数主要是对信号量集的一系列控制操作，根据操作命令 cmd 的不同，执行不同的操作，<br>第四个参数是可选的。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">int semctl(int semid, int semnum, int cmd, ...);</span><br><span class="line">- semid： System V 信号量的标识符；</span><br><span class="line">- semnum：表示信号量集中的第 semnum 个信号量。它的取值范围： 0 ~ nsems-1 。</span><br><span class="line">- cmd：操作命令，主要有以下命令：</span><br><span class="line">    * IPC_STAT：获取此信号量集合的 semid_ds 结构，存放在第四个参数的 buf 中。</span><br><span class="line">    * IPC_SET：通过第四个参数的 buf 来设定信号量集相关联的 semid_ds 中信号量集合权限为 sem_perm 中的 uid， gid， mode。</span><br><span class="line">    * IPC_RMID：从系统中删除该信号量集合。</span><br><span class="line">    * GETVAL：返回第 semnum 个信号量的值。</span><br><span class="line">    * SETVAL：设置第 semnum 个信号量的值，该值由第四个参数中的 val 指定。</span><br><span class="line">    * GETPID：返回第 semnum 个信号量的 sempid，最后一个操作的 pid。</span><br><span class="line">    * GETNCNT：返回第 semnum 个信号量的 semncnt。等待 semval 变为大于当前值的线程数。</span><br><span class="line">    * GETZCNT：返回第 semnum 个信号量的 semzcnt。等待 semval 变为 0 的线程数。</span><br><span class="line">    * GETALL：去信号量集合中所有信号量的值，将结果存放到的 array 所指向的数组。</span><br><span class="line">    * SETALL：按 arg.array 所指向的数组中的值，设置集合中所有信号量的值。</span><br><span class="line">- 第四个参数是可选的：如果使用该参数，该参数的类型为 union semun，它是多个特定命令的联合体</span><br><span class="line">	union semun &#123;</span><br><span class="line">		int val; /* Value for SETVAL */</span><br><span class="line">		struct semid_ds *buf; /* Buffer for IPC_STAT, IPC_SET */</span><br><span class="line">        unsigned short *array; /* Array for GETALL, SETALL */</span><br><span class="line">        struct seminfo *__buf; /* Buffer for IPC_INFO</span><br><span class="line">        (Linux-specific) */</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
 
 
       
@@ -420,7 +411,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2022/08/26/git%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" title="git的一些常用操作" target="_blank" rel="external">http://example.com/2022/08/26/git的一些常用操作/</a>
+      <a href="http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/" title="Linux应用编程-IPC信号量" target="_blank" rel="external">http://example.com/2022/10/28/Linux应用编程-IPC信号量/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -466,13 +457,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2022/08/26/git%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93/" title="git初始化连接远程仓库"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2022/08/25/markdown%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" title="markdown使用说明"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="Linux应用编程-消息队列"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
