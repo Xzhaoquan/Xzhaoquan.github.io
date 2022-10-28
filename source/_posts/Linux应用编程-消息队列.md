@@ -29,6 +29,9 @@ tags: Linux应用开发
   msgget() 函数的作用是创建或获取一个消息队列对象，并返回消息队列标识符。
   int msgget(key_t key, int msgflg);
   - key：消息队列的关键字值，多个进程可以通过它访问同一个消息队列。可通过ftok函数创建
+  	• key_t ftok(const char *pathname, int proj_id);
+  		* path：合法路径
+  		* proj_id：一个整数
   - msgflg：表示创建的消息队列的标志参数
   	•  IPC_CREAT
   	•  IPC_EXCL
