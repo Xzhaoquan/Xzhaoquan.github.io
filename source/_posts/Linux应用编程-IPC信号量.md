@@ -75,9 +75,8 @@ int semop(int semid, struct sembuf *sops, size_t nsops);
     	~ sem_op > 0 表示进程未使用或者使用完毕交回资源，表示信号量V(释放操作)，sem_op 的值加到该信号量的信号量当前值 semval
     	~ sem_op < 0 表示进程需要使用资源，表示信号量P操作（获取资源），当信号量当前值 semval 大于或者等于 -sem_op 时， semval 减掉 sem_op 的绝对值，为该进程分配对应数目的资源。
     	~ sem_op = 0 表示进程要阻塞等待，直至信号量当前值 semval 变为 0
-	* sem_flg，信号量操作的属性标志
-        ~ IPC_NOWAIT 使对信号量的操作是非阻塞的
-        ~ IPC_WAIT 使对信号量的操作是阻塞的
+    * sem_flg，信号量操作的属性标志
+        ~ IPC_NOWAIT 使对信号量的操作是非阻塞的，即指定了该标志，调用进程在信号量的值不满足条件的情况下不会被阻塞，而是直接返回-1，并将 errno 设置为 EAGAIN。
         ~ SEM_UNDO 维护进程对信号量的调整值，进程退出的时候会自动还原它对信号量的操作
         ~ 0 表示正常操作
 - nsops：表示上面 sops 数组的数量，如只有一个 sops 数组， nsops 就设置为 1
@@ -105,8 +104,8 @@ int semctl(int semid, int semnum, int cmd, ...);
     * SETALL：按 arg.array 所指向的数组中的值，设置集合中所有信号量的值。
 - 第四个参数是可选的：如果使用该参数，该参数的类型为 union semun，它是多个特定命令的联合体
 	union semun {
-		int val; /* Value for SETVAL */
-		struct semid_ds *buf; /* Buffer for IPC_STAT, IPC_SET */
+        int val; /* Value for SETVAL */
+        struct semid_ds *buf; /* Buffer for IPC_STAT, IPC_SET */
         unsigned short *array; /* Array for GETALL, SETALL */
         struct seminfo *__buf; /* Buffer for IPC_INFO
         (Linux-specific) */
