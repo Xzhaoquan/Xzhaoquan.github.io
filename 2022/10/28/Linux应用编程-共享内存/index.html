@@ -27,7 +27,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/image-20221028214119485.png">
 <meta property="article:published_time" content="2022-10-28T13:34:34.000Z">
-<meta property="article:modified_time" content="2022-10-28T14:25:14.636Z">
+<meta property="article:modified_time" content="2022-10-29T13:02:40.172Z">
 <meta property="article:author" content="Napat">
 <meta property="article:tag" content="Linux应用开发">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -266,7 +266,7 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/Linux/">Linux</a>
               </p>
               <p class="item-title">
                 <a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" class="title">Linux应用编程-共享内存</a>
@@ -281,7 +281,7 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/Linux/">Linux</a>
               </p>
               <p class="item-title">
                 <a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/" class="title">Linux应用编程-IPC信号量</a>
@@ -296,7 +296,7 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/Linux/">Linux</a>
               </p>
               <p class="item-title">
                 <a href="/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="title">Linux应用编程-消息队列</a>
@@ -311,7 +311,7 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/Linux/">Linux</a>
               </p>
               <p class="item-title">
                 <a href="/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E7%AE%A1%E9%81%93/" class="title">Linux应用编程-管道</a>
@@ -326,7 +326,7 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/Linux/">Linux</a>
               </p>
               <p class="item-title">
                 <a href="/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E4%BF%A1%E5%8F%B7/" class="title">Linux应用编程-信号</a>
@@ -370,6 +370,11 @@
 	</a>
 </span>
         
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
@@ -396,7 +401,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">int shmget(key_t key, size_t size, int shmflg);</span><br><span class="line">- key：标识共享内存的键值</span><br><span class="line">- size：共享内存大小，所有的内存分配操作都是以页为单位的，所以即使只申请只有一个字节的内存，内存也会分配整整一页。</span><br><span class="line">- shmflg：创建的共享内存的模式标志参数</span><br><span class="line">	* IPC_CREAT：如果内核中不存在关键字与 key 相等的共享内存，则新建一个共享内存；如果存在这样的共享内存，返回此共享内存的标识符。</span><br><span class="line">	* IPC_EXCL：如果内核中不存在键值与 key 相等的共享内存，则新建一个共享内存；如果存在这样的共享内存则报错。</span><br><span class="line">	* SHM_HUGETLB：使用“大页面”来分配共享内存，所谓的“大页面”指的是内核为了提高程序性能，对内存实行分页管理时，采用比默认尺寸（4KB）更大的分页，以减少缺页中断。</span><br><span class="line">	* SHM_NORESERVE：不在交换分区中为这块共享内存保留空间。</span><br><span class="line">返回值： shmget() 函数的返回值是共享内存的 ID。创建失败返回-1。</span><br><span class="line">错误代码：</span><br><span class="line">- EACCES：指定的消息队列已存在，但调用进程没有权限访问它</span><br><span class="line">- EEXIST： key 指定的消息队列已存在，而 msgflg 中同时指定 IPC_CREAT 和 IPC_EXCL 标志</span><br><span class="line">- EINVAL：创建共享内存时参数 size 小于 SHMMIN 或大于 SHMMAX。</span><br><span class="line">- ENFILE：已达到系统范围内打开文件总数的限制。</span><br><span class="line">- ENOENT：给定的 key 不存在任何共享内存，并且未指定 IPC_CREAT。</span><br><span class="line">- ENOMEM：内存不足，无法为共享内存分配内存。</span><br><span class="line">- EACCES：没有权限。</span><br></pre></td></tr></table></figure>
 
 <h5 id="内存映射函数"><a href="#内存映射函数" class="headerlink" title="内存映射函数"></a>内存映射函数</h5><p>shmat() 映射函数  ，共享内存区对象映射到调用进程的地址空间  。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">void *shmat(int shmid, const void *shmaddr, int shmflg);</span><br><span class="line">- shmid：共享内存 ID，通常是由 shmget() 函数返回的。</span><br><span class="line">- shmaddr：如果不为 NULL，则系统会根据 shmaddr 来选择一个合适的内存区域，如果为NULL，则系统会自动选择一个合适的虚拟内存空间地址去映射共享内存。</span><br><span class="line">- shmflg：操作共享内存的方式：</span><br><span class="line">    * SHM_RDONLY：以只读方式映射共享内存。</span><br><span class="line">    * SHM_REMAP：重新映射，此时 shmaddr 不能为 NULL。</span><br><span class="line">    * NULLSHM：自动选择比 shmaddr 小的最大页对齐地址。</span><br><span class="line">shmat() 函数调用成功后返回共享内存的起始地址。</span><br><span class="line"></span><br><span class="line">注意：</span><br><span class="line">- 共享内存只能以只读或者可读写方式映射，无法以只写方式映射。</span><br><span class="line">- shmat() 第二个参数 shmaddr 一般都设为 NULL，让系统自动找寻合适的地址。但当其确实</span><br><span class="line">不为空时，那么要求 SHM_RND 在 shmflg 必须被设置，这样的话系统将会选择比 shmaddr</span><br><span class="line">小而又最大的页对齐地址（即为 SHMLBA 的整数倍）作为共享内存区域的起始地址。如果</span><br><span class="line">没有设置 SHM_RND，那么 shmaddr 必须是严格的页对齐地址。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void *shmat(int shmid, const void *shmaddr, int shmflg);</span><br><span class="line">- shmid：共享内存 ID，通常是由 shmget() 函数返回的。</span><br><span class="line">- shmaddr：如果不为 NULL，则系统会根据 shmaddr 来选择一个合适的内存区域，如果为NULL，则系统会自动选择一个合适的虚拟内存空间地址去映射共享内存。</span><br><span class="line">- shmflg：操作共享内存的方式：</span><br><span class="line">	* 0：可读可写</span><br><span class="line">    * SHM_RDONLY：以只读方式映射共享内存。</span><br><span class="line">    * SHM_REMAP：重新映射，此时 shmaddr 不能为 NULL。</span><br><span class="line">    * NULLSHM：自动选择比 shmaddr 小的最大页对齐地址。</span><br><span class="line">shmat() 函数调用成功后返回共享内存的起始地址。</span><br><span class="line"></span><br><span class="line">注意：</span><br><span class="line">- 共享内存只能以只读或者可读写方式映射，无法以只写方式映射。</span><br><span class="line">- shmat() 第二个参数 shmaddr 一般都设为 NULL，让系统自动找寻合适的地址。但当其确实</span><br><span class="line">不为空时，那么要求 SHM_RND 在 shmflg 必须被设置，这样的话系统将会选择比 shmaddr</span><br><span class="line">小而又最大的页对齐地址（即为 SHMLBA 的整数倍）作为共享内存区域的起始地址。如果</span><br><span class="line">没有设置 SHM_RND，那么 shmaddr 必须是严格的页对齐地址。</span><br></pre></td></tr></table></figure>
 
 <h5 id="解除内存映射函数"><a href="#解除内存映射函数" class="headerlink" title="解除内存映射函数"></a>解除内存映射函数</h5><p>shmdt() 函数是用来解除进程与共享内存之间的映射的，在解除映射后，该进程不能再访问这个共享内存  。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int shmdt(const void *shmaddr);</span><br><span class="line">- shmaddr：映射的共享内存的起始地址。</span><br><span class="line"></span><br><span class="line">注意：该函数并不删除所指定的共享内存区，而只是将先前用 shmat() 函数映射好的共享内存脱离当前进程，共享内存还是存在于物理内存中。</span><br></pre></td></tr></table></figure>
