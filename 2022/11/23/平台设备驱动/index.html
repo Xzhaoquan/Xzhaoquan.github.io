@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>平台设备驱动 | Hexo</title>
+  <meta name="description" content="平台设备驱动平台总线-Linux内核引进的一种虚拟总线（platfrom bus） 平台总线平台总线的注册和匹配方式使用platfrom_bus_type来描述平台总线 12345678struct bus_type platform_bus_type &#x3D; &amp;#123;	.name &#x3D; &quot;platform&quot;,	.dev_groups &#x3D; platform_dev_groups,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="平台设备驱动">
+<meta property="og:url" content="http://example.com/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="平台设备驱动平台总线-Linux内核引进的一种虚拟总线（platfrom bus） 平台总线平台总线的注册和匹配方式使用platfrom_bus_type来描述平台总线 12345678struct bus_type platform_bus_type &#x3D; &amp;#123;	.name &#x3D; &quot;platform&quot;,	.dev_groups &#x3D; platform_dev_groups,">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-23T12:50:30.000Z">
+<meta property="article:modified_time" content="2022-11-23T15:02:43.151Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="Linux设备驱动">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.33px;">Linux设备驱动</a> <a href="/tags/git/" style="font-size: 13.67px;">git</a> <a href="/tags/hexo/" style="font-size: 13.33px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" class="title">平台设备驱动</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-23T12:50:30.000Z" itemprop="datePublished">2022-11-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/23/Linux%E8%AE%BE%E5%A4%87%E6%A8%A1%E5%9E%8B/" class="title">Linux设备模型</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-23T12:31:45.000Z" itemprop="datePublished">2022-11-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" class="title">Linux应用编程-共享内存</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-10-28T13:34:34.000Z" itemprop="datePublished">2022-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/" class="title">Linux应用编程-IPC信号量</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-10-28T12:30:16.000Z" itemprop="datePublished">2022-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="title">Linux应用编程-消息队列</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-10-27T13:54:25.000Z" itemprop="datePublished">2022-10-27</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-平台设备驱动" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      平台设备驱动
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" class="article-date">
+	  <time datetime="2022-11-23T12:50:30.000Z" itemprop="datePublished">2022-11-23</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="平台设备驱动"><a href="#平台设备驱动" class="headerlink" title="平台设备驱动"></a>平台设备驱动</h2><p>平台总线-Linux内核引进的一种虚拟总线（platfrom bus）</p>
+<h3 id="平台总线"><a href="#平台总线" class="headerlink" title="平台总线"></a>平台总线</h3><h5 id="平台总线的注册和匹配方式"><a href="#平台总线的注册和匹配方式" class="headerlink" title="平台总线的注册和匹配方式"></a>平台总线的注册和匹配方式</h5><p>使用platfrom_bus_type来描述平台总线</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct bus_type platform_bus_type = &#123;</span><br><span class="line">	.name = &quot;platform&quot;,</span><br><span class="line">	.dev_groups = platform_dev_groups,</span><br><span class="line">	.match = platform_match,</span><br><span class="line">	.uevent = platform_uevent,</span><br><span class="line">	.pm = &amp;platform_dev_pm_ops</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>平台设备总线在Linux启动时自动注册</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bus_register(&amp;platform_bus_type);  </span><br></pre></td></tr></table></figure>
+
+<h5 id="平台设备的匹配"><a href="#平台设备的匹配" class="headerlink" title="平台设备的匹配"></a>平台设备的匹配</h5><p>平台总线采用platform_match函数去匹配平台设备和平台驱动</p>
+<p>平台设备去匹配设备可以通过四种方式：</p>
+<ul>
+<li><p>通过设备树机制去进行匹配</p>
+<ul>
+<li>通过设备树去获取设备信息，来进行匹配</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (of_driver_match_device(dev, drv))</span><br><span class="line">return 1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ACPI匹配模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (acpi_driver_match_device(dev, drv))</span><br><span class="line">return 1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>id_table方式去匹配</p>
+<ul>
+<li><p>通过我们在定义驱动结构体（platform_driver  ）时提供的id_table数组，去比较id_table里面的</p>
+<p>name成员与平台设备成员里面的的name成员，来进行匹配。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (pdrv-&gt;id_table)</span><br><span class="line">return platform_match_id(pdrv-&gt;id_table, pdev) != NULL;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static const struct platform_device_id *platform_match_id(</span><br><span class="line">						const struct platform_device_id *id,</span><br><span class="line">						struct platform_device *pdev)</span><br><span class="line">&#123;</span><br><span class="line">    while (id-&gt;name[0]) &#123;</span><br><span class="line">        if (strcmp(pdev-&gt;name, id-&gt;name) == 0) &#123;</span><br><span class="line">        pdev-&gt;id_entry = id;</span><br><span class="line">        return id;</span><br><span class="line">    	&#125;</span><br><span class="line">    	id++;</span><br><span class="line">    &#125;</span><br><span class="line">    return NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果要使用id_table方式去进行匹配我们需要在添加平台驱动的时候添加id_table数组元素。</p>
+</li>
+</ul>
+</li>
+<li><p>字符串比较方式去匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return (strcmp(pdev-&gt;name, drv-&gt;name) == 0);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>上面四种匹配方式的先后顺序是从上到下，最上面的匹配方式优先级最高，最下面的匹配方式优先级最低。</p>
+<h5 id="什么时候进行平台总线匹配？"><a href="#什么时候进行平台总线匹配？" class="headerlink" title="什么时候进行平台总线匹配？"></a>什么时候进行平台总线匹配？</h5><p>每当有新的设备或者是新的驱动加入到总线时，总线会调用paltform_match函数去对新添加的设备或者是驱动，进行配对。</p>
+<h3 id="平台设备"><a href="#平台设备" class="headerlink" title="平台设备"></a>平台设备</h3><h4 id="内核使用platform-device来描述平台设备"><a href="#内核使用platform-device来描述平台设备" class="headerlink" title="内核使用platform_device来描述平台设备"></a>内核使用platform_device来描述平台设备</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">struct platform_device &#123;</span><br><span class="line">	const char	*name;</span><br><span class="line">	int		id;</span><br><span class="line">	bool		id_auto;</span><br><span class="line">	struct device	dev;</span><br><span class="line">	u32		num_resources;</span><br><span class="line">	struct resource	*resource;</span><br><span class="line"></span><br><span class="line">	const struct platform_device_id	*id_entry;</span><br><span class="line">	char *driver_override; /* Driver name to force a match */</span><br><span class="line"></span><br><span class="line">	/* MFD cell pointer */</span><br><span class="line">	struct mfd_cell *mfd_cell;</span><br><span class="line"></span><br><span class="line">	/* arch specific additions */</span><br><span class="line">	struct pdev_archdata	archdata;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>name：设备名称，总线进行匹配时，会比较设备和驱动的名称是否一致；  </p>
+</li>
+<li><p>id  ：设备的编号，如果Linux里面设备同名，则通过该编号来识别不同设备。</p>
+</li>
+<li><p>dev：继承Linux里面的设备模型中的device结构体，管理平台设备。</p>
+</li>
+<li><p>num_resources：记录资源的个数，当结构成员resource存放的是数组时，记录的是数组的个数。</p>
+<p>使用ARRAY_SIZE计算数组大小。</p>
+</li>
+<li><p>resource：平台设备提供给驱动的资源，irq,dma,io,内存。</p>
+</li>
+<li><p>id_entry：平台设备提供的一种匹配方式。</p>
+</li>
+</ul>
+<h5 id="使用resource-来描述提供给驱动的资源"><a href="#使用resource-来描述提供给驱动的资源" class="headerlink" title="使用resource 来描述提供给驱动的资源"></a>使用resource 来描述提供给驱动的资源</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct resource &#123;</span><br><span class="line">	resource_size_t start;</span><br><span class="line">	resource_size_t end;</span><br><span class="line">	const char *name;</span><br><span class="line">	unsigned long flags;</span><br><span class="line">	unsigned long desc;</span><br><span class="line">	struct resource *parent, *sibling, *child;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>需要指定资源的名字（可有可无），指定资源的起始地址和结束地址，指定提供资源的类型。</p>
+<ul>
+<li>start：资源的起始地址</li>
+<li>end：资源的结束地址</li>
+<li>name：指定资源的名字（可设置为NULL）</li>
+<li>flags：指定资源的类型<ul>
+<li>IORESOURCE_IO：用于IO地址空间，用于IO端口映射</li>
+<li>IORESOURCE_MEM：用于外设的可直接寻址的地址空间</li>
+<li>IORESOURCE_IRQ：指定该设备使用某个中断</li>
+<li>IORESOURCE_DMA：指定去使用某个DMA通道</li>
+</ul>
+</li>
+</ul>
+<p>一般使用IO内存映射的方式（IORESOURCE_MEM）去访问内存，去读写寄存器。</p>
+<h6 id="注意：如果使用中断引脚或者是使用DMA通道只是用一个的话，start和end必须是相等的。"><a href="#注意：如果使用中断引脚或者是使用DMA通道只是用一个的话，start和end必须是相等的。" class="headerlink" title="注意：如果使用中断引脚或者是使用DMA通道只是用一个的话，start和end必须是相等的。"></a>注意：如果使用中断引脚或者是使用DMA通道只是用一个的话，start和end必须是相等的。</h6><h5 id="平台设备采用platform-device-结构体中的dev对象里面的platform-data-来保私有数据"><a href="#平台设备采用platform-device-结构体中的dev对象里面的platform-data-来保私有数据" class="headerlink" title="平台设备采用platform_device  结构体中的dev对象里面的platform_data  来保私有数据"></a>平台设备采用platform_device  结构体中的dev对象里面的platform_data  来保私有数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">platform_device-&gt;device-&gt;platform_data  </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static struct platform_device red_led_device = &#123;</span><br><span class="line">    .name = &quot;led_dev&quot;,/*需要和driver匹配的名字*/</span><br><span class="line">    .id = 1,</span><br><span class="line">    .num_resources = ARRAY_SIZE(red_led_resource),</span><br><span class="line">    .resource = red_led_resource,</span><br><span class="line">    .dev = &#123;</span><br><span class="line">        .release = red_led_release,</span><br><span class="line">        .platform_data = red_hard_info,/*硬件信息*/</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>平台设备提供的resource资源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static struct resource red_led_resource[] = &#123;</span><br><span class="line">    [0] = DEFINE_RES_MEM(GPIO1_DR, 4),</span><br><span class="line">    [1] = DEFINE_RES_MEM(GPIO1_GDIR, 4),</span><br><span class="line">	[2] = DEFINE_RES_MEM(IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO04, 4),</span><br><span class="line">	[3] = DEFINE_RES_MEM(CCM_CCGR1, 4),</span><br><span class="line">	[4] = DEFINE_RES_MEM(IOMUXC_SW_PAD_CTL_PAD_GPIO1_IO04, 4),</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="平台设备的注册和注销"><a href="#平台设备的注册和注销" class="headerlink" title="平台设备的注册和注销"></a>平台设备的注册和注销</h4><p>我们定义和初始化platform_device  结构体后，需要将设备注册，挂载在平台设备总线上面。</p>
+<h5 id="平台设备的注册"><a href="#平台设备的注册" class="headerlink" title="平台设备的注册"></a>平台设备的注册</h5><p>使用platform_device_register  函数将平台设备注册到平台设备总线上面去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int platform_device_register(struct platform_device *pdev)</span><br></pre></td></tr></table></figure>
+
+<h5 id="平台设备的注销"><a href="#平台设备的注销" class="headerlink" title="平台设备的注销"></a>平台设备的注销</h5><p>注销挂载在设备总线上面的平台设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void platform_device_unregister(struct platform_device *pdev)  </span><br></pre></td></tr></table></figure>
+
+<h3 id="平台驱动"><a href="#平台驱动" class="headerlink" title="平台驱动"></a>平台驱动</h3><h4 id="内核使用platform-driver来描述平台驱动"><a href="#内核使用platform-driver来描述平台驱动" class="headerlink" title="内核使用platform_driver来描述平台驱动"></a>内核使用platform_driver来描述平台驱动</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct platform_driver &#123;</span><br><span class="line">	int (*probe)(struct platform_device *);</span><br><span class="line">	int (*remove)(struct platform_device *);</span><br><span class="line">	void (*shutdown)(struct platform_device *);</span><br><span class="line">	int (*suspend)(struct platform_device *, pm_message_t state);</span><br><span class="line">	int (*resume)(struct platform_device *);</span><br><span class="line">	struct device_driver driver;</span><br><span class="line">	const struct platform_device_id *id_table;</span><br><span class="line">	bool prevent_deferred_probe;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>probe：平台总线和设备匹配成功之后执行，一般用来对设备的一系列初始化（需自己实现）</li>
+<li>remove：移除设备之后回调该函数。（需自己实现）</li>
+<li>driver  ：继承device_driver对象</li>
+<li>id_table：表示该驱动能够兼容的设备类型。  （需自己添加）</li>
+</ul>
+<p>填充id_table结体来支持平台总线的id_table匹配模式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct platform_device_id &#123;</span><br><span class="line">	char name[PLATFORM_NAME_SIZE];</span><br><span class="line">	kernel_ulong_t driver_data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>name：支持匹配的驱动名字</li>
+<li>driver_data：保存驱动配置（有一些是寄存器配置）</li>
+</ul>
+<h4 id="平台驱动的注册和注销"><a href="#平台驱动的注册和注销" class="headerlink" title="平台驱动的注册和注销"></a>平台驱动的注册和注销</h4><h5 id="平台设备的注册：注册成功后在-x2F-sys-x2F-bus-x2F-platform-x2F-driver-目录下生成一个新的目录项"><a href="#平台设备的注册：注册成功后在-x2F-sys-x2F-bus-x2F-platform-x2F-driver-目录下生成一个新的目录项" class="headerlink" title="平台设备的注册：注册成功后在&#x2F;sys&#x2F;bus&#x2F;platform&#x2F;driver 目录下生成一个新的目录项"></a>平台设备的注册：注册成功后在&#x2F;sys&#x2F;bus&#x2F;platform&#x2F;driver 目录下生成一个新的目录项</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int platform_driver_register(struct platform_driver *drv);  </span><br></pre></td></tr></table></figure>
+
+<h5 id="平台设备的注销-1"><a href="#平台设备的注销-1" class="headerlink" title="平台设备的注销"></a>平台设备的注销</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void platform_driver_unregister(struct platform_driver *drv);</span><br></pre></td></tr></table></figure>
+
+<h4 id="平台驱动获取设备信息（资源）"><a href="#平台驱动获取设备信息（资源）" class="headerlink" title="平台驱动获取设备信息（资源）"></a>平台驱动获取设备信息（资源）</h4><h5 id="平台驱动可以使用platform-get-resource-函数去获取设备中的resource资源数据。"><a href="#平台驱动可以使用platform-get-resource-函数去获取设备中的resource资源数据。" class="headerlink" title="平台驱动可以使用platform_get_resource()  函数去获取设备中的resource资源数据。"></a>平台驱动可以使用platform_get_resource()  函数去获取设备中的resource资源数据。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">extern struct resource *platform_get_resource(struct platform_device *dev,</span><br><span class="line">					      unsigned int type, unsigned int num);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>dev：指定要获取哪个平台设备的资源；  </li>
+<li>type：指定获取资源的类型，如 IORESOURCE_MEM、 IORESOURCE_IO 等；  </li>
+<li>num：指定要获取的资源编号。每个设备所需要资源的个数是不一定的，为此内核对这些<br>资源进行了编号，对于不同的资源，编号之间是相互独立的。</li>
+</ul>
+<p>平台驱动获取资源（和上面平台设备提供资源相对应）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">platform_get_resource(pdev,IORESOURCE_MEM,0);</span><br><span class="line">platform_get_resource(pdev,IORESOURCE_MEM,1);</span><br><span class="line">platform_get_resource(pdev,IORESOURCE_MEM,2);</span><br><span class="line">platform_get_resource(pdev,IORESOURCE_MEM,3);</span><br><span class="line">platform_get_resource(pdev,IORESOURCE_MEM,4);</span><br></pre></td></tr></table></figure>
+
+<h5 id="平台设备获取irq设备资源（获取中断引脚）"><a href="#平台设备获取irq设备资源（获取中断引脚）" class="headerlink" title="平台设备获取irq设备资源（获取中断引脚）"></a>平台设备获取irq设备资源（获取中断引脚）</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int platform_get_irq(struct platform_device *pdev, unsigned int num)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>dev：指定要获取哪个平台设备的资源；  </li>
+<li>num： 指定要获取的资源编号。</li>
+</ul>
+<h5 id="平台设备获取私密资源（信息）"><a href="#平台设备获取私密资源（信息）" class="headerlink" title="平台设备获取私密资源（信息）"></a>平台设备获取私密资源（信息）</h5><p>获取platform_device-&gt;device-&gt;platform_data  保存的私有文件信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static inline void *dev_get_platdata(const struct device *dev)</span><br><span class="line">&#123;</span><br><span class="line">	return dev-&gt;platform_data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>dev： struct device 结构体类型指针</li>
+</ul>
+<h3 id="创建平台设备步骤"><a href="#创建平台设备步骤" class="headerlink" title="创建平台设备步骤"></a>创建平台设备步骤</h3><h4 id="1、定义填充platform-device结构体"><a href="#1、定义填充platform-device结构体" class="headerlink" title="1、定义填充platform_device结构体"></a>1、定义填充platform_device结构体</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static struct platform_device red_led_device = &#123;</span><br><span class="line">    .name = &quot;led_dev&quot;,/*需要和driver匹配的名字*/</span><br><span class="line">    .id = 1,</span><br><span class="line">    .num_resources = ARRAY_SIZE(red_led_resource),</span><br><span class="line">    .resource = red_led_resource,</span><br><span class="line">    .dev = &#123;</span><br><span class="line">        .release = red_led_release,</span><br><span class="line">        .platform_data = red_hard_info,/*硬件信息*/</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、添加自定义resource资源结构体（以下示例）"><a href="#2、添加自定义resource资源结构体（以下示例）" class="headerlink" title="2、添加自定义resource资源结构体（以下示例）"></a>2、添加自定义resource资源结构体（以下示例）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static struct resource red_led_resource[] = &#123;</span><br><span class="line">    [0] = DEFINE_RES_MEM(GPIO1_DR, 4),</span><br><span class="line">    [1] = DEFINE_RES_MEM(GPIO1_GDIR, 4),</span><br><span class="line">	[2] = DEFINE_RES_MEM(IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO04, 4),</span><br><span class="line">	[3] = DEFINE_RES_MEM(CCM_CCGR1, 4),</span><br><span class="line">	[4] = DEFINE_RES_MEM(IOMUXC_SW_PAD_CTL_PAD_GPIO1_IO04, 4),</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、实现dev-release回调函数，和添加platform-data私密信息"><a href="#3、实现dev-release回调函数，和添加platform-data私密信息" class="headerlink" title="3、实现dev.release回调函数，和添加platform_data私密信息"></a>3、实现dev.release回调函数，和添加platform_data私密信息</h4><h4 id="4、调用platform-device-register函数注册添加平台设备"><a href="#4、调用platform-device-register函数注册添加平台设备" class="headerlink" title="4、调用platform_device_register函数注册添加平台设备"></a>4、调用platform_device_register函数注册添加平台设备</h4><h3 id="创建平台驱动步骤"><a href="#创建平台驱动步骤" class="headerlink" title="创建平台驱动步骤"></a>创建平台驱动步骤</h3><h4 id="1、定义填充platform-driver结构体"><a href="#1、定义填充platform-driver结构体" class="headerlink" title="1、定义填充platform_driver结构体"></a>1、定义填充platform_driver结构体</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">static struct platform_driver red_led_driver = &#123;</span><br><span class="line">    .driver.name = &quot;led_dev&quot;,</span><br><span class="line">    .remove = led_pdrv_remove,</span><br><span class="line">    .probe = led_pdrv_probe,</span><br><span class="line">    .id_table = led_id_table,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、实现remove，probe等回调函数"><a href="#2、实现remove，probe等回调函数" class="headerlink" title="2、实现remove，probe等回调函数"></a>2、实现remove，probe等回调函数</h4><h4 id="3、添加id-table匹配方式"><a href="#3、添加id-table匹配方式" class="headerlink" title="3、添加id_table匹配方式"></a>3、添加id_table匹配方式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct platform_device_id led_id_table[] = &#123;</span><br><span class="line">    &#123;.name = &quot;led_dev&quot;&#125;,</span><br><span class="line">    &#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、调用probe函数中初始化平台设备的时候去获取平台资源，并将资源保存到平台驱动结构体中。"><a href="#4、调用probe函数中初始化平台设备的时候去获取平台资源，并将资源保存到平台驱动结构体中。" class="headerlink" title="4、调用probe函数中初始化平台设备的时候去获取平台资源，并将资源保存到平台驱动结构体中。"></a>4、调用probe函数中初始化平台设备的时候去获取平台资源，并将资源保存到平台驱动结构体中。</h4><ul>
+<li><p>使用dev_get_platdata获取私密数据</p>
+</li>
+<li><p>使用platform_get_resource去获取resource数据</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">static int probe(struct platform_device *pdev)</span><br><span class="line">&#123;</span><br><span class="line">	dev_get_platdata(&amp;pdev-&gt;dev);</span><br><span class="line">	platform_get_resource(pdev,IORESOURCE_MEM,0);</span><br><span class="line">	latform_get_resource(pdev,IORESOURCE_MEM,1);</span><br><span class="line">	</span><br><span class="line">	platform_set_drvdata(pdev, cur_led);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5、调用platform-driver-register函数去注册添加驱动到平台总线上面"><a href="#5、调用platform-driver-register函数去注册添加驱动到平台总线上面" class="headerlink" title="5、调用platform_driver_register函数去注册添加驱动到平台总线上面"></a>5、调用platform_driver_register函数去注册添加驱动到平台总线上面</h4>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2022/11/23/%E5%B9%B3%E5%8F%B0%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" title="平台设备驱动" target="_blank" rel="external">http://example.com/2022/11/23/平台设备驱动/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2022/11/23/Linux%E8%AE%BE%E5%A4%87%E6%A8%A1%E5%9E%8B/" title="Linux设备模型"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
