@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>红黑树 | Hexo</title>
+  <meta name="description" content="红黑树（rbtree）[TOC] 红黑树特性 1、节点是红节点或者是黑节点 2、根节点为黑色 3、叶节点为黑色（叶节点是指末梢的空姐点Nil或NULL）（保证一半以上是黑节点）（是一个满二叉树） 4、红节点的子节点必须是黑节点 5、新插入的节点是红节点 6、每个节点到叶子节点的所有路径，都包含相同数目的黑色节点（相同黑色高度）  红黑树规则说明：  规则4和5保证了红黑树的大致平衡，根节点到叶子的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红黑树">
+<meta property="og:url" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="红黑树（rbtree）[TOC] 红黑树特性 1、节点是红节点或者是黑节点 2、根节点为黑色 3、叶节点为黑色（叶节点是指末梢的空姐点Nil或NULL）（保证一半以上是黑节点）（是一个满二叉树） 4、红节点的子节点必须是黑节点 5、新插入的节点是红节点 6、每个节点到叶子节点的所有路径，都包含相同数目的黑色节点（相同黑色高度）  红黑树规则说明：  规则4和5保证了红黑树的大致平衡，根节点到叶子的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230105144601026.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109161252478.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109161710020.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109174621234.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109175632366.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110093517079.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110212714544.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110210208576.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110203948743.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110210411856.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110221049902.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110223237204.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110224417963.png">
+<meta property="og:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110224548810.png">
+<meta property="article:published_time" content="2023-01-09T12:12:35.000Z">
+<meta property="article:modified_time" content="2023-01-10T14:53:41.176Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230105144601026.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.5px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.75px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.25px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.5px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/" class="title">红黑树</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-01-09T12:12:35.000Z" itemprop="datePublished">2023-01-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/05/gpio%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="title">gpio子系统</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-05T06:59:46.000Z" itemprop="datePublished">2022-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/05/pinctrl%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="title">pinctrl子系统</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-05T06:09:03.000Z" itemprop="datePublished">2022-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/04/%E8%AE%BE%E5%A4%87%E6%A0%91%E6%8F%92%E4%BB%B6/" class="title">设备树插件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-04T12:51:28.000Z" itemprop="datePublished">2022-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/27/Linux%E8%AE%BE%E5%A4%87%E6%A0%91/" class="title">Linux设备树</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-27T11:04:04.000Z" itemprop="datePublished">2022-11-27</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-红黑树" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      红黑树
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/" class="article-date">
+	  <time datetime="2023-01-09T12:12:35.000Z" itemprop="datePublished">2023-01-09</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="红黑树（rbtree）"><a href="#红黑树（rbtree）" class="headerlink" title="红黑树（rbtree）"></a>红黑树（rbtree）</h2><p>[TOC]</p>
+<h3 id="红黑树特性"><a href="#红黑树特性" class="headerlink" title="红黑树特性"></a>红黑树特性</h3><ul>
+<li>1、节点是红节点或者是黑节点</li>
+<li>2、根节点为黑色</li>
+<li>3、叶节点为黑色（叶节点是指末梢的空姐点Nil或NULL）（保证一半以上是黑节点）（是一个满二叉树）</li>
+<li>4、红节点的子节点必须是黑节点</li>
+<li>5、新插入的节点是红节点</li>
+<li>6、每个节点到叶子节点的所有路径，都包含相同数目的黑色节点（相同黑色高度）</li>
+</ul>
+<p>红黑树规则说明：</p>
+<ul>
+<li><p>规则4和5保证了红黑树的大致平衡，根节点到叶子的所有路径中，最长路径不会超过最短路径的两倍</p>
+<p>使得红黑树在最坏的情况下，也能有O（log2N）的查找效率；</p>
+</li>
+</ul>
+<h4 id="红黑树插入规律"><a href="#红黑树插入规律" class="headerlink" title="红黑树插入规律"></a>红黑树插入规律</h4><p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230105144601026.png" alt="image-20230105144601026"></p>
+<h3 id="红黑树的基本操作左旋右旋"><a href="#红黑树的基本操作左旋右旋" class="headerlink" title="红黑树的基本操作左旋右旋"></a>红黑树的基本操作左旋右旋</h3><h4 id="对X节点进行左旋"><a href="#对X节点进行左旋" class="headerlink" title="对X节点进行左旋"></a>对X节点进行左旋</h4><p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109161252478.png" alt="image-20230109161252478"></p>
+<h4 id="对X节点进行右旋"><a href="#对X节点进行右旋" class="headerlink" title="对X节点进行右旋"></a>对X节点进行右旋</h4><p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109161710020.png" alt="image-20230109161710020"></p>
+<h3 id="红黑树节点添加调整"><a href="#红黑树节点添加调整" class="headerlink" title="红黑树节点添加调整"></a>红黑树节点添加调整</h3><h5 id="红黑树节点添加（添加的节点都是红色节点）"><a href="#红黑树节点添加（添加的节点都是红色节点）" class="headerlink" title="红黑树节点添加（添加的节点都是红色节点）"></a>红黑树节点添加（添加的节点都是红色节点）</h5><p>将红黑树当作普通二叉树添加节点，只有在进行调整和着色。</p>
+<p>当节点插入成功之后，我们需要根据插入的节点进行调整，使其变成一颗红黑树。</p>
+<h5 id="插入节点的调整"><a href="#插入节点的调整" class="headerlink" title="插入节点的调整"></a>插入节点的调整</h5><p>节点插入之后可能出现3种情况：</p>
+<ul>
+<li>情况1：插入节点的父亲节点和叔叔节点是红色</li>
+</ul>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109174621234.png" alt="image-20230109174621234"></p>
+<p>情况1处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、将插入节点的父节点设为黑色</span><br><span class="line">2、将插入节点的叔叔节点设为黑色</span><br><span class="line">3、将插入节点的祖父节点设为红色</span><br><span class="line">4、将祖父节点设为当前节点，之后继续对红色节点操作</span><br></pre></td></tr></table></figure>
+
+<p>情况1处理完成之后会变成，情况2</p>
+<ul>
+<li>情况2：插入节点的叔叔节点是黑色，且当前节点是父节点的右孩子</li>
+</ul>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230109175632366.png" alt="image-20230109175632366"></p>
+<p>情况2处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、将父节点作为新的当前节点</span><br><span class="line">2、以新的当前节点作为支点进行左旋</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>情况3：插入节点的叔叔节点是黑色，且当前节点是父节点的左孩子</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110093517079.png" alt="image-20230110093517079"></p>
+</li>
+</ul>
+<p>情况3处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、将父亲节点设为黑色</span><br><span class="line">2、将祖父节点设为红色</span><br><span class="line">3、以祖父节点为支点进行右旋</span><br></pre></td></tr></table></figure>
+
+<h3 id="红黑树节点删除"><a href="#红黑树节点删除" class="headerlink" title="红黑树节点删除"></a>红黑树节点删除</h3><h4 id="红黑树节点删除可能出现的情况"><a href="#红黑树节点删除可能出现的情况" class="headerlink" title="红黑树节点删除可能出现的情况"></a>红黑树节点删除可能出现的情况</h4><h5 id="被删除节点无子节点"><a href="#被删除节点无子节点" class="headerlink" title="被删除节点无子节点"></a>被删除节点无子节点</h5><ul>
+<li><p>case 1:被删除节点为红色</p>
+<ul>
+<li>不需要任何处理，红黑树是平衡的。</li>
+</ul>
+</li>
+<li><p>case 2:被删除节点为黑色</p>
+<p>因为删除黑色结点会破坏红黑树的性质5，所以为了不破坏性质5，将node删除后用一个拥有额外黑色的null替代它（可以想象是将node删除后，在这个位置放了一个黑色的权值），剩下的就是调平的过程，最终这个游离的黑色权值被扔掉，整个删除操作完成。</p>
+<ul>
+<li><p>1、node节点的兄弟节点是红色</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110212714544.png" alt="image-20230110212714544"></p>
+<p>处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">（左旋父，父祖换色）</span><br><span class="line">1、将node的兄弟节点设为“黑色”。</span><br><span class="line">2、将node的父节点设为“红色”。</span><br><span class="line">3、对node的父节点进行左旋。</span><br><span class="line">4、左旋后，重新设置node的兄弟节点。</span><br></pre></td></tr></table></figure>
+
+<p>如果NL节点下面的节点是NIL节点的话，就变成case4情况。</p>
+<p>如果NIL节点下面的左节点是红节点，右节点是黑色。变成case3情况.</p>
+<p>如果NIL节点下面的右节点是红节点，左节点是黑色。变成case2情况.</p>
+</li>
+<li><p>2、node的兄弟节点是黑色，兄弟节点的右孩子是红色（兄黑，右红侄）</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110210208576.png" alt="image-20230110210208576"></p>
+<p>处理：（处理后，红黑树平衡）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">（左旋父，祖染父色，父叔黑）</span><br><span class="line">1、将node父亲节点的颜色赋值给node的兄弟节点</span><br><span class="line">2、将node父亲节点设为黑色</span><br><span class="line">3、将node兄弟节点的右孩子设为黑色</span><br><span class="line">4、以node父亲节点为支点进行左旋</span><br><span class="line">5、设置node节点为根节点</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3、node的兄弟节点是黑色，兄弟节点的左孩子是红色（兄黑，左红侄）</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110203948743.png" alt="image-20230110203948743"></p>
+<p>处理：（处理后变成兄黑，右红侄）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">（右旋兄，交换兄弟节点与其右子节点颜色）</span><br><span class="line">1、将node兄弟节点的左孩子设为“黑色”。</span><br><span class="line">2、将node兄弟节点设为“红色”。</span><br><span class="line">3、对node的兄弟节点进行右旋。</span><br><span class="line">4、 右旋后，重新设置node的兄弟节点。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>4、node节点的兄弟节点是黑色，双黑节点（兄弟节点的子节点是NIL节点）</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110210411856.png" alt="image-20230110210411856"></p>
+<p>处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">（兄弟红，用递归，遇到根节点或者是红节点，染黑回）</span><br><span class="line">（将兄弟染红，视角递归到P节点（或者说是当前节点是NIL节点的父节点），如果P节点是红色或者是根节点，就直接将P节点染黑返回）</span><br><span class="line">1、将node节点的兄弟节点设为红色</span><br><span class="line">2、将node的父节点设为新的node节点</span><br></pre></td></tr></table></figure>
+
+<p>如果P节点是红色，直接将P节点染黑返回</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110221049902.png" alt="image-20230110221049902"></p>
+<p>如果P节点是黑色，会变成case1情况。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="被删除节点只有一个子节点"><a href="#被删除节点只有一个子节点" class="headerlink" title="被删除节点只有一个子节点"></a>被删除节点只有一个子节点</h5><ul>
+<li><p>case 3:被删除节点是黑色（被删除节点是红色不可能，违反规则）</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110223237204.png" alt="image-20230110223237204"></p>
+<ul>
+<li>将Node节点删除之后，把他的子节点变成黑色完成红黑树平衡</li>
+</ul>
+</li>
+</ul>
+<h5 id="被删节点有两个子节点（被删节点是黑色或者是红色）"><a href="#被删节点有两个子节点（被删节点是黑色或者是红色）" class="headerlink" title="被删节点有两个子节点（被删节点是黑色或者是红色）"></a>被删节点有两个子节点（被删节点是黑色或者是红色）</h5><p>当被删节点有两个节点的时候，需要先找到这个被删节点的后继节点（或者是前驱节点），不用改变颜色，将后继节点替换删除节点。</p>
+<p>如果删除节点的后继节点是（node-&gt;right&gt;nl）,使用nl替换删除node之后，出现以下情况：</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110224417963.png" alt="image-20230110224417963"></p>
+<ul>
+<li>如果nl是黑色，会转变成case 2</li>
+<li>如果nl是红色,   会转变成case 1</li>
+</ul>
+<p>如果删除节点的后继节点是（node-&gt;right）,使用nl替换删除node之后，出现一下情况：</p>
+<p><img src="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/image-20230110224548810.png" alt="image-20230110224548810"></p>
+<ul>
+<li>如果right是黑色，会变成 case 3 </li>
+<li>如果right是红色，会变成case 1</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/" title="红黑树" target="_blank" rel="external">http://example.com/2023/01/09/红黑树/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2022/12/05/gpio%E5%AD%90%E7%B3%BB%E7%BB%9F/" title="gpio子系统"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
