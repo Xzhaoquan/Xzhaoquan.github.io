@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>mqtt协议解析 | Hexo</title>
+  <meta name="description" content="MQTT数据帧解析[TOC] MQTT 控制报文格式MQTT控制报文结构组成 固定报头（所有控制报文都包含） 可变报头 消息体  固定报头的组成格式  控制报文的类型  控制报文的类型由第一个字节的4-7位组成     控制报文类型标志位   剩余长度：从第二个字节开始，剩余长度（Remaining Length） 表示当前报文剩余部分的字节数， 包括可变报头和负载的数据。 剩余长度不包括用于编码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mqtt协议解析">
+<meta property="og:url" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="MQTT数据帧解析[TOC] MQTT 控制报文格式MQTT控制报文结构组成 固定报头（所有控制报文都包含） 可变报头 消息体  固定报头的组成格式  控制报文的类型  控制报文的类型由第一个字节的4-7位组成     控制报文类型标志位   剩余长度：从第二个字节开始，剩余长度（Remaining Length） 表示当前报文剩余部分的字节数， 包括可变报头和负载的数据。 剩余长度不包括用于编码">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118145809356.png">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150005166.png">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150027077.png">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150625999.png">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118212354474.png">
+<meta property="og:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118151514215.png">
+<meta property="article:published_time" content="2023-01-18T06:53:02.000Z">
+<meta property="article:modified_time" content="2023-01-18T15:33:12.517Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="MQTT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118145809356.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.5px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.75px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.25px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.5px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/" class="title">mqtt协议解析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-01-18T06:53:02.000Z" itemprop="datePublished">2023-01-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/" class="title">红黑树</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-01-09T12:12:35.000Z" itemprop="datePublished">2023-01-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/05/gpio%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="title">gpio子系统</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-05T06:59:46.000Z" itemprop="datePublished">2022-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/05/pinctrl%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="title">pinctrl子系统</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-05T06:09:03.000Z" itemprop="datePublished">2022-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/04/%E8%AE%BE%E5%A4%87%E6%A0%91%E6%8F%92%E4%BB%B6/" class="title">设备树插件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-04T12:51:28.000Z" itemprop="datePublished">2022-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-mqtt协议解析" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mqtt协议解析
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/" class="article-date">
+	  <time datetime="2023-01-18T06:53:02.000Z" itemprop="datePublished">2023-01-18</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/MQTT/" rel="tag">MQTT</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="MQTT数据帧解析"><a href="#MQTT数据帧解析" class="headerlink" title="MQTT数据帧解析"></a>MQTT数据帧解析</h1><p>[TOC]</p>
+<h2 id="MQTT-控制报文格式"><a href="#MQTT-控制报文格式" class="headerlink" title="MQTT 控制报文格式"></a>MQTT 控制报文格式</h2><h4 id="MQTT控制报文结构组成"><a href="#MQTT控制报文结构组成" class="headerlink" title="MQTT控制报文结构组成"></a>MQTT控制报文结构组成</h4><ul>
+<li>固定报头（所有控制报文都包含）</li>
+<li>可变报头</li>
+<li>消息体</li>
+</ul>
+<h4 id="固定报头的组成格式"><a href="#固定报头的组成格式" class="headerlink" title="固定报头的组成格式"></a>固定报头的组成格式</h4><p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118145809356.png" alt="image-20230118145809356"></p>
+<ul>
+<li><p><strong>控制报文的类型</strong></p>
+<ul>
+<li>控制报文的类型由第一个字节的4-7位组成</li>
+</ul>
+<p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150005166.png" alt="image-20230118150005166"></p>
+<p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150027077.png" alt="image-20230118150027077"></p>
+</li>
+<li><p><strong>控制报文类型标志位</strong></p>
+<p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118150625999.png" alt="image-20230118150625999"></p>
+</li>
+<li><p><strong>剩余长度</strong>：从第二个字节开始，剩余长度（Remaining Length） 表示当前报文剩余部分的字节数， 包括可变报头和负载的数据。 剩余长度不包括用于编码剩余长度字段本身的字节数。  </p>
+<p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118212354474.png" alt="image-20230118212354474"></p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">分别表示（每个字节的低 7 位用于编码数据， 最高位是标志位） ：</span><br><span class="line">1 个字节时， 从 0(0x00)到 127(0x7f)</span><br><span class="line">2 个字节时， 从 128(0x80,0x01)到 16383(0Xff,0x7f)</span><br><span class="line">3 个字节时， 从 16384(0x80,0x80,0x01)到 2097151(0xFF,0xFF,0x7F)</span><br><span class="line">4 个字节时， 从 2097152(0x80,0x80,0x80,0x01)到 268435455(0xFF,0xFF,0xFF,0x7F)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="可变报头"><a href="#可变报头" class="headerlink" title="可变报头"></a>可变报头</h4><p><strong>可变报头在固定报头和负载之间，可变报头的内容根据报文类型的不同而不同</strong></p>
+<ul>
+<li><p><strong>报文标识符</strong></p>
+<ul>
+<li><strong>报文标识符类型</strong></li>
+</ul>
+<p><img src="/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/image-20230118151514215.png" alt="image-20230118151514215"></p>
+<ul>
+<li><p>很多控制报文的可变报头部分包含一个两字节的报文标识符字段。 这些报文是 PUBLISH（QoS&gt;0 时），<br>  PUBACK， PUBREC， PUBREL， PUBCOMP， SUBSCRIBE, SUBACK， UNSUBSCIBE，UNSUBACK。 </p>
+</li>
+<li><p>&#96;&#96;&#96;<br>1、SUBSCRIBE， UNSUBSCRIBE 和 PUBLISH（QoS 大于 0） 控制报文必须包含一个非零的 16 位报文标识<br>符（Packet Identifier）。<br>2、客户端每次发送一个新的这些类型的报文时都必须分配一个当前未使用的报文标识符。<br>3、如果一个客户端要重发这个特殊的控制报文，在随后重发那个报文时， 它必须使用相同的标识符。 当客户端处理完这个报文对应的确认后，这个报文标识符就释放可重用。<br>4、QoS 1 的 PUBLISH 对应的是 PUBACK， QoS 2 的 PUBLISH 对应的是 PUBCOMP，与 SUBSCRIBE 或<br>UNSUBSCRIBE 对应的分别是 SUBACK 或 UNSUBACK [MQTT-2.3.1-3]。<br>5、QoS 设置为 0 的 PUBLISH 报文不能包含报文标识符<br>6、PUBACK, PUBREC, PUBREL 报文必须包含与最初发送的 PUBLISH 报文相同的报文标识符<br>7、SUBACK 和 UNSUBACK 必须包含在对应的 SUBSCRIBE 和 UNSUBSCRIBE 报文中使用的报文标识符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - **包含标识符的控制报文**</span><br><span class="line"></span><br><span class="line">  ​	![image-20230118152304772](mqtt协议解析/image-20230118152304772.png)</span><br><span class="line"></span><br><span class="line">客户端和服务端彼此独立地分配报文标识符。 因此，客户端服务端组合使用相同的报文标识符可以实现并</span><br><span class="line">发的消息交换。  </span><br><span class="line"></span><br><span class="line">## MQTT控制报文</span><br><span class="line"></span><br><span class="line">### 1、CONNECT-连接服务端</span><br><span class="line"></span><br><span class="line">#### 客户端和服务端的网络建立后，第一个报文必须是connect报文，且一个网络连接上只能发送一个网络连接</span><br><span class="line"></span><br><span class="line">##### connect连接的固定报头（0x10）</span><br><span class="line"></span><br><span class="line">![image-20230118153045359](mqtt协议解析/image-20230118153045359.png)</span><br><span class="line"></span><br><span class="line">***剩余字段长度长度等于有效负荷长度加上可变报头的长度***</span><br><span class="line"></span><br><span class="line">#### 可变报头长度</span><br><span class="line"></span><br><span class="line">***CONNECT 报文的可变报头按下列次序包含四个字段：***</span><br><span class="line"></span><br><span class="line">- 协议名（Protocol Name） **（协议名是表示协议名 MQTT 的 UTF-8 编码的字符串） **</span><br><span class="line"></span><br><span class="line">  - 协议名构成</span><br><span class="line"></span><br><span class="line">  ![image-20230118153430526](mqtt协议解析/image-20230118153430526.png)</span><br><span class="line"></span><br><span class="line">  ![image-20230118153505227](mqtt协议解析/image-20230118153505227.png)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">- 协议级别（ProtocolLevel） </span><br><span class="line"></span><br><span class="line">  - Protocol Level byte 协议级别字节构成  </span><br><span class="line"></span><br><span class="line">  ![image-20230118153636758](mqtt协议解析/image-20230118153636758.png)</span><br><span class="line"></span><br><span class="line">-  连接标志（Connect Flags）</span><br><span class="line"></span><br><span class="line">  - 连接标志位**（连接标志字节包含一些用于指定 MQTT 连接行为的参数。 它还指出有效载荷中的字段是否存在。）  **</span><br><span class="line">  - 服务端必须验证 CONNECT 控制报文的保留标志位（第 0 位） 是否为 0， 如果不为 0 必须断开客户端连接 。</span><br><span class="line"></span><br><span class="line">  ![image-20230118153804825](mqtt协议解析/image-20230118153804825.png)</span><br><span class="line"></span><br><span class="line">  - 清理会话（CleanSession）</span><br><span class="line"></span><br><span class="line">    - CleanSession置0：**表示创建一个持久会话，在客户端断开连接时，会话仍然保持并保存离线消息，直到会话超时注销。**</span><br><span class="line">    - CleanSession置1：**表示创建一个新的临时会话，在客户端断开时，会话自动销毁。**</span><br><span class="line"></span><br><span class="line">  - 遗嘱标志（Will Flsg）</span><br><span class="line"></span><br><span class="line">    - WillFlag位置1：表示如果连接请求被接受了， 遗嘱（Will Message） 消息必须被存储在服务端并且与这个网络连接关联。  之后网络连接关闭时，服务端必须发布这个遗嘱消息， 除非服务端收到DISCONNECT 报文时删除了这个遗嘱消息  。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>  可以理解为简而言之，就是客户端预先定义好，在自己异常断开的情况下，所留下的最后遗愿（Last Will），也称之为遗嘱（Testament）。这个遗嘱就是一个由客户端预先定义好的主题和对应消息，附加在CONNECT的可变报文头部中，在客户端连接出现异常的情况下，由服务器主动发布此消息。</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">    - WillFlag位置0：网络连接断开时， 不能发送遗嘱消息  </span><br><span class="line"></span><br><span class="line">  - 遗嘱QoS标志（WillQos）**两位标志位用于指定发布遗嘱消息时使用的服务质量等级。  **</span><br><span class="line"></span><br><span class="line">    - WillQoS可以设置：</span><br><span class="line">      - 0x00：遗嘱 QoS  服务质量等级  0</span><br><span class="line">      - 0x01：遗嘱 QoS  服务质量等级  1</span><br><span class="line">      - 0x02：遗嘱 QoS  服务质量等级  2</span><br><span class="line"></span><br><span class="line">  - 遗嘱保留标志（WillRetain）：</span><br><span class="line"></span><br><span class="line">    - WillRetain置0：遗嘱消息被发布时需要保留  </span><br><span class="line">    - WillRetain置1：遗嘱消息被发布时不需要保留  </span><br><span class="line"></span><br><span class="line">  - 用户标志（UserNameFlag）</span><br><span class="line"></span><br><span class="line">    - UserNameFlag置0：有效载荷中不能包含用户名字段  </span><br><span class="line">    - UserNameFlag置1：有效载荷中必须包含用户名字段  </span><br><span class="line"></span><br><span class="line">  - 密码标志（PasswordFlag）**（如果用户名标志被设置为 0， 密码标志也必须设置为 0  ）**</span><br><span class="line"></span><br><span class="line">    - PasswordFlag置0：有效载荷中不能包含密码字段  </span><br><span class="line">    - PasswordFlag置1：有效载荷中必须包含密码字段  </span><br><span class="line"></span><br><span class="line">- 保持连接（Keep Alive） </span><br><span class="line"></span><br><span class="line">  **保持字节连接**</span><br><span class="line"></span><br><span class="line">  ![image-20230118161545118](mqtt协议解析/image-20230118161545118.png)</span><br><span class="line"></span><br><span class="line">  保持连接（Keep Alive） 是一个以秒为单位的时间间隔，表示为一个 16 位的字，它是指在客户端传输完成一个控制报文的时刻到发送下一个报文的时刻， 两者之间允许空闲的最大时间间隔。  </span><br><span class="line"></span><br><span class="line">  - 保持连接的值为零表示关闭保持连接功能  </span><br><span class="line"></span><br><span class="line">  - 如果没有任何其它的控制报文可以发送， 客户端必须发送一个**PINGREQ** 报文  </span><br><span class="line">  - 不管保持连接的值是多少，客户端任何时候都可以发送 PINGREQ 报文，并且使用 PINGRESP 报文判断网络和服务端的活动状态。  </span><br><span class="line"></span><br><span class="line">  - 客户端发送了 PINGREQ 报文之后， 如果在**合理的时间内仍没有收到 PINGRESP 报文**， 它应该关闭到服务端的网络连接。  </span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">***CONNECT 报文的有效载荷（payload） 包含一个或多个以长度为前缀的字段，可变报头中的标志决定是否包含这些字段。 如果包含的话， 必须按这个顺序出现：客户端标识符， 遗嘱主题， 遗嘱消息， 用户名， 密码***</span><br><span class="line"></span><br><span class="line">- 客户端标识符（**服务端使用客户端表示符识别客户端**）</span><br><span class="line"></span><br><span class="line">  - 连接服务端的每个客户端都有**唯一的客户端标识符**（ClientId） 。客户端和服务端都必须使用 ClientId 识别两者之间的 MQTT 会话相关的状态。</span><br><span class="line"></span><br><span class="line">  - 客户端标识符 (ClientId) 必须存在而且必须是 CONNECT 报文有效载荷的第一个字段   （**标识符ID必须是UTF8编码，只能包含大小写字母和数字**）</span><br><span class="line"></span><br><span class="line">  - 服务端可以允许客户端提供一个零字节的客户端标识符 (ClientId)  ，务端必须将这看作特殊情况并分配唯一的客户端标识符给那个客户端。如果客户端提供了一个零字节的客户端标识符， 它必须同时将清理会话标志设置为 1    </span><br><span class="line"></span><br><span class="line">- 遗嘱主题</span><br><span class="line"></span><br><span class="line">  如果遗嘱标志被设置为 1， 有效载荷的下一个字段是遗嘱主题（Will Topic）  </span><br><span class="line"></span><br><span class="line">- 遗嘱消息</span><br><span class="line"></span><br><span class="line">  如果遗嘱标志被设置为 1， 有效载荷的下一个字段是遗嘱消息。  	</span><br><span class="line"></span><br><span class="line">- 用户名</span><br><span class="line"></span><br><span class="line">  如果用户名（User Name） 标志被设置为 1， 有效载荷的下一个字段就是它。   </span><br><span class="line"></span><br><span class="line">- 密码</span><br><span class="line"></span><br><span class="line">  如果密码（Password） 标志被设置为 1， 有效载荷的下一个字段就是它。  密码字段包含一个两字节的长度字段， 长度表示二进制数据的字节数（不包含长度字段本身占用的两个字节） ， 后面跟着 0 到 65535 字节的二进制数据。  </span><br><span class="line"></span><br><span class="line">#### 响应</span><br><span class="line"></span><br><span class="line">- 服务端响应</span><br><span class="line">  - 网络连接建立后， 如果服务端在合理的时间内没有收到 CONNECT 报文， 服务端应该关闭这个连接。  </span><br><span class="line">  - 服务端必须按照 3.1 节的要求验证 CONNECT 报文， 如果报文不符合规范， 服务端不发送CONNACK 报文直接关闭网络连接  。</span><br><span class="line">  - 如果任何一项检查没通过，按照 3.2 节的描述，它应该发送一个适当的、 返回码非零的CONNACK 响应， 并且必须关闭这个网络连接。  </span><br><span class="line"></span><br><span class="line">### 2、CONNACK-确认连接请求</span><br><span class="line"></span><br><span class="line">#### CONNACK固定报头</span><br><span class="line"></span><br><span class="line">![image-20230118165402419](mqtt协议解析/image-20230118165402419.png)</span><br><span class="line"></span><br><span class="line">***剩余长度字段  ：***</span><br><span class="line"></span><br><span class="line">- 表示可变报头的长度。 对于 CONNACK 报文这个值等于 2。  </span><br><span class="line"></span><br><span class="line">#### 可变报头</span><br><span class="line"></span><br><span class="line">![image-20230118165749540](mqtt协议解析/image-20230118165749540.png)</span><br><span class="line"></span><br><span class="line">- **确认连接标志**</span><br><span class="line">  - 第 1 个字节是 连接确认标志， 位 7-1 是保留位且必须设置为 0。  第 0 (SP)位 是当前会话（Session Present） 标志。  </span><br><span class="line"></span><br><span class="line">- **当前会话**（**连接确认标志的第 0 位。**）</span><br><span class="line"></span><br><span class="line">  -   如果服务端收到清理会话（CleanSession） 标志为 1 的连接，除了将 CONNACK 报文中的返回码设置为 0之外，还必须将 CONNACK 报文中的当前会话设置（Session Present） 标志为 0  </span><br><span class="line"></span><br><span class="line">  - 如果服务端收到一个 CleanSession 为 0 的连接， 当前会话标志的值取决于服务端是否已经保存了 ClientId对应客户端的会话状态。  </span><br><span class="line"></span><br><span class="line">    - 如果服务端已经保存了会话状态， 它必须将 CONNACK 报文中的当前会话标志设置为 1</span><br><span class="line">    - 如果服务端没有已保存的会话状态， 它必须将 CONNACK 报文中的当前会话设置为 0，还需要将 CONNACK 报文中的返回码设置为 0  。</span><br><span class="line"></span><br><span class="line">    - 如果服务端发送了一个包含非零返回码的 CONNACK 报文， 它必须将当前会话标志设置为 0  </span><br><span class="line"></span><br><span class="line">- **连接返回码（可变报头的第二个字节）**</span><br><span class="line"></span><br><span class="line">  ![image-20230118170752934](mqtt协议解析/image-20230118170752934.png)</span><br><span class="line"></span><br><span class="line">  ![image-20230118170806394](mqtt协议解析/image-20230118170806394.png)</span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 3、PUBLISH-发布消息</span><br><span class="line"></span><br><span class="line">#### publish的固定报头：</span><br><span class="line"></span><br><span class="line">![image-20230118171158474](mqtt协议解析/image-20230118171158474.png)</span><br><span class="line"></span><br><span class="line">- **重发标志位** **（第一个字节第3位）**</span><br><span class="line">  - DUP 标志被设置为 0， 表示这是客户端或服务端第一次请求发送这个 PUBLISH 报文  </span><br><span class="line">  - DUP 标志被设置为 1，表示这可能是一个早前报文请求的重发。  </span><br><span class="line">  - **客户端或服务端请求重发一个 PUBLISH 报文时， 必须将 DUP 标志设置为 1 ， 对于 QoS0 的消息， DUP 标志必须设置为 0  **</span><br><span class="line"></span><br><span class="line">- **服务质量等级** **（第一个字节第1，2位）**</span><br><span class="line"></span><br><span class="line">  - QoS值 = 00：最多分发一次</span><br><span class="line">  - QoS值 = 01：至少分发一次</span><br><span class="line">  - QoS值 = 10：只分发一次</span><br><span class="line">  - QoS值 = 11：保留位</span><br><span class="line"></span><br><span class="line">- **保留标志位** **（第一个字节第0位）**</span><br><span class="line"></span><br><span class="line">  - 如果客户端发给服务端的 PUBLISH 报文的保留（RETAIN） 标志被设置为 1， 服务端必须存储这个应用消息和它的服务质量等级（QoS） ，以便它可以被分发给未来的主题名匹配的订阅者  </span><br><span class="line"></span><br><span class="line">  - 服务端发送 PUBLISH 报文给客户端时，如果消息是作为客户端一个新订阅的结果发送， 它必须将报文的保留标志设为 1  </span><br><span class="line">  - 当一个 PUBLISH 报文发送给客户端是因为匹配一个已建立的订阅时，服务端必须将保留标志设为 0  </span><br><span class="line">  - 保留标志为 1 且有效载荷为零字节的 PUBLISH 报文会被服务端当作正常消息处理，它会被发送给订阅主题匹配的客户端。此外，同一个主题下任何现存的保留消息必须被移除，因此这个主题之后的任何订阅者都不会收到一个保留消息  </span><br><span class="line">  - 如果客户端发给服务端的 PUBLISH 报文的保留标志位 0， 服务端不能存储这个消息也不能移除或替换任何现存的保留消息  </span><br><span class="line"></span><br><span class="line">- 剩余长度</span><br><span class="line"></span><br><span class="line">#### publish可变报头</span><br><span class="line"></span><br><span class="line">##### 主题名</span><br><span class="line"></span><br><span class="line">- 主题名必须是 PUBLISH 报文可变报头的第一个字段。   </span><br><span class="line">- PUBLISH 报文中的主题名不能包含通配符   </span><br><span class="line"></span><br><span class="line">##### 报文标识符</span><br><span class="line"></span><br><span class="line">​	只有当 QoS 等级是 1 或 2 时，报文标识符（Packet Identifier） 字段才能出现在 PUBLISH 报文中。   </span><br><span class="line"></span><br><span class="line">##### 有效负荷</span><br><span class="line"></span><br><span class="line">​	有效载荷包含将被发布的应用消息。  有效载荷的长度这样计算： 用固定报头中的剩余长度字段的值减去可变报头的长度。  </span><br><span class="line"></span><br><span class="line">##### 响应</span><br><span class="line"></span><br><span class="line">- 服务质量等级Qos0：无响应</span><br><span class="line">- 服务质量等级Qos1：PUBACK 报文</span><br><span class="line">- 服务质量等级Qos2：PUBREC 报文</span><br><span class="line"></span><br><span class="line">##### 动作</span><br><span class="line"></span><br><span class="line">​	客户端使用 PUBLISH 报文发送应用消息给服务端， 目的是分发到其它订阅匹配的客户端。  </span><br><span class="line"></span><br><span class="line">​	服务端使用 PUBLISH 报文发送应用消息给每一个订阅匹配的客户端。  </span><br><span class="line"></span><br><span class="line">### 4、PUBACK –发布确认  </span><br><span class="line"></span><br><span class="line">PUBACK 报文是对 QoS 1 等级的 PUBLISH 报文的响应。 </span><br><span class="line"></span><br><span class="line">#### PUBACK 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118173146808](mqtt协议解析/image-20230118173146808.png) </span><br><span class="line"></span><br><span class="line">![image-20230118173205345](mqtt协议解析/image-20230118173205345.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">表示可变报头的长度。对 PUBACK 报文这个值等于 2.  </span><br><span class="line"></span><br><span class="line">#### 可变报头  </span><br><span class="line"></span><br><span class="line">包含等待确认的 PUBLISH 报文的报文标识符  </span><br><span class="line"></span><br><span class="line">![image-20230118173304813](mqtt协议解析/image-20230118173304813.png)</span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 5、PUBREC – 发布收到（QoS 2， 第一步）  </span><br><span class="line"></span><br><span class="line">#### PUBREC 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118173620945](mqtt协议解析/image-20230118173620945.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">表示可变报头的长度。 对 PUBREC 报文它的值等于 2。  </span><br><span class="line"></span><br><span class="line">#### PUBREC 可变报头  </span><br><span class="line"></span><br><span class="line">可变报头包含等待确认的 PUBLISH 报文的报文标识符。  </span><br><span class="line"></span><br><span class="line">![image-20230118173711725](mqtt协议解析/image-20230118173711725.png)</span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 6、PUBREL – 发布释放（QoS 2， 第二步）  </span><br><span class="line"></span><br><span class="line">PUBREL 报文是对 PUBREC 报文的响应。 它是 QoS 2 等级协议交换的第三个报文。  </span><br><span class="line"></span><br><span class="line">#### 固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118173845828](mqtt协议解析/image-20230118173845828.png)</span><br><span class="line"></span><br><span class="line">**PUBREL 控制报文固定报头的第 3,2,1,0 位是保留位， 必须被设置为 0,0,1,0。 **</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">表示可变报头的长度。 对 PUBREL 报文这个值等于 2.   </span><br><span class="line"></span><br><span class="line">#### PUBREL 报文可变报头  </span><br><span class="line"></span><br><span class="line">可变报头包含与等待确认的 PUBREC 报文相同的报文标识符。  </span><br><span class="line"></span><br><span class="line">![image-20230118173946287](mqtt协议解析/image-20230118173946287.png)</span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 7 、PUBCOMP – 发布完成（QoS 2， 第三步）</span><br><span class="line"></span><br><span class="line">PUBCOMP 报文是对 PUBREL 报文的响应。 它是 QoS 2 等级协议交换的第四个也是最后一个报文。    </span><br><span class="line"></span><br><span class="line">#### PUBCOMP 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118174114030](mqtt协议解析/image-20230118174114030.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">表示可变报头的长度。 对 PUBCOMP 报文这个值等于 2。  </span><br><span class="line"></span><br><span class="line">#### PUBCOMP 报文可变报头  </span><br><span class="line"></span><br><span class="line">可变报头包含与等待确认的 PUBREL 报文相同的报文标识符。  </span><br><span class="line"></span><br><span class="line">![image-20230118174227721](mqtt协议解析/image-20230118174227721.png)</span><br><span class="line"></span><br><span class="line">#### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 8、SUBSCRIBE - 订阅主题  </span><br><span class="line"></span><br><span class="line">客户端向服务端发送 SUBSCRIBE 报文用于创建一个或多个订阅。 每个订阅注册客户端关心的一个或多个主题。 为了将应用消息转发给与那些订阅匹配的主题， 服务端发送 PUBLISH 报文给客户端。 SUBSCRIBE报文也（为每个订阅） 指定了最大的 QoS 等级， 服务端根据这个发送应用消息给客户端。  </span><br><span class="line"></span><br><span class="line">#### SUBSCRIBE 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118174630367](mqtt协议解析/image-20230118174630367.png)</span><br><span class="line"></span><br><span class="line">**SUBSCRIBE 控制报固定报头的第 3,2,1,0 位是保留位， 必须分别设置为 0,0,1,0。**  </span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">等于可变报头的长度（2 字节） 加上有效载荷的长度。  </span><br><span class="line"></span><br><span class="line">#### SUBSCRIBE 可变报头</span><br><span class="line"></span><br><span class="line">可变报头包含客户端标识符。  </span><br><span class="line"></span><br><span class="line">#### SUBSCRIBE 有效载荷</span><br><span class="line"></span><br><span class="line">SUBSCRIBE 报文的有效载荷包含了一个主题过滤器列表， 它们表示客户端想要订阅的主题。  </span><br><span class="line"></span><br><span class="line">**报文有效载荷格式**</span><br><span class="line"></span><br><span class="line">![image-20230118174912107](mqtt协议解析/image-20230118174912107.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 有效载荷字节格式非规范示例  </span><br><span class="line"></span><br><span class="line">![image-20230118175051471](mqtt协议解析/image-20230118175051471.png)</span><br><span class="line"></span><br><span class="line">![image-20230118175107151](mqtt协议解析/image-20230118175107151.png)</span><br><span class="line"></span><br><span class="line">#### 响应</span><br><span class="line"></span><br><span class="line">服务端收到客户端发送的一个 SUBSCRIBE 报文时， 必须使用 SUBACK 报文响应  </span><br><span class="line"></span><br><span class="line">SUBACK 报文必须和等待确认的 SUBSCRIBE 报文有相同的报文标识符  </span><br><span class="line"></span><br><span class="line">### 9、 SUBACK – 订阅确认  </span><br><span class="line"></span><br><span class="line">服务端发送 SUBACK 报文给客户端， 用于确认它已收到并且正在处理 SUBSCRIBE 报文。  </span><br><span class="line"></span><br><span class="line">SUBACK 报文包含一个返回码清单， 它们指定了 SUBSCRIBE 请求的每个订阅被授予的最大 QoS 等级。  </span><br><span class="line"></span><br><span class="line">#### SUBACK 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118175316108](mqtt协议解析/image-20230118175316108.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">等于可变报头的长度加上有效载荷的长度。  </span><br><span class="line"></span><br><span class="line">#### SUBACK 报文可变报头  </span><br><span class="line"></span><br><span class="line">可变报头包含等待确认的 SUBSCRIBE 报文的报文标识符。  </span><br><span class="line"></span><br><span class="line">![image-20230118175404006](mqtt协议解析/image-20230118175404006.png)</span><br><span class="line"></span><br><span class="line">#### 有效载荷</span><br><span class="line"></span><br><span class="line">有效载荷包含一个返回码清单。 每个返回码对应等待确认的 SUBSCRIBE 报文中的一个主题过滤器。</span><br><span class="line"></span><br><span class="line">返回码的顺序必须和 SUBSCRIBE 报文中主题过滤器的顺序相同  </span><br><span class="line"></span><br><span class="line">##### 有效载荷格式</span><br><span class="line"></span><br><span class="line">![image-20230118175637006](mqtt协议解析/image-20230118175637006.png)</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p>允许的返回码值：<br>0x00 - 最大 QoS 0<br>0x01 - 成功 – 最大 QoS 1<br>0x02 - 成功 – 最大 QoS 2<br>0x80 - Failure 失败</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 10 、UNSUBSCRIBE –取消订阅  </span><br><span class="line"></span><br><span class="line">客户端发送 UNSUBSCRIBE 报文给服务端， 用于取消订阅主题。  </span><br><span class="line"></span><br><span class="line">#### UNSUBSCRIBE 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118175754029](mqtt协议解析/image-20230118175754029.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">等于可变报头的长度加上有效载荷的长度。  </span><br><span class="line"></span><br><span class="line">#### UNSUBSCRIBE 报文可变报头  </span><br><span class="line"></span><br><span class="line">![image-20230118175834119](mqtt协议解析/image-20230118175834119.png)</span><br><span class="line"></span><br><span class="line">可变报头包含一个报文标识符。  </span><br><span class="line"></span><br><span class="line">#### 有效载荷</span><br><span class="line"></span><br><span class="line">UNSUBSCRIBE 报文的有效载荷包含客户端想要取消订阅的主题过滤器列表。  </span><br><span class="line"></span><br><span class="line">#### 响应</span><br><span class="line"></span><br><span class="line">服务端必须发送 UNSUBACK 报文响应客户端的 UNSUBSCRIBE 请求。</span><br><span class="line"></span><br><span class="line">UNSUBACK 报文必须包含和UNSUBSCRIBE 报文相同的报文标识符。 即使没有删除任何主题订阅， 服务端也必须发送一个 SUBACK 响应。  </span><br><span class="line"></span><br><span class="line">### 11、UNSUBACK – 取消订阅确认  </span><br><span class="line"></span><br><span class="line">服务端发送 UNSUBACK 报文给客户端用于确认收到 UNSUBSCRIBE 报文。  </span><br><span class="line"></span><br><span class="line">#### UNSUBACK 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118202732410](mqtt协议解析/image-20230118202732410.png)</span><br><span class="line"></span><br><span class="line">剩余长度字段</span><br><span class="line">表示可变报头的长度， 对 UNSUBACK 报文这个值等于 2。  </span><br><span class="line"></span><br><span class="line">#### 可变报头  </span><br><span class="line"></span><br><span class="line">可变报头包含等待确认的 UNSUBSCRIBE 报文的报文标识符。  </span><br><span class="line"></span><br><span class="line">![image-20230118202813135](mqtt协议解析/image-20230118202813135.png)</span><br><span class="line"></span><br><span class="line">### 有效负载</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">## 12、PINGREQ – 心跳请求  </span><br><span class="line"></span><br><span class="line">#### 客户端发送 PINGREQ 报文给服务端的。  </span><br><span class="line"></span><br><span class="line">- 在没有任何其它控制报文从客户端发给服务的时，告知服务端客户端还活着。  </span><br><span class="line">- 请求服务端发送 响应确认它还活着。  </span><br><span class="line">- 使用网络以确认网络连接没有断开。  </span><br><span class="line"></span><br><span class="line">保持连接（Keep Alive） 处理中用到这个报文  。</span><br><span class="line"></span><br><span class="line">#### PINGREQ 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118203020292](mqtt协议解析/image-20230118203020292.png)</span><br><span class="line"></span><br><span class="line">![image-20230118203038983](mqtt协议解析/image-20230118203038983.png)</span><br><span class="line"></span><br><span class="line">#### 可变报头</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">#### 有效载荷</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">#### 响应</span><br><span class="line"></span><br><span class="line">服务端必须发送 PINGRESP 报文响应客户端的 PINGREQ 报文  </span><br><span class="line"></span><br><span class="line">### 13、PINGRESP – 心跳响应  </span><br><span class="line"></span><br><span class="line">服务端发送 PINGRESP 报文响应客户端的 PINGREQ 报文。 表示服务端还活着。  </span><br><span class="line"></span><br><span class="line">#### PINGRESP 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118203421595](mqtt协议解析/image-20230118203421595.png)</span><br><span class="line"></span><br><span class="line">#### 可变报头</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">#### 有效载荷</span><br><span class="line"></span><br><span class="line">无</span><br><span class="line"></span><br><span class="line">### 14、DISCONNECT –断开连接  </span><br><span class="line"></span><br><span class="line">DISCONNECT 报文是客户端发给服务端的最后一个控制报文。表示客户端正常断开连接。  </span><br><span class="line"></span><br><span class="line">#### DISCONNECT 报文固定报头  </span><br><span class="line"></span><br><span class="line">![image-20230118203629687](mqtt协议解析/image-20230118203629687.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 报文例子详解</span><br><span class="line"></span><br><span class="line">#### 1、CONECT 报文（client）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte) 0x01 ??<br>可变报头<br>    协议名(6byte) 0x00 0x04 ‘M’ ‘Q’ ‘T’ ‘T’<br>    协议级别(1byte) ??<br>    连接标志(1byte) ??<br>    保持连接(2byte) ?? ??<br>有效载荷<br>    客户端标识符(xbyte)<br>    遗嘱主题(如果开启遗嘱标志才有)(abyte)<br>    遗嘱消息(如果开启遗嘱标志才有)(bbyte)<br>    用户名(ybyte)<br>    密码(zbyte &#x3D; 2byte + ?)<br>byte &#x3D; 2 + 6 + 1 + 1 + 2 + x + y + z<br>开启遗嘱标志：byte &#x3D; 2 + 6 + 1 + 1 + 2 + x + y + z + a + b</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 2、CONNACK 报文(server)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x20 0x20<br>报文标识符(2byte) ?? ??<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 3、PUBLISH 报文(client)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	?? ??<br>可变报头<br>    主题名(xbyte)<br>    报文标识符(2byte)(只有qos1或qos2才有报文标识符)<br>有效载荷(ybyte) ?? ?? …<br>byte &#x3D; 2 + x + 2 + y</p>
+<p>如果是qos0：byte &#x3D; 2 + x + y</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 4、PUBACK 报文 (server)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x40 0x20<br>报文标识符(2byte) ?? ??<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 5、PUBREC 报文</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x50 0x20<br>报文标识符(2byte) ?? ??<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 6、PUBREL报文</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x60 0x20<br>报文标识符(2byte) ?? ??<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 7、PUBCOMP 报文 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x60 0x20<br>报文标识符(2byte) ?? ??<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 8、SUBSCRIBE报文</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0x80 ??<br>可变报头<br>    报文标识符(2byte) ?? ??<br>主题过滤器(nbyte &#x3D; 2byte + xbyte + 1byte)<br>    长度(2byte)<br>    主题过滤器(xbyte)<br>    服务质量要求(1byte)<br>byte &#x3D; 2 + 2 + n<br>报文标识符主要用于主题订阅和订阅确认的身份识别!!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 9、SUBACK 报文(server)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte) 0x90 03<br>可变报头(2byte) ?? ??(返回的这是SUBSCRIBE报文的报文标识符)<br>有效载荷(1byte) ??<br>byte &#x3D; 2 + 2 + 1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 10、UNSUBSCRIBE  (client)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0xA0 ??<br>可变报头<br>    报文标识符(2byte) ?? ??<br>主题过滤器(nbyte &#x3D; 2byte + xbyte)<br>    长度(2byte)<br>    主题过滤器(xbyte)<br>byte &#x3D; 2 + 2 + n	</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 11、UNSUBACK （server）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte) 0xB0 02<br>可变报头(2byte) ?? ??(返回的这是SUBSCRIBE报文的报文标识符)<br>byte &#x3D; 2 + 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 12、PINGREQ报文（client）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0xC0 0x00<br>byte &#x3D; 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 13、PINGRESP报文（server）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0xD0 0x00<br>byte &#x3D; 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 14、DISCONNECT报文（client）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>固定报头(2byte)	0xE0 0x60<br>byte &#x3D; 2</p>
+<pre><code>
+</code></pre>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2023/01/18/mqtt%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90/" title="mqtt协议解析" target="_blank" rel="external">http://example.com/2023/01/18/mqtt协议解析/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2023/01/09/%E7%BA%A2%E9%BB%91%E6%A0%91/" title="红黑树"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
