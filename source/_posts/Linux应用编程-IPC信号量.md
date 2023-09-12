@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-IPC信号量
+categories: Linux
 date: 2022-10-28 20:30:16
 tags: Linux应用开发
 ---

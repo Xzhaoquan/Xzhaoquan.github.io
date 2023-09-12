@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-共享内存
+categories: Linux
 date: 2022-10-28 21:34:34
 tags: Linux应用开发
 ---
@@ -65,6 +66,7 @@ void *shmat(int shmid, const void *shmaddr, int shmflg);
 - shmid：共享内存 ID，通常是由 shmget() 函数返回的。
 - shmaddr：如果不为 NULL，则系统会根据 shmaddr 来选择一个合适的内存区域，如果为NULL，则系统会自动选择一个合适的虚拟内存空间地址去映射共享内存。
 - shmflg：操作共享内存的方式：
+	* 0：可读可写
     * SHM_RDONLY：以只读方式映射共享内存。
     * SHM_REMAP：重新映射，此时 shmaddr 不能为 NULL。
     * NULLSHM：自动选择比 shmaddr 小的最大页对齐地址。

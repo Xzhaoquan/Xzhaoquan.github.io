@@ -1,5 +1,6 @@
 ---
 title: LED字符设备
+categories: Linux
 date: 2022-09-14 22:01:58
 tags: linux驱动开发
 ---
@@ -96,6 +97,17 @@ tags: linux驱动开发
   from：需要拷贝的用户空间的地址
   n：需要拷贝数据的长度
   ```
+
+- copy_to_user将内核空间数据拷贝到用户空间
+
+  ```
+  copy_to_user(void __user *to, const void *from, unsigned long n)
+  to：将数据拷贝到用户空间
+  from：需要拷贝的内核空间数据的地址
+  n：需要拷贝数据的长度
+  ```
+
+  
 
 ##### 4、添加、删除LED字符设备
 

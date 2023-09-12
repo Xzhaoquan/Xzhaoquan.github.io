@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-管道
+categories: Linux
 date: 2022-10-26 23:39:05
 tags: Linux应用开发
 ---

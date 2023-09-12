@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-进程
+categories: Linux
 date: 2022-10-25 22:48:47
 tags: Linux应用开发
 ---

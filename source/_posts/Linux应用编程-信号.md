@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-信号
+categories: Linux
 date: 2022-10-26 20:54:06
 tags: Linux应用开发
 ---

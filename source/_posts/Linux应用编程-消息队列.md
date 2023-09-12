@@ -1,5 +1,6 @@
 ---
 title: Linux应用编程-消息队列
+categories: Linux
 date: 2022-10-27 21:54:25
 tags: Linux应用开发
 ---
