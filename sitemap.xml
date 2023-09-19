@@ -245,7 +245,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E4%BF%A1%E5%8F%B7/</loc>
+    <loc>http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/</loc>
     
     <lastmod>2023-09-13</lastmod>
     
@@ -254,7 +254,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/2022/10/28/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-IPC%E4%BF%A1%E5%8F%B7%E9%87%8F/</loc>
+    <loc>http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E4%BF%A1%E5%8F%B7/</loc>
     
     <lastmod>2023-09-13</lastmod>
     
@@ -375,21 +375,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/md/</loc>
-    <lastmod>2023-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/tags/C/</loc>
-    <lastmod>2023-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/MQTT/</loc>
+    <lastmod>2023-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/md/</loc>
     <lastmod>2023-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
