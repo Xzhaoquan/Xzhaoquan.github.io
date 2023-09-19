@@ -18,14 +18,17 @@
   
   
   <title>Qt显示窗口部件之浏览器 | Hexo</title>
-  <meta property="og:type" content="article">
+  <meta name="description" content="Qt显示窗口部件QTextBrowserQTextBrowser 继承 QTextEdit， QTextBrowser 类提供了一个具有超文本导航的文本浏览器。该类扩展了 QTextEdit(在只读模式下)，添加了一些导航功能，以便用户可以跟踪超文本文档中的链接。   QTextBrowser使用示例 新建一个带ui的工程 声明和实例化QTextBrowser 信号和槽的连接 槽函数的实现  示例">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Qt显示窗口部件之浏览器">
 <meta property="og:url" content="http://example.com/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6%E4%B9%8B%E6%B5%8F%E8%A7%88%E5%99%A8/index.html">
 <meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="Qt显示窗口部件QTextBrowserQTextBrowser 继承 QTextEdit， QTextBrowser 类提供了一个具有超文本导航的文本浏览器。该类扩展了 QTextEdit(在只读模式下)，添加了一些导航功能，以便用户可以跟踪超文本文档中的链接。   QTextBrowser使用示例 新建一个带ui的工程 声明和实例化QTextBrowser 信号和槽的连接 槽函数的实现  示例">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-14T08:03:01.000Z">
-<meta property="article:modified_time" content="2023-09-14T08:03:01.992Z">
+<meta property="article:modified_time" content="2023-09-14T09:26:20.065Z">
 <meta property="article:author" content="Napat">
+<meta property="article:tag" content="Qt">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
   <link rel="canonical" href="http://example.com/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6%E4%B9%8B%E6%B5%8F%E8%A7%88%E5%99%A8/index.html">
@@ -226,7 +229,7 @@
   <div class="widget">
     <h3 class="widget-title">标签</h3>
     <div class="widget-body">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -236,7 +239,7 @@
   <div class="widget">
     <h3 class="widget-title">标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.6px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.8px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/Qt/" style="font-size: 13.6px;">Qt</a> <a href="/tags/git/" style="font-size: 13.4px;">git</a> <a href="/tags/hexo/" style="font-size: 13.2px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.4px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
+      <a href="/tags/C/" style="font-size: 13px;">C</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.6px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.8px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/Qt/" style="font-size: 13.8px;">Qt</a> <a href="/tags/git/" style="font-size: 13.4px;">git</a> <a href="/tags/hexo/" style="font-size: 13.2px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.4px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
     </div>
   </div>
 
@@ -245,7 +248,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -257,6 +260,21 @@
     <div class="widget-body">
       <ul class="recent-post-list list-unstyled no-thumbnail">
         
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" class="title">window下面实现C串口</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-19T12:59:20.000Z" itemprop="datePublished">2023-09-19</time>
+              </p>
+            </div>
+          </li>
+          
           <li>
             
             <div class="item-inner">
@@ -317,21 +335,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/09/12/Qt%E8%BE%93%E5%85%A5%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6/" class="title">Qt输入窗口部件</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-09-12T09:26:46.000Z" itemprop="datePublished">2023-09-12</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -366,6 +369,11 @@
 </span>
         
         
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Qt/" rel="tag">Qt</a>
+  </span>
+
 
         
 
@@ -375,7 +383,14 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        
+        <h2 id="Qt显示窗口部件"><a href="#Qt显示窗口部件" class="headerlink" title="Qt显示窗口部件"></a>Qt显示窗口部件</h2><h3 id="QTextBrowser"><a href="#QTextBrowser" class="headerlink" title="QTextBrowser"></a>QTextBrowser</h3><p>QTextBrowser 继承 QTextEdit， QTextBrowser 类提供了一个具有超文本导航的文本浏览器。该类扩展了 QTextEdit(在只读模式下)，添加了一些导航功能，以便用户可以跟踪超文本文档中的链接。  </p>
+<h4 id="QTextBrowser使用示例"><a href="#QTextBrowser使用示例" class="headerlink" title="QTextBrowser使用示例"></a>QTextBrowser使用示例</h4><ul>
+<li>新建一个带ui的工程</li>
+<li>声明和实例化QTextBrowser</li>
+<li>信号和槽的连接</li>
+<li>槽函数的实现</li>
+</ul>
+<h5 id="示例代码如下"><a href="#示例代码如下" class="headerlink" title="示例代码如下"></a>示例代码如下</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &quot;ui_mainwindow.h&quot;</span><br><span class="line">/*窗口对话框与文本流*/</span><br><span class="line">#include &lt;QFileDialog&gt;</span><br><span class="line">#include &lt;QTextStream&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">    , ui(new Ui::MainWindow)</span><br><span class="line">&#123;</span><br><span class="line">    ui-&gt;setupUi(this);</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line">    /*将窗口标题设置为文本浏览器*/</span><br><span class="line">    this-&gt;setWindowTitle(&quot;文本浏览器&quot;);</span><br><span class="line">    /*实例化*/</span><br><span class="line">    textBroser = new QTextBrowser(this);</span><br><span class="line">    /*设置文本浏览器窗口居中*/</span><br><span class="line">    this-&gt;setCentralWidget(textBroser);</span><br><span class="line"></span><br><span class="line">    openAction = new QAction(&quot;打开&quot;,this);</span><br><span class="line">    /* ui 窗口自带有 menubar(菜单栏)、 mainToolbar（工具栏）与</span><br><span class="line">    * statusbar（状态栏）</span><br><span class="line">    * menuBar 是 ui 生成工程就有的，所以可以在 menubar 里添加</span><br><span class="line">    * 我们的 QActiont 等，如果不需要 menubar，可以在 ui 设计</span><br><span class="line">    * 窗口里，在右则对象里把 menubar 删除，再自己重新定义自己的</span><br><span class="line">    * 菜单栏</span><br><span class="line">    */</span><br><span class="line">    ui-&gt;menubar-&gt;addAction(openAction);</span><br><span class="line">    connect(openAction,SIGNAL(triggered()),this,SLOT(openActionTriggered()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void MainWindow::openActionTriggered()&#123;</span><br><span class="line">    /*调用系统打开文件窗口，过滤文件名*/</span><br><span class="line">    QString FileName = QFileDialog::getOpenFileName(this,tr(&quot;打开文件&quot;),&quot;&quot;,</span><br><span class="line">                                                  tr(&quot;Files(*.txt *.cpp *.h *.html)&quot;));</span><br><span class="line">    QFile myFile(FileName);</span><br><span class="line">    /*以只读文本方式打开*/</span><br><span class="line">    if(!myFile.open(QIODevice::ReadOnly | QIODevice::Text))&#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    /*使用QTextStream对象接收*/</span><br><span class="line">    QTextStream in (&amp;myFile);</span><br><span class="line">    /*读取全部数据*/</span><br><span class="line">    QString myText = in.readAll();</span><br><span class="line"></span><br><span class="line">    /*判断打开文件的后缀，如果使html格式的则设置文本浏览器为html格式*/</span><br><span class="line">    if(FileName.endsWith(&quot;html&quot;) || FileName.endsWith(&quot;htm&quot;))&#123;</span><br><span class="line">        textBroser-&gt;setHtml(myText);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        textBroser-&gt;setPlainText(myText);</span><br><span class="line">    &#125;</span><br><span class="line">    /*Ui 窗口自带有statusbar(状态栏),设置打开的文件名*/</span><br><span class="line">    ui-&gt;statusbar-&gt;showMessage(&quot;文件名:&quot; + FileName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     <div class="article-footer">
@@ -429,6 +444,10 @@
   <div class="bar-inner">
   
   <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" title="window下面实现C串口"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
     
     
     <li class="next">

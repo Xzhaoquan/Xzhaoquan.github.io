@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>window下面实现C串口 | Hexo</title>
+  <meta name="description" content="在windows下面实现C串口代码示例如下 SerialC.h 1234567891011121314151617181920212223242526272829303132333435#ifndef __SERIALC_H#define __SERIALC_H#include &lt;windows.h&gt;#include &lt;stdio.h&gt;#ifdef __cpluspluse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="window下面实现C串口">
+<meta property="og:url" content="http://example.com/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="在windows下面实现C串口代码示例如下 SerialC.h 1234567891011121314151617181920212223242526272829303132333435#ifndef __SERIALC_H#define __SERIALC_H#include &lt;windows.h&gt;#include &lt;stdio.h&gt;#ifdef __cpluspluse">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-19T12:59:20.000Z">
+<meta property="article:modified_time" content="2023-09-19T13:04:03.853Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="C">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C/" style="font-size: 13px;">C</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.6px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.8px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/Qt/" style="font-size: 13.8px;">Qt</a> <a href="/tags/git/" style="font-size: 13.4px;">git</a> <a href="/tags/hexo/" style="font-size: 13.2px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.4px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" class="title">window下面实现C串口</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-19T12:59:20.000Z" itemprop="datePublished">2023-09-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6%E4%B9%8B%E6%B5%8F%E8%A7%88%E5%99%A8/" class="title">Qt显示窗口部件之浏览器</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-14T08:03:01.000Z" itemprop="datePublished">2023-09-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6/" class="title">Qt显示窗口部件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-14T05:30:35.000Z" itemprop="datePublished">2023-09-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/13/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E5%9D%97%E5%88%9D%E5%A7%8B%E5%8C%96/" class="title">单片机模块初始化</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-13T08:41:16.000Z" itemprop="datePublished">2023-09-13</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/12/Qt%E4%BF%A1%E5%8F%B7%E5%92%8C%E6%A7%BD/" class="title">Qt信号和槽</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-12T09:27:00.000Z" itemprop="datePublished">2023-09-12</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-window下面实现C串口" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      window下面实现C串口
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" class="article-date">
+	  <time datetime="2023-09-19T12:59:20.000Z" itemprop="datePublished">2023-09-19</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/C/" rel="tag">C</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="在windows下面实现C串口"><a href="#在windows下面实现C串口" class="headerlink" title="在windows下面实现C串口"></a>在windows下面实现C串口</h2><p>代码示例如下</p>
+<p>SerialC.h</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#ifndef __SERIALC_H</span><br><span class="line">#define __SERIALC_H</span><br><span class="line"></span><br><span class="line">#include &lt;windows.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">extern &quot;C&quot;</span><br><span class="line">&#123;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    typedef HANDLE PORT;</span><br><span class="line"></span><br><span class="line">    extern PORT OpenPort(int idCom);</span><br><span class="line">    extern void ClosePort(PORT idCom);</span><br><span class="line">    extern int SetPortBoudrate(PORT idCom, int rate);</span><br><span class="line">    extern int SetPortDateBits(PORT idCom, int bits);</span><br><span class="line">    extern int SetPortStopBits(PORT idCom, int bits);</span><br><span class="line">    extern int SetPortParity(PORT idCom, int parity);</span><br><span class="line">    extern int GetPortBoudrate(PORT idCom);</span><br><span class="line">    extern int GetPortDataBits(PORT idCom);</span><br><span class="line">    extern int GetPortStopBits(PORT idCom);</span><br><span class="line">    extern int GetPortParity(PORT idCom);</span><br><span class="line">    extern int PortSendDate(PORT idCom, const char *date);</span><br><span class="line">    extern int PortReceiveDate(PORT idCom, char *date, int len);</span><br><span class="line">    extern PORT SerialPortInit(int idCom, int rate, int dateBits, int stopBits, int parity);</span><br><span class="line">    extern int SerialReceiveDate(PORT idCom, char *date, int len);</span><br><span class="line">    extern int SerialSendDate(PORT idCom, const char *date, int len);</span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#endif</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>SerialC.c</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;SerialC.h&quot;</span><br><span class="line"></span><br><span class="line">// #define SDebug</span><br><span class="line">#ifdef SDebug</span><br><span class="line">#define SerialDebug(...) printf(__VA_ARGS__)</span><br><span class="line">#else</span><br><span class="line">#define SerialDebug(...)</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">PORT OpenPort(int idCom)</span><br><span class="line">&#123;</span><br><span class="line">	PORT Com;</span><br><span class="line">	TCHAR ComName[128] = &#123;0&#125;;</span><br><span class="line">	wsprintf(ComName, TEXT(&quot;\\\\.\\COM%d&quot;), idCom);</span><br><span class="line">	Com = CreateFile(ComName,</span><br><span class="line">					 GENERIC_READ | GENERIC_WRITE,</span><br><span class="line">					 0,</span><br><span class="line">					 NULL,</span><br><span class="line">					 OPEN_EXISTING,</span><br><span class="line">					 0,</span><br><span class="line">					 NULL);</span><br><span class="line"></span><br><span class="line">	if (Com == INVALID_HANDLE_VALUE)</span><br><span class="line">	&#123;</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	COMMTIMEOUTS timeOuts = &#123;0&#125;;</span><br><span class="line">	timeOuts.ReadIntervalTimeout = 50;</span><br><span class="line">	timeOuts.ReadTotalTimeoutConstant = 50;</span><br><span class="line">	timeOuts.ReadTotalTimeoutMultiplier = 10;</span><br><span class="line">	timeOuts.WriteTotalTimeoutConstant = 50;</span><br><span class="line">	timeOuts.WriteTotalTimeoutMultiplier = 10;</span><br><span class="line"></span><br><span class="line">	if (SetCommTimeouts(Com, &amp;timeOuts) == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	if (SetCommMask(Com, EV_RXCHAR) == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	SerialDebug(&quot;Open %d Success\r\n&quot;, idCom);</span><br><span class="line">	return Com;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void ClosePort(PORT idCom)</span><br><span class="line">&#123;</span><br><span class="line">	CloseHandle(idCom);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SetPortBoudrate(PORT idCom, int rate)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	dcbSerial.BaudRate = rate;</span><br><span class="line">	Status = SetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	return Status;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SetPortDateBits(PORT idCom, int bits)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	dcbSerial.ByteSize = bits;</span><br><span class="line">	Status = SetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	return Status;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SetPortStopBits(PORT idCom, int bits)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	dcbSerial.StopBits = bits;</span><br><span class="line">	Status = SetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	return Status;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SetPortParity(PORT idCom, int parity)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	dcbSerial.Parity = parity;</span><br><span class="line">	Status = SetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	return Status;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int GetPortBoudrate(PORT idCom)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	return dcbSerial.BaudRate;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int GetPortDataBits(PORT idCom)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	return dcbSerial.ByteSize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int GetPortStopBits(PORT idCom)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	return dcbSerial.StopBits;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int GetPortParity(PORT idCom)</span><br><span class="line">&#123;</span><br><span class="line">	DCB dcbSerial = &#123;0&#125;;</span><br><span class="line">	BOOL Status;</span><br><span class="line">	dcbSerial.DCBlength = sizeof(dcbSerial);</span><br><span class="line">	Status = GetCommState(idCom, &amp;dcbSerial);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	return dcbSerial.Parity;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int PortSendDate(PORT idCom, const char *date)</span><br><span class="line">&#123;</span><br><span class="line">	DWORD writeLen = strlen(date);</span><br><span class="line">	DWORD hasWrite;</span><br><span class="line">	BOOL Status = WriteFile(idCom,</span><br><span class="line">							date,</span><br><span class="line">							writeLen,</span><br><span class="line">							&amp;hasWrite,</span><br><span class="line">							NULL);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		// SerialDebug(&quot;date Send Success\r\n&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	return hasWrite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int PortReceiveDate(PORT idCom, char *date, int len)</span><br><span class="line">&#123;</span><br><span class="line">	DWORD dwEventMask;</span><br><span class="line">	DWORD hasRead;</span><br><span class="line"></span><br><span class="line">	BOOL Status = WaitCommEvent(idCom, &amp;dwEventMask, NULL);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	Status = ReadFile(idCom, date, len, &amp;hasRead, NULL);</span><br><span class="line">	date[hasRead] = 0;</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		// SerialDebug(&quot;has Read %d date\r\n&quot;,hasRead);</span><br><span class="line">	&#125;</span><br><span class="line">	return TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PORT SerialPortInit(int idCom, int rate, int dateBits, int stopBits, int parity)</span><br><span class="line">&#123;</span><br><span class="line">	int Status = 0;</span><br><span class="line">	PORT Com;</span><br><span class="line">	Com = OpenPort(idCom);</span><br><span class="line">	if (Com == INVALID_HANDLE_VALUE)</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Open Com%d Fail\r\n&quot;, idCom);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	Status = SetPortBoudrate(Com, rate);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Set BoudRate Com%d Fail\r\n&quot;, idCom);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	Status = SetPortDateBits(Com, dateBits);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Set dateBits Com%d Fail\r\n&quot;, idCom);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	stopBits = ONESTOPBIT;</span><br><span class="line">	Status = SetPortStopBits(Com, stopBits);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Set stopBits Com%d Fail\r\n&quot;, idCom);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	Status = SetPortParity(Com, parity);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Set Parity Com%d Fail\r\n&quot;, idCom);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	return Com;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SerialReceiveDate(PORT idCom, char *date, int len)</span><br><span class="line">&#123;</span><br><span class="line">	DWORD dwEventMask;</span><br><span class="line">	DWORD NoByteRead = 0;</span><br><span class="line"></span><br><span class="line">	BOOL Status = WaitCommEvent(idCom, &amp;dwEventMask, NULL);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	Status = ReadFile(idCom, date, len, &amp;NoByteRead, NULL);</span><br><span class="line">	date[NoByteRead] = 0;</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;receive :%s\r\n&quot;, date);</span><br><span class="line">	&#125;</span><br><span class="line">	return NoByteRead;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int SerialSendDate(PORT idCom, const char *date, int len)</span><br><span class="line">&#123;</span><br><span class="line">	DWORD hasWrite;</span><br><span class="line">	BOOL Status = WriteFile(idCom,</span><br><span class="line">							date,</span><br><span class="line">							len,</span><br><span class="line">							&amp;hasWrite,</span><br><span class="line">							NULL);</span><br><span class="line">	if (Status == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		SerialDebug(&quot;Send :%s\r\n&quot;, date);</span><br><span class="line">	&#125;</span><br><span class="line">	return hasWrite;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" title="window下面实现C串口" target="_blank" rel="external">http://example.com/2023/09/19/window下面实现C串口/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6%E4%B9%8B%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Qt显示窗口部件之浏览器"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
