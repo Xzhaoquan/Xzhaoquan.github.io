@@ -1,7 +1,7 @@
 ---
 title: window下面实现C串口
 date: 2023-09-19 20:59:20
-tags: C
+tags: C语言
 ---
 
 ## 在windows下面实现C串口
