@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Qt布局管理 | Hexo</title>
+  <meta name="description" content="Qt布局管理QBoxLayoutQBoxLayout 继承 QLayout。 QBoxLayout 类提供水平或垂直地排列子部件。 QBoxLayout 获取从它的父布局或从 parentWidget()中所获得的空间，将其分成一列框，并使每个托管小部件填充一个框。   代码示例123456789101112131415161718192021222324252627282930313233343">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt布局管理">
+<meta property="og:url" content="http://example.com/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="Qt布局管理QBoxLayoutQBoxLayout 继承 QLayout。 QBoxLayout 类提供水平或垂直地排列子部件。 QBoxLayout 获取从它的父布局或从 parentWidget()中所获得的空间，将其分成一列框，并使每个托管小部件填充一个框。   代码示例123456789101112131415161718192021222324252627282930313233343">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-20T01:39:49.000Z">
+<meta property="article:modified_time" content="2023-09-20T05:22:33.844Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="Qt">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.75px;">C语言</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 14px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.75px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.25px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.5px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/" class="title">Qt布局管理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-20T01:39:49.000Z" itemprop="datePublished">2023-09-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" class="title">window下面实现C串口</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-19T12:59:20.000Z" itemprop="datePublished">2023-09-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6%E4%B9%8B%E6%B5%8F%E8%A7%88%E5%99%A8/" class="title">Qt显示窗口部件之浏览器</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-14T08:03:01.000Z" itemprop="datePublished">2023-09-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/14/Qt%E6%98%BE%E7%A4%BA%E7%AA%97%E5%8F%A3%E9%83%A8%E4%BB%B6/" class="title">Qt显示窗口部件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-14T05:30:35.000Z" itemprop="datePublished">2023-09-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/09/13/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E5%9D%97%E5%88%9D%E5%A7%8B%E5%8C%96/" class="title">单片机模块初始化</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-09-13T08:41:16.000Z" itemprop="datePublished">2023-09-13</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Qt布局管理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Qt布局管理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/" class="article-date">
+	  <time datetime="2023-09-20T01:39:49.000Z" itemprop="datePublished">2023-09-20</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Qt/" rel="tag">Qt</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="Qt布局管理"><a href="#Qt布局管理" class="headerlink" title="Qt布局管理"></a>Qt布局管理</h2><h3 id="QBoxLayout"><a href="#QBoxLayout" class="headerlink" title="QBoxLayout"></a>QBoxLayout</h3><p>QBoxLayout 继承 QLayout。 QBoxLayout 类提供水平或垂直地排列子部件。 QBoxLayout 获取从它的父布局或从 parentWidget()中所获得的空间，将其分成一列框，并使每个托管小部件填充一个框。  </p>
+<h5 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QList&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line">    hWidget = new QWidget(this);</span><br><span class="line">    hWidget-&gt;setGeometry(0,0,800,240);</span><br><span class="line"></span><br><span class="line">    vWidget = new QWidget(this);</span><br><span class="line">    vWidget-&gt;setGeometry(0,240,200,240);</span><br><span class="line"></span><br><span class="line">    hBoxLayout = new QHBoxLayout(this);</span><br><span class="line">    vBoxLayout = new QVBoxLayout(this);</span><br><span class="line"></span><br><span class="line">    /*使用QList链表*/</span><br><span class="line">    QList &lt;QString&gt; list;</span><br><span class="line">    list&lt;&lt;&quot;one&quot;&lt;&lt;&quot;two&quot;&lt;&lt;&quot;three&quot;&lt;&lt;&quot;four&quot;&lt;&lt;&quot;five&quot;&lt;&lt;&quot;six&quot;;</span><br><span class="line">    /*实例化PushButton*/</span><br><span class="line">    for(int i = 0;i &lt; 6;i ++)&#123;</span><br><span class="line">        button[i] = new QPushButton(this);</span><br><span class="line">        button[i]-&gt;setText(list[i]);</span><br><span class="line">        if(3 &gt; i)&#123;</span><br><span class="line">            /*将按钮添加到hBoxLayout*/</span><br><span class="line">            hBoxLayout-&gt;addWidget(button[i]);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            vBoxLayout-&gt;addWidget(button[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /*设置按钮间隔为50*/</span><br><span class="line">    hBoxLayout-&gt;setSpacing(50);</span><br><span class="line">    hWidget-&gt;setLayout(hBoxLayout);</span><br><span class="line">    vWidget-&gt;setLayout(vBoxLayout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="QGridLayout"><a href="#QGridLayout" class="headerlink" title="QGridLayout"></a>QGridLayout</h3><p>QGridLayout 类提供了布局管理器里的一种以网格（二维）的方式管理界面组件  </p>
+<p>QGridLayout获取可用的空间(通过其父布局或parentWidget()))，将其分为行和列，并将其管理的每个小部件放入正确的单元格中。由于网格布局管理器中的组件也是会随着窗口拉伸而发生变化的，所以也是需要设置组件之间的比例系数的，与QBoxLayout 不同的是网格布局管理器还需要分别设置行和列的比例系数。  </p>
+<h5 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QList&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line"></span><br><span class="line">    gWidget = new QWidget(this);</span><br><span class="line">    /*设置gWidget居中央*/</span><br><span class="line">    this-&gt;setCentralWidget(gWidget);</span><br><span class="line">    gridLayout = new QGridLayout();</span><br><span class="line"></span><br><span class="line">    QList &lt;QString&gt; list;</span><br><span class="line">    list&lt;&lt;&quot;button1&quot;&lt;&lt;&quot;button2&quot;&lt;&lt;&quot;button3&quot;&lt;&lt;&quot;button4&quot;&lt;&lt;&quot;button5&quot;&lt;&lt;&quot;button6&quot;;</span><br><span class="line"></span><br><span class="line">    for(int i = 0;i &lt; 4;i ++)&#123;</span><br><span class="line">        button[i] = new QPushButton(this);</span><br><span class="line">        button[i]-&gt;setText(list[i]);</span><br><span class="line">        /*设置按钮的最小宽度与高度*/</span><br><span class="line">        button[i]-&gt;setMaximumSize(100,30);</span><br><span class="line">        /*设置自动调整按钮大小*/</span><br><span class="line">        button[i]-&gt;setSizePolicy(</span><br><span class="line">                    QSizePolicy::Expanding,</span><br><span class="line">                    QSizePolicy::Expanding</span><br><span class="line">                    );</span><br><span class="line">        switch(i)&#123;</span><br><span class="line">        case 0:</span><br><span class="line">            /*将button添加到网格的坐标(0,0)*/</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],0,0);</span><br><span class="line">            break;</span><br><span class="line">        case 1:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],0,1);</span><br><span class="line">            break;</span><br><span class="line">        case 2:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],1,0);</span><br><span class="line">            break;</span><br><span class="line">        case 3:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],1,1);</span><br><span class="line">            break;</span><br><span class="line">        default:</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /*设置0,1行的行比例系数*/</span><br><span class="line">    gridLayout-&gt;setRowStretch(0,2);</span><br><span class="line">    gridLayout-&gt;setRowStretch(1,3);</span><br><span class="line">    /*设置0,1列的列比例系数*/</span><br><span class="line">    gridLayout-&gt;setColumnStretch(0,1);</span><br><span class="line">    gridLayout-&gt;setColumnStretch(1,3);</span><br><span class="line"></span><br><span class="line">    gWidget-&gt;setLayout(gridLayout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="QFormLayout"><a href="#QFormLayout" class="headerlink" title="QFormLayout"></a>QFormLayout</h3><p>QFormLayout 继承 QLayout。 QFormLayout 类管理输入小部件及其关联标签的表单。 QFormLayout 是一个方便的布局类，它以两列的形式布局其子类。左列由标签组成，右列由“字段”小部件(QLineEdit(行编辑器)、 QSpinBox(旋转框等))组成。通常使用 setRowWrapPolicy(RowWrapPolicy policy)接口函数设置布局的换行策略进行布局等。   </p>
+<h5 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QList&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line"></span><br><span class="line">    gWidget = new QWidget(this);</span><br><span class="line">    /*设置gWidget居中央*/</span><br><span class="line">    this-&gt;setCentralWidget(gWidget);</span><br><span class="line">    gridLayout = new QGridLayout();</span><br><span class="line"></span><br><span class="line">    QList &lt;QString&gt; list;</span><br><span class="line">    list&lt;&lt;&quot;button1&quot;&lt;&lt;&quot;button2&quot;&lt;&lt;&quot;button3&quot;&lt;&lt;&quot;button4&quot;&lt;&lt;&quot;button5&quot;&lt;&lt;&quot;button6&quot;;</span><br><span class="line"></span><br><span class="line">    for(int i = 0;i &lt; 4;i ++)&#123;</span><br><span class="line">        button[i] = new QPushButton(this);</span><br><span class="line">        button[i]-&gt;setText(list[i]);</span><br><span class="line">        /*设置按钮的最小宽度与高度*/</span><br><span class="line">        button[i]-&gt;setMaximumSize(100,30);</span><br><span class="line">        /*设置自动调整按钮大小*/</span><br><span class="line">        button[i]-&gt;setSizePolicy(</span><br><span class="line">                    QSizePolicy::Expanding,</span><br><span class="line">                    QSizePolicy::Expanding</span><br><span class="line">                    );</span><br><span class="line">        switch(i)&#123;</span><br><span class="line">        case 0:</span><br><span class="line">            /*将button添加到网格的坐标(0,0)*/</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],0,0);</span><br><span class="line">            break;</span><br><span class="line">        case 1:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],0,1);</span><br><span class="line">            break;</span><br><span class="line">        case 2:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],1,0);</span><br><span class="line">            break;</span><br><span class="line">        case 3:</span><br><span class="line">            gridLayout-&gt;addWidget(button[i],1,1);</span><br><span class="line">            break;</span><br><span class="line">        default:</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /*设置0,1行的行比例系数*/</span><br><span class="line">    gridLayout-&gt;setRowStretch(0,2);</span><br><span class="line">    gridLayout-&gt;setRowStretch(1,3);</span><br><span class="line">    /*设置0,1列的列比例系数*/</span><br><span class="line">    gridLayout-&gt;setColumnStretch(0,1);</span><br><span class="line">    gridLayout-&gt;setColumnStretch(1,3);</span><br><span class="line"></span><br><span class="line">    gWidget-&gt;setLayout(gridLayout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="QSpacerItem"><a href="#QSpacerItem" class="headerlink" title="QSpacerItem"></a>QSpacerItem</h3><p>QSpacerItem 类在布局中提供空白(空间间隔)。所以 QSpacerItem 是在布局中使用的。  </p>
+<h5 id="代码示例-2"><a href="#代码示例-2" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QList&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line">    widget = new QWidget(this);</span><br><span class="line">    /*设置widget居中*/</span><br><span class="line">    this-&gt;setCentralWidget(widget);</span><br><span class="line">    /*实例化QSpacerItem*/</span><br><span class="line">    vSpacer = new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding);</span><br><span class="line">    hSpacer = new QSpacerItem(10,10,QSizePolicy::Expanding,QSizePolicy::Minimum);</span><br><span class="line"></span><br><span class="line">    mainLayout = new QHBoxLayout();</span><br><span class="line">    hBoxLayout = new QHBoxLayout();</span><br><span class="line">    vBoxLayout = new QVBoxLayout();</span><br><span class="line"></span><br><span class="line">    /*在VboxLayout添加垂直间隔*/</span><br><span class="line">    vBoxLayout-&gt;addSpacerItem(vSpacer);</span><br><span class="line"></span><br><span class="line">    QList &lt;QString&gt; list;</span><br><span class="line">    list&lt;&lt;&quot;bt1&quot;&lt;&lt;&quot;bt2&quot;&lt;&lt;&quot;bt3&quot;&lt;&lt;&quot;bt4&quot;&lt;&lt;&quot;bt5&quot;&lt;&lt;&quot;bt6&quot;;</span><br><span class="line"></span><br><span class="line">    for(int i = 0;i &lt; 6;i ++)&#123;</span><br><span class="line">        button[i] = new QPushButton(this);</span><br><span class="line">        button[i]-&gt;setText(list[i]);</span><br><span class="line">        if(3 &gt; i)&#123;</span><br><span class="line">            /*按钮1设置大小为100 * 100*/</span><br><span class="line">            button[i]-&gt;setFixedSize(60,30);</span><br><span class="line">            /*在vboxLayout添加按钮*/</span><br><span class="line">            vBoxLayout-&gt;addWidget(button[i]);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            button[i]-&gt;setFixedSize(60,30);</span><br><span class="line">            hBoxLayout-&gt;addWidget(button[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /*在hBoxLayout里面添加水平间隔*/</span><br><span class="line">    hBoxLayout-&gt;addSpacerItem(hSpacer);</span><br><span class="line">    /*在主布局俩面添加垂直布局*/</span><br><span class="line">    mainLayout-&gt;addLayout(vBoxLayout);</span><br><span class="line">    /*在主布局里面添加水平布局*/</span><br><span class="line">    mainLayout-&gt;addLayout(hBoxLayout);</span><br><span class="line">    /*设置部件之间的间距*/</span><br><span class="line">    mainLayout-&gt;setSpacing(30);</span><br><span class="line">    widget-&gt;setLayout(mainLayout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2023/09/20/Qt%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/" title="Qt布局管理" target="_blank" rel="external">http://example.com/2023/09/20/Qt布局管理/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2023/09/19/window%E4%B8%8B%E9%9D%A2%E5%AE%9E%E7%8E%B0C%E4%B8%B2%E5%8F%A3/" title="window下面实现C串口"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
