@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2023/09/21/Qt%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99/</loc>
+    <lastmod>2023-09-21</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2023/09/21/Qt%E9%A1%B9%E7%9B%AE%E6%8E%A7%E4%BB%B6%E7%BB%84/</loc>
     <lastmod>2023-09-21</lastmod>
   </url>
@@ -117,11 +121,11 @@
     <lastmod>2023-09-13</lastmod>
   </url>
   <url>
-    <loc>http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E7%AE%A1%E9%81%93/</loc>
+    <loc>http://example.com/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</loc>
     <lastmod>2023-09-13</lastmod>
   </url>
   <url>
-    <loc>http://example.com/2022/10/27/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</loc>
+    <loc>http://example.com/2022/10/26/Linux%E5%BA%94%E7%94%A8%E7%BC%96%E7%A8%8B-%E7%AE%A1%E9%81%93/</loc>
     <lastmod>2023-09-13</lastmod>
   </url>
   <url>
