@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-10-10T02:11:27.507Z</updated>
+  <updated>2023-10-10T02:22:09.818Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://example.com/2023/10/10/RS232-RS485-TTL%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86/"/>
     <id>http://example.com/2023/10/10/RS232-RS485-TTL%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86/</id>
     <published>2023-10-10T01:55:34.000Z</published>
-    <updated>2023-10-10T02:11:27.507Z</updated>
+    <updated>2023-10-10T02:22:09.818Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="RS232-RS485-TTL电平标准"><a href="#RS232-RS485-TTL电平标准" class="headerlink" title="RS232 RS485 TTL电平标准"></a>RS232 RS485 TTL电平标准</h2><h3 id="RS232电平标准"><a href="#RS232电平标准" class="headerlink" title="RS232电平标准"></a>RS232电平标准</h3><h4 id="RS232通信模式："><a href="#RS232通信模式：" class="headerlink" title="RS232通信模式："></a>RS232通信模式：</h4><p>RS232是全双工通信。</p><h4 id="RS232的逻辑电平"><a href="#RS232的逻辑电平" class="headerlink" title="RS232的逻辑电平"></a>RS232的逻辑电平</h4><ul><li>逻辑1：-15V–5V </li><li>逻辑0：+3V–+15V</li></ul><p>RS232 的逻辑电平和TTL 不一样但是协议是一样的。</p><h2 id="RS485电平标准"><a href="#RS485电平标准" class="headerlink" title="RS485电平标准"></a>RS485电平标准</h2><h3 id="RS485通信模式"><a href="#RS485通信模式" class="headerlink" title="RS485通信模式"></a>RS485通信模式</h3><p>RS485是半双工通信</p><h3 id="RS485的逻辑电平"><a href="#RS485的逻辑电平" class="headerlink" title="RS485的逻辑电平"></a>RS485的逻辑电平</h3><ul><li>逻辑1：+2V–+6V </li><li>逻辑0：-6V–+2V</li></ul><p>这里的电平指AB两线间的电压差。</p><h2 id="TTL电平标准"><a href="#TTL电平标准" class="headerlink" title="TTL电平标准"></a>TTL电平标准</h2><h3 id="TTL通信模式‘"><a href="#TTL通信模式‘" class="headerlink" title="TTL通信模式‘"></a>TTL通信模式‘</h3><p>TTL是全双工通信</p><h3 id="TTL的逻辑电平"><a href="#TTL的逻辑电平" class="headerlink" title="TTL的逻辑电平"></a>TTL的逻辑电平</h3><ul><li>逻辑1: 2.4V–5V </li><li>逻辑0: 0V–0.5V</li></ul>]]></content>
+    <content type="html"><![CDATA[<h2 id="RS232-RS485-TTL电平标准"><a href="#RS232-RS485-TTL电平标准" class="headerlink" title="RS232 RS485 TTL电平标准"></a>RS232 RS485 TTL电平标准</h2><h3 id="RS232电平标准"><a href="#RS232电平标准" class="headerlink" title="RS232电平标准"></a>RS232电平标准</h3><h4 id="RS232通信模式："><a href="#RS232通信模式：" class="headerlink" title="RS232通信模式："></a>RS232通信模式：</h4><p>RS232是全双工通信。</p><h4 id="RS232的逻辑电平"><a href="#RS232的逻辑电平" class="headerlink" title="RS232的逻辑电平"></a>RS232的逻辑电平</h4><ul><li>逻辑1：-15V–5V </li><li>逻辑0：+3V–+15V</li></ul><p>RS232 的逻辑电平和TTL 不一样但是协议是一样的。</p><h2 id="RS485电平标准"><a href="#RS485电平标准" class="headerlink" title="RS485电平标准"></a>RS485电平标准</h2><h3 id="RS485通信模式"><a href="#RS485通信模式" class="headerlink" title="RS485通信模式"></a>RS485通信模式</h3><p>RS485是半双工通信</p><h3 id="RS485的逻辑电平"><a href="#RS485的逻辑电平" class="headerlink" title="RS485的逻辑电平"></a>RS485的逻辑电平</h3><ul><li>逻辑1：+2V–+6V (A - B)</li><li>逻辑0：-6V–+2V (A - B)</li><li>高阻态（控制信号未使能）</li></ul><p>这里的电平指AB两线间的电压差。</p><h2 id="TTL电平标准"><a href="#TTL电平标准" class="headerlink" title="TTL电平标准"></a>TTL电平标准</h2><h3 id="TTL通信模式‘"><a href="#TTL通信模式‘" class="headerlink" title="TTL通信模式‘"></a>TTL通信模式‘</h3><p>TTL是全双工通信</p><h3 id="TTL的逻辑电平"><a href="#TTL的逻辑电平" class="headerlink" title="TTL的逻辑电平"></a>TTL的逻辑电平</h3><ul><li>逻辑1: 2.4V–5V </li><li>逻辑0: 0V–0.5V</li></ul>]]></content>
     
     
       
