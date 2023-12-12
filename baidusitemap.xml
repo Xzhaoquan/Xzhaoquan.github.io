@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2023/12/12/TCP%E5%92%8CUDP%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2023-12-12</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2023/10/10/RS232-RS485-TTL%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86/</loc>
     <lastmod>2023-10-10</lastmod>
   </url>
