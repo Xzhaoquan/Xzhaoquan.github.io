@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ECDHE密钥交换的原理 | Hexo</title>
+  <meta name="description" content="🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？密钥交换的核心在于：客户端和服务器通过不同的路径计算，最终能得到相同的共享密钥。这背后的原理来自于 椭圆曲线 Diffie-Hellman (ECDH) 算法的数学特性。 🔹 一、ECDHE 核心数学原理ECDHE（Elliptic Curve Diffie-Hellman Ephemeral）基于椭圆曲线密码学 (E">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECDHE密钥交换的原理">
+<meta property="og:url" content="http://example.com/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？密钥交换的核心在于：客户端和服务器通过不同的路径计算，最终能得到相同的共享密钥。这背后的原理来自于 椭圆曲线 Diffie-Hellman (ECDH) 算法的数学特性。 🔹 一、ECDHE 核心数学原理ECDHE（Elliptic Curve Diffie-Hellman Ephemeral）基于椭圆曲线密码学 (E">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-19T14:35:38.000Z">
+<meta property="article:modified_time" content="2025-03-19T14:36:59.969Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="ESP32_TLS">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLASH/" rel="tag">FLASH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NR-MICRO-SHELL/" rel="tag">NR_MICRO_SHELL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" rel="tag">网络通信</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/ESP32-TLS/" style="font-size: 13.83px;">ESP32_TLS</a> <a href="/tags/FLASH/" style="font-size: 13px;">FLASH</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.5px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/NR-MICRO-SHELL/" style="font-size: 13px;">NR_MICRO_SHELL</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/git/" style="font-size: 13.33px;">git</a> <a href="/tags/hexo/" style="font-size: 13.17px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.33px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" style="font-size: 13px;">网络通信</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">十二月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" class="title">esp32_tls握手中证书验证与密钥交换详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:44:17.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-tls%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" class="title">esp32_tls密钥交换详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:43:27.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-tls%E5%8D%95%E9%A1%B9%E8%AE%A4%E8%AF%81%E5%92%8C%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E7%9A%84%E5%8C%BA%E5%88%AB/" class="title">esp32_tls单项认证和双向认证的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:41:27.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-https%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E6%8F%A1%E6%89%8B%E6%B5%81%E7%A8%8B%E7%AE%80%E8%A7%A3/" class="title">esp32_https证书验证握手流程简解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:40:11.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-https%E8%AF%81%E4%B9%A6%E8%AF%A6%E8%A7%A3/" class="title">esp32_https证书详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:39:01.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ECDHE密钥交换的原理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ECDHE密钥交换的原理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/" class="article-date">
+	  <time datetime="2025-03-19T14:35:38.000Z" itemprop="datePublished">2025-03-19</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="🔹-ECDHE-密钥交换的原理-—-为什么客户端和服务器计算的密钥是一样的？"><a href="#🔹-ECDHE-密钥交换的原理-—-为什么客户端和服务器计算的密钥是一样的？" class="headerlink" title="🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？"></a><strong>🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？</strong></h2><p>密钥交换的核心在于：<strong>客户端和服务器通过不同的路径计算，最终能得到相同的共享密钥</strong>。这背后的原理来自于 <strong>椭圆曲线 Diffie-Hellman (ECDH)</strong> 算法的数学特性。</p>
+<h1 id="🔹-一、ECDHE-核心数学原理"><a href="#🔹-一、ECDHE-核心数学原理" class="headerlink" title="🔹 一、ECDHE 核心数学原理"></a><strong>🔹 一、ECDHE 核心数学原理</strong></h1><p>ECDHE（Elliptic Curve Diffie-Hellman Ephemeral）基于椭圆曲线密码学 (ECC) 的数学性质。其核心依赖以下公式：</p>
+<h3 id="🔢-公式推导"><a href="#🔢-公式推导" class="headerlink" title="🔢 公式推导"></a><strong>🔢 公式推导</strong></h3><ol>
+<li><strong>选择公共参数</strong></li>
+</ol>
+<blockquote>
+<p>🔹 双方协商并选择相同的椭圆曲线参数：</p>
+</blockquote>
+<ul>
+<li><strong>椭圆曲线参数</strong> <code>G</code>（基点，已知的固定点）</li>
+<li><strong>椭圆曲线的素数阶数</strong> <code>p</code>（模运算的模数，防止溢出）</li>
+</ul>
+<ol>
+<li><strong>客户端生成密钥对</strong></li>
+</ol>
+<ul>
+<li>随机生成私钥 <strong><code>d_C</code></strong></li>
+<li>计算公钥 <strong><code>Q_C = d_C × G</code></strong></li>
+</ul>
+<ol>
+<li><strong>服务器生成密钥对</strong></li>
+</ol>
+<ul>
+<li>随机生成私钥 <strong><code>d_S</code></strong></li>
+<li>计算公钥 <strong><code>Q_S = d_S × G</code></strong></li>
+</ul>
+<ol>
+<li><strong>客户端和服务器交换公钥</strong></li>
+</ol>
+<ul>
+<li>客户端发送 <code>Q_C</code></li>
+<li>服务器发送 <code>Q_S</code></li>
+</ul>
+<ol>
+<li><strong>双方计算共享密钥 (Z)</strong></li>
+</ol>
+<ul>
+<li><strong>客户端计算</strong></li>
+</ul>
+<p>Z&#x3D;dC×QS&#x3D;dC×(dS×G)Z &#x3D; d_C \times Q_S &#x3D; d_C \times (d_S \times G)Z&#x3D;dC×QS&#x3D;dC×(dS×G)</p>
+<ul>
+<li><strong>服务器计算</strong></li>
+</ul>
+<p>Z&#x3D;dS×QC&#x3D;dS×(dC×G)Z &#x3D; d_S \times Q_C &#x3D; d_S \times (d_C \times G)Z&#x3D;dS×QC&#x3D;dS×(dC×G)</p>
+<ol>
+<li><strong>根据交换律 (交换群的性质)：</strong></li>
+</ol>
+<p>dC×dS×G&#x3D;dS×dC×Gd_C \times d_S \times G &#x3D; d_S \times d_C \times GdC×dS×G&#x3D;dS×dC×G</p>
+<p>✅ <strong>最终，客户端和服务器得到相同的共享密钥 <code>Z</code></strong></p>
+<hr>
+<h1 id="🔹-二、为什么攻击者无法推导出密钥？"><a href="#🔹-二、为什么攻击者无法推导出密钥？" class="headerlink" title="🔹 二、为什么攻击者无法推导出密钥？"></a><strong>🔹 二、为什么攻击者无法推导出密钥？</strong></h1><p>ECDHE 的安全性来自于以下数学难题：</p>
+<h3 id="🔒-椭圆曲线离散对数问题-ECDLP"><a href="#🔒-椭圆曲线离散对数问题-ECDLP" class="headerlink" title="🔒 椭圆曲线离散对数问题 (ECDLP)"></a>🔒 <strong>椭圆曲线离散对数问题 (ECDLP)</strong></h3><blockquote>
+<p>已知公钥 <code>Q = d × G</code>，要反推出私钥 <code>d</code> 几乎不可能。</p>
+</blockquote>
+<p>🔹 椭圆曲线的点运算不支持传统加法&#x2F;乘法逆运算<br> 🔹 ECDHE 的私钥 <code>d</code> 具有非常高的熵值，随机性强<br> 🔹 即便攻击者拦截了 <code>Q_C</code> 和 <code>Q_S</code>，仍无法直接推算出 <code>d_C</code> 或 <code>d_S</code></p>
+<hr>
+<h1 id="🔹-三、ECDHE-密钥交换的安全性分析"><a href="#🔹-三、ECDHE-密钥交换的安全性分析" class="headerlink" title="🔹 三、ECDHE 密钥交换的安全性分析"></a><strong>🔹 三、ECDHE 密钥交换的安全性分析</strong></h1><p>✅ <strong>前向安全性 (Forward Secrecy)</strong></p>
+<ul>
+<li>即便服务器私钥泄露，历史通信数据依然安全。</li>
+<li>每次握手使用随机的临时密钥对，确保加密数据独立。</li>
+</ul>
+<p>✅ <strong>抗中间人攻击 (MitM)</strong></p>
+<ul>
+<li>客户端会验证服务器的证书，确保 <code>Q_S</code> 来自合法服务器。</li>
+<li>服务器也会验证客户端的公钥，防止非法客户端接入。</li>
+</ul>
+<p>✅ <strong>数学安全性</strong></p>
+<ul>
+<li>ECDHE 依赖于 ECDLP（椭圆曲线离散对数问题），比 RSA 更难破解。</li>
+<li>常用的 <code>secp256r1</code> (NIST P-256) 提供 128 位安全性，满足现代加密需求。</li>
+</ul>
+<hr>
+<h1 id="🔹-四、代码演示-—-ECDHE-密钥交换的完整实现"><a href="#🔹-四、代码演示-—-ECDHE-密钥交换的完整实现" class="headerlink" title="🔹 四、代码演示 — ECDHE 密钥交换的完整实现"></a><strong>🔹 四、代码演示 — ECDHE 密钥交换的完整实现</strong></h1><p>以下是 ESP32 使用 <code>mbedTLS</code> 进行 ECDHE 密钥交换的代码示例：</p>
+<h3 id="🔹-客户端生成公私钥对"><a href="#🔹-客户端生成公私钥对" class="headerlink" title="🔹 客户端生成公私钥对"></a><strong>🔹 客户端生成公私钥对</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ecdh_context ecdh;</span><br><span class="line">mbedtls_ecdh_init(&amp;ecdh);</span><br><span class="line"></span><br><span class="line">// 选择椭圆曲线参数 (推荐 secp256r1)</span><br><span class="line">mbedtls_ecp_group_load(&amp;ecdh.grp, MBEDTLS_ECP_DP_SECP256R1);</span><br><span class="line"></span><br><span class="line">// 生成私钥 d_C，并计算公钥 Q_C</span><br><span class="line">mbedtls_ecdh_gen_public(&amp;ecdh.grp, &amp;ecdh.d, &amp;ecdh.Q,</span><br><span class="line">                        mbedtls_ctr_drbg_random, &amp;ctr_drbg);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-服务器生成公私钥对"><a href="#🔹-服务器生成公私钥对" class="headerlink" title="🔹 服务器生成公私钥对"></a><strong>🔹 服务器生成公私钥对</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ecdh_gen_public(&amp;ecdh.grp, &amp;ecdh.d, &amp;ecdh.Q,</span><br><span class="line">                        mbedtls_ctr_drbg_random, &amp;ctr_drbg);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-共享密钥计算-Pre-Master-Secret"><a href="#🔹-共享密钥计算-Pre-Master-Secret" class="headerlink" title="🔹 共享密钥计算 (Pre-Master Secret)"></a><strong>🔹 共享密钥计算 (Pre-Master Secret)</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ecdh_compute_shared(</span><br><span class="line">    &amp;ecdh.grp,      // 椭圆曲线参数</span><br><span class="line">    &amp;ecdh.z,        // 输出的共享密钥 (Pre-Master Secret)</span><br><span class="line">    &amp;ecdh.Qp,       // 对方公钥</span><br><span class="line">    &amp;ecdh.d,        // 本地私钥</span><br><span class="line">    mbedtls_ctr_drbg_random, &amp;ctr_drbg</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-最终-Master-Secret-生成"><a href="#🔹-最终-Master-Secret-生成" class="headerlink" title="🔹 最终 Master Secret 生成"></a><strong>🔹 最终 Master Secret 生成</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ssl_derive_keys(&amp;ssl);  // 将共享密钥转化为 Master Secret</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="🔹-五、常见问题与解答"><a href="#🔹-五、常见问题与解答" class="headerlink" title="🔹 五、常见问题与解答"></a><strong>🔹 五、常见问题与解答</strong></h1><table>
+<thead>
+<tr>
+<th><strong>问题</strong></th>
+<th><strong>原因</strong></th>
+<th><strong>解决方法</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>密钥不一致</strong></td>
+<td>双方选择了不同的椭圆曲线参数</td>
+<td>确保 <code>G</code>、<code>p</code> 等参数相同</td>
+</tr>
+<tr>
+<td><strong>握手失败 (Handshake Failure)</strong></td>
+<td>证书验证失败</td>
+<td>检查证书链完整性及域名匹配</td>
+</tr>
+<tr>
+<td><strong>握手超时</strong></td>
+<td>网络延迟或丢包</td>
+<td>调整 <code>timeout</code> 设置并重试</td>
+</tr>
+<tr>
+<td><strong><code>MBEDTLS_ERR_SSL_NO_CIPHER_CHOSEN</code></strong></td>
+<td>加密套件不兼容</td>
+<td>选择兼容的加密套件 (如 <code>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</code>)</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="🔹-六、总结"><a href="#🔹-六、总结" class="headerlink" title="🔹 六、总结"></a><strong>🔹 六、总结</strong></h1><p>🔹 ECDHE 之所以能让客户端和服务器生成相同的密钥，依赖于：<br> ✅ <strong>椭圆曲线点乘的交换律</strong><br> ✅ <strong>公钥点无法反推出私钥的 ECDLP 数学难题</strong></p>
+<p>🔹 ECDHE 结合 <code>TLS</code> 提供了强大的安全保障，ESP32 在使用 HTTPS、MQTT、WebSocket 等网络通信中广泛应用 ECDHE。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/" title="ECDHE密钥交换的原理" target="_blank" rel="external">http://example.com/2025/03/19/ECDHE密钥交换的原理/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/" title="esp32_https连接-证书验证-握手成功详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2024/12/02/nr-micro-shell%E7%A7%BB%E6%A4%8D%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="nr_micro_shell移植使用详解"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
