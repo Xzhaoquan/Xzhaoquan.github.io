@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>esp32_tls握手中证书验证与密钥交换详解 | Hexo</title>
-  <meta name="description" content="ESP32 TLS 握手中证书验证与密钥交换详解在 TLS（Transport Layer Security）握手中，证书验证 和 密钥交换 是确保通信安全的两个关键环节。以下将结合 mbedTLS 源码及 ESP32 实际应用，深入剖析这两个步骤的具体机制、代码实现以及关键点。 证书传输与验证（Certificate &amp; Verify）服务器在 ServerHello 后发送 Certi">
+  <title>RS485_RS232_RS422_TTL之间的区别 | Hexo</title>
+  <meta name="description" content="RS-485、RS-232、RS-422和TTL的详解以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：  1. TTL（Transistor-Transistor Logic）逻辑电平定义 逻辑0（LOW）： 电压范围：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统） 典型场景：微控制器GPIO输出低电平，传感器信号接地。   逻辑">
 <meta property="og:type" content="article">
-<meta property="og:title" content="esp32_tls握手中证书验证与密钥交换详解">
-<meta property="og:url" content="http://example.com/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:title" content="RS485_RS232_RS422_TTL之间的区别">
+<meta property="og:url" content="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="ESP32 TLS 握手中证书验证与密钥交换详解在 TLS（Transport Layer Security）握手中，证书验证 和 密钥交换 是确保通信安全的两个关键环节。以下将结合 mbedTLS 源码及 ESP32 实际应用，深入剖析这两个步骤的具体机制、代码实现以及关键点。 证书传输与验证（Certificate &amp; Verify）服务器在 ServerHello 后发送 Certi">
+<meta property="og:description" content="RS-485、RS-232、RS-422和TTL的详解以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：  1. TTL（Transistor-Transistor Logic）逻辑电平定义 逻辑0（LOW）： 电压范围：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统） 典型场景：微控制器GPIO输出低电平，传感器信号接地。   逻辑">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-03-19T14:44:17.000Z">
-<meta property="article:modified_time" content="2025-03-19T14:44:39.755Z">
+<meta property="article:published_time" content="2025-03-23T06:21:04.000Z">
+<meta property="article:modified_time" content="2025-03-23T06:39:34.498Z">
 <meta property="article:author" content="Napat">
-<meta property="article:tag" content="ESP32_TLS">
+<meta property="article:tag" content="RS485">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/index.html">
+  <link rel="canonical" href="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
   
     <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -348,14 +348,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-esp32-tls握手中证书验证与密钥交换详解" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-RS485-RS232-RS422-TTL之间的区别" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      esp32_tls握手中证书验证与密钥交换详解
+      RS485_RS232_RS422_TTL之间的区别
     </h1>
   
 
@@ -363,156 +363,234 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" class="article-date">
-	  <time datetime="2025-03-19T14:44:17.000Z" itemprop="datePublished">2025-03-19</time>
+	<a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" class="article-date">
+	  <time datetime="2025-03-23T06:21:04.000Z" itemprop="datePublished">2025-03-23</time>
 	</a>
 </span>
         
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a>
+	<a class="article-tag-link-link" href="/tags/RS485/" rel="tag">RS485</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="ESP32-TLS-握手中证书验证与密钥交换详解"><a href="#ESP32-TLS-握手中证书验证与密钥交换详解" class="headerlink" title="ESP32 TLS 握手中证书验证与密钥交换详解"></a><strong>ESP32 TLS 握手中证书验证与密钥交换详解</strong></h2><p>在 TLS（Transport Layer Security）握手中，<strong>证书验证</strong> 和 <strong>密钥交换</strong> 是确保通信安全的两个关键环节。以下将结合 <code>mbedTLS</code> 源码及 ESP32 实际应用，深入剖析这两个步骤的具体机制、代码实现以及关键点。</p>
-<h1 id="证书传输与验证（Certificate-amp-Verify）"><a href="#证书传输与验证（Certificate-amp-Verify）" class="headerlink" title="证书传输与验证（Certificate &amp; Verify）"></a><strong>证书传输与验证（Certificate &amp; Verify）</strong></h1><p>服务器在 <code>ServerHello</code> 后发送 <code>Certificate</code> 消息，客户端（ESP32）需完成以下验证：</p>
-<p> ✅ <strong>证书链完整性</strong>（是否存在缺失证书）<br> ✅ <strong>签名有效性</strong>（验证签名是否匹配）<br> ✅ <strong>证书有效期</strong>（检查过期时间）<br> ✅ <strong>域名匹配</strong>（确保证书的 CN 字段与服务器域名一致）<br> ✅ <strong>吊销检查</strong>（可选，通过 OCSP&#x2F;CRL 检查证书状态）</p>
+        <h2 id="RS-485、RS-232、RS-422和TTL的详解"><a href="#RS-485、RS-232、RS-422和TTL的详解" class="headerlink" title="RS-485、RS-232、RS-422和TTL的详解"></a>RS-485、RS-232、RS-422和TTL的详解</h2><p>以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：</p>
 <hr>
-<h2 id="📋-Step-3-证书验证流程-mbedTLS"><a href="#📋-Step-3-证书验证流程-mbedTLS" class="headerlink" title="📋 Step 3 证书验证流程 (mbedTLS)"></a><strong>📋 Step 3 证书验证流程 (mbedTLS)</strong></h2><p>mbedTLS 内部的证书验证过程包括以下关键步骤：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 接收并解析 Certificate 消息</span><br><span class="line">2. 验证证书链完整性</span><br><span class="line">3. 验证证书签名 (RSA/ECDSA)</span><br><span class="line">4. 验证证书有效期</span><br><span class="line">5. 验证域名匹配 (Host Name)</span><br><span class="line">6. 生成验证结果 (成功/失败)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="🟢-1-接收并解析-Certificate-消息"><a href="#🟢-1-接收并解析-Certificate-消息" class="headerlink" title="🟢 1. 接收并解析 Certificate 消息"></a><strong>🟢 1. 接收并解析 Certificate 消息</strong></h3><p>在 ESP32 的 <code>mbedtls_ssl_handshake()</code> 中，<code>Certificate</code> 消息解析由以下代码触发：</p>
-<p>🔹 <strong><code>ssl_tls.c</code> 内部流程</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">if ( ( ret = mbedtls_ssl_parse_certificate( ssl ) ) != 0 )</span><br><span class="line">&#123;</span><br><span class="line">    MBEDTLS_SSL_DEBUG_RET( 1, &quot;mbedtls_ssl_parse_certificate&quot;, ret );</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h3 id="1-TTL（Transistor-Transistor-Logic）"><a href="#1-TTL（Transistor-Transistor-Logic）" class="headerlink" title="1. TTL（Transistor-Transistor Logic）"></a><strong>1. TTL（Transistor-Transistor Logic）</strong></h3><h4 id="逻辑电平定义"><a href="#逻辑电平定义" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑0（LOW）</strong>：<ul>
+<li><strong>电压范围</strong>：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统）</li>
+<li><strong>典型场景</strong>：微控制器GPIO输出低电平，传感器信号接地。</li>
+</ul>
+</li>
+<li><strong>逻辑1（HIGH）</strong>：<ul>
+<li><strong>电压范围</strong>：2V ~ 5V（5V系统）或 1.7V ~ 3.3V（3.3V系统）</li>
+<li><strong>典型场景</strong>：微控制器输出高电平，LED点亮信号。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点"><a href="#物理层特点" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：单端电压信号（单线传输）</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
 <ul>
-<li><code>mbedtls_ssl_parse_certificate()</code> 接收服务器证书链</li>
-<li>证书链将存储在 <code>mbedtls_x509_crt</code> 结构体中</li>
+<li><strong>单工</strong>：单向传输（如传感器到MCU）。</li>
+<li><strong>半双工</strong>：同一线路分时双向传输（需协议控制方向）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MCU_TX ----[电阻]----&gt; MCU_RX（直接连接，无电平转换）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键问题</strong>：</p>
+<ul>
+<li><strong>电平兼容性</strong>：5V TTL与3.3V系统需电平转换（如分压电阻或缓冲器）。</li>
+<li><strong>抗干扰差</strong>：长距离易受噪声影响，通常限制在1米以内。</li>
+</ul>
+</li>
 </ul>
 <hr>
-<h3 id="🟢-2-验证证书链完整性"><a href="#🟢-2-验证证书链完整性" class="headerlink" title="🟢 2. 验证证书链完整性"></a><strong>🟢 2. 验证证书链完整性</strong></h3><p><code>mbedtls_x509_crt_verify()</code> 用于验证服务器提供的证书链。其核心步骤包括：</p>
-<p>✅ 检查证书是否被 CA 签名<br> ✅ 遍历证书链并检查每个证书的父子关系<br> ✅ 确保链条最终指向可信根证书</p>
-<p><strong>代码示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">uint32_t flags;</span><br><span class="line">ret = mbedtls_x509_crt_verify(</span><br><span class="line">    &amp;crt,           // 服务器提供的证书链</span><br><span class="line">    &amp;cacert,        // 本地加载的根证书</span><br><span class="line">    NULL,           // CRL (可选)</span><br><span class="line">    &quot;example.com&quot;,  // 验证的服务器域名</span><br><span class="line">    &amp;flags,         // 验证结果标志</span><br><span class="line">    NULL, NULL      // 日志输出 (可选)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="🟢-3-验证签名-RSA-x2F-ECDSA"><a href="#🟢-3-验证签名-RSA-x2F-ECDSA" class="headerlink" title="🟢 3. 验证签名 (RSA&#x2F;ECDSA)"></a><strong>🟢 3. 验证签名 (RSA&#x2F;ECDSA)</strong></h3><p>在 <code>mbedtls_x509_crt_verify()</code> 中，签名验证的核心代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">ret = mbedtls_pk_verify(</span><br><span class="line">    &amp;crt-&gt;pk,            // 证书公钥</span><br><span class="line">    MBEDTLS_MD_SHA256,   // 签名使用的哈希算法</span><br><span class="line">    hash, hash_len,      // 待验证的哈希值</span><br><span class="line">    sig, sig_len         // 证书中的签名</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
+<h3 id="2-RS-232"><a href="#2-RS-232" class="headerlink" title="2. RS-232"></a><strong>2. RS-232</strong></h3><h4 id="逻辑电平定义-1"><a href="#逻辑电平定义-1" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑0（SPACE）</strong>：<ul>
+<li><strong>电压范围</strong>：+3V ~ +15V（驱动端）</li>
+<li><strong>接收阈值</strong>：&gt; +3V 识别为0。</li>
+</ul>
+</li>
+<li><strong>逻辑1（MARK）</strong>：<ul>
+<li><strong>电压范围</strong>：-3V ~ -15V（驱动端）</li>
+<li><strong>接收阈值</strong>：&lt; -3V 识别为1。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-1"><a href="#物理层特点-1" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：单端负逻辑（高电压为0，低电压为1）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
 <ul>
-<li><code>mbedtls_pk_verify()</code> 确保服务器提供的签名与证书内容匹配</li>
-<li>常见签名算法包括：<strong>RSA</strong>、<strong>ECDSA</strong></li>
+<li><strong>全双工</strong>：独立TX（发送）和RX（接收）线路。</li>
+<li><strong>典型连接</strong>：DB9接口（如计算机串口）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MCU_TX --[MAX232]--&gt; RS-232_TX  </span><br><span class="line">MCU_RX &lt;--[MAX232]-- RS-232_RX</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键问题</strong>：</p>
+<ul>
+<li><strong>电平转换</strong>：需专用芯片（如MAX232）转换TTL与RS-232电平。</li>
+<li><strong>传输距离</strong>：最长15米（速率≤20kbps时）。</li>
+</ul>
+</li>
 </ul>
 <hr>
-<h3 id="🟢-4-验证证书有效期"><a href="#🟢-4-验证证书有效期" class="headerlink" title="🟢 4. 验证证书有效期"></a><strong>🟢 4. 验证证书有效期</strong></h3><p><code>mbedtls_x509_time_is_past()</code> 和 <code>mbedtls_x509_time_is_future()</code> 用于检查时间有效性：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">if ( mbedtls_x509_time_is_past(&amp;crt-&gt;valid_to) ) &#123;</span><br><span class="line">    ESP_LOGE(TAG, &quot;证书已过期&quot;);</span><br><span class="line">    return MBEDTLS_ERR_X509_CERT_VERIFY_FAILED;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if ( mbedtls_x509_time_is_future(&amp;crt-&gt;valid_from) ) &#123;</span><br><span class="line">    ESP_LOGE(TAG, &quot;证书尚未生效&quot;);</span><br><span class="line">    return MBEDTLS_ERR_X509_CERT_VERIFY_FAILED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h3 id="3-RS-422"><a href="#3-RS-422" class="headerlink" title="3. RS-422"></a><strong>3. RS-422</strong></h3><h4 id="逻辑电平定义-2"><a href="#逻辑电平定义-2" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑1</strong>：<ul>
+<li><strong>差分电压</strong>：B线电压 &gt; A线电压 +0.2V（典型差值±2V）。</li>
+</ul>
+</li>
+<li><strong>逻辑0</strong>：<ul>
+<li><strong>差分电压</strong>：A线电压 &gt; B线电压 +0.2V。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-2"><a href="#物理层特点-2" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：差分信号（两条线传输一个信号）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>全双工</strong>：两对差分线（TX+&#x2F;- 和 RX+&#x2F;-）。</li>
+<li><strong>拓扑结构</strong>：点对点或1发多收（最多10个接收器）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Driver_A+ ---- 120Ω ---- Receiver_A+  </span><br><span class="line">Driver_A- ---- 120Ω ---- Receiver_A-</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键优势</strong>：</p>
+<ul>
+<li><strong>抗干扰</strong>：差分信号抵消共模噪声，适合工业环境。</li>
+<li><strong>长距离</strong>：支持1200米（速率≤100kbps时）。</li>
+</ul>
+</li>
+</ul>
 <hr>
-<h3 id="🟢-5-验证域名匹配"><a href="#🟢-5-验证域名匹配" class="headerlink" title="🟢 5. 验证域名匹配"></a><strong>🟢 5. 验证域名匹配</strong></h3><p>ESP32 检查证书中的 <code>Common Name (CN)</code> 字段是否匹配：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">ret = mbedtls_ssl_set_hostname(&amp;ssl, &quot;example.com&quot;);  // 目标服务器域名</span><br></pre></td></tr></table></figure>
-
+<h3 id="4-RS-485"><a href="#4-RS-485" class="headerlink" title="4. RS-485"></a><strong>4. RS-485</strong></h3><h4 id="逻辑电平定义-3"><a href="#逻辑电平定义-3" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑1（Idle&#x2F;MARK）</strong>：<ul>
+<li><strong>差分电压</strong>：B线电压 &gt; A线电压 +0.2V（典型差值±1.5V）。</li>
+</ul>
+</li>
+<li><strong>逻辑0（Active&#x2F;SPACE）</strong>：<ul>
+<li><strong>差分电压</strong>：A线电压 &gt; B线电压 +0.2V。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-3"><a href="#物理层特点-3" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：差分信号（半双工）或两对差分线（全双工）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>半双工</strong>：单对差分线（A&#x2F;B），分时双向传输。</li>
+<li><strong>全双工</strong>：两对差分线（需4线制）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Node1_A ----|  </span><br><span class="line">            |---- Bus_A ---- 120Ω终端电阻  </span><br><span class="line">Node1_B ----|  </span><br><span class="line">            |---- Bus_B ---- 120Ω终端电阻  </span><br><span class="line">Node2_A ----|  </span><br><span class="line">Node2_B ----|</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键配置</strong>：</p>
+<ul>
+<li><strong>终端电阻</strong>：总线两端需120Ω电阻，防止信号反射。</li>
+<li><strong>偏置电阻</strong>：空闲时通过电阻拉高B线、拉低A线，避免总线悬空。</li>
+</ul>
+</li>
+</ul>
 <hr>
-<h3 id="🟢-6-生成验证结果"><a href="#🟢-6-生成验证结果" class="headerlink" title="🟢 6. 生成验证结果"></a><strong>🟢 6. 生成验证结果</strong></h3><p>如果 <code>flags == 0</code>，表示验证成功；否则，验证失败。</p>
-<hr>
-<h2 id="🧩-证书验证失败的常见错误码"><a href="#🧩-证书验证失败的常见错误码" class="headerlink" title="🧩 证书验证失败的常见错误码"></a><strong>🧩 证书验证失败的常见错误码</strong></h2><table>
+<h3 id="5-对比总结"><a href="#5-对比总结" class="headerlink" title="5. 对比总结"></a><strong>5. 对比总结</strong></h3><table>
 <thead>
 <tr>
-<th>错误码</th>
-<th>含义</th>
+<th align="left"><strong>特性</strong></th>
+<th align="left"><strong>TTL</strong></th>
+<th align="left"><strong>RS-232</strong></th>
+<th align="left"><strong>RS-422</strong></th>
+<th align="left"><strong>RS-485</strong></th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>MBEDTLS_ERR_X509_CERT_VERIFY_FAILED</code></td>
-<td>证书链验证失败</td>
+<td align="left"><strong>逻辑表示</strong></td>
+<td align="left">单端电压</td>
+<td align="left">单端负逻辑</td>
+<td align="left">差分电压</td>
+<td align="left">差分电压</td>
 </tr>
 <tr>
-<td><code>MBEDTLS_ERR_X509_CERT_EXPIRED</code></td>
-<td>证书已过期</td>
+<td align="left"><strong>0的电压</strong></td>
+<td align="left">0V~0.8V (5V)</td>
+<td align="left">+3V~+15V</td>
+<td align="left">A &gt; B +0.2V</td>
+<td align="left">A &gt; B +0.2V</td>
 </tr>
 <tr>
-<td><code>MBEDTLS_ERR_X509_CERT_REVOKED</code></td>
-<td>证书已吊销</td>
+<td align="left"><strong>1的电压</strong></td>
+<td align="left">2V~5V (5V)</td>
+<td align="left">-3V~-15V</td>
+<td align="left">B &gt; A +0.2V</td>
+<td align="left">B &gt; A +0.2V</td>
 </tr>
 <tr>
-<td><code>MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT</code></td>
-<td>证书格式错误</td>
+<td align="left"><strong>抗噪能力</strong></td>
+<td align="left">弱</td>
+<td align="left">中等</td>
+<td align="left">强</td>
+<td align="left">极强</td>
+</tr>
+<tr>
+<td align="left"><strong>拓扑结构</strong></td>
+<td align="left">点对点</td>
+<td align="left">点对点</td>
+<td align="left">1主多从</td>
+<td align="left">多主多从总线</td>
+</tr>
+<tr>
+<td align="left"><strong>最大节点数</strong></td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">10</td>
+<td align="left">32~256</td>
+</tr>
+<tr>
+<td align="left"><strong>典型应用</strong></td>
+<td align="left">板级通信</td>
+<td align="left">老式外设</td>
+<td align="left">工业长距离点对点</td>
+<td align="left">工业Modbus网络</td>
 </tr>
 </tbody></table>
 <hr>
-<h1 id="🔹-Step-4：密钥交换（Key-Exchange）"><a href="#🔹-Step-4：密钥交换（Key-Exchange）" class="headerlink" title="🔹 Step 4：密钥交换（Key Exchange）"></a><strong>🔹 Step 4：密钥交换（Key Exchange）</strong></h1><p>密钥交换是 TLS 握手中最核心的安全机制，负责生成对称密钥，以便双方加密数据传输。mbedTLS 中支持以下几种密钥交换算法：</p>
-<p>✅ <strong>RSA (最常见，较慢，适用于兼容性强的环境)</strong><br> ✅ <strong>ECDHE (更安全，性能更佳，推荐使用)</strong><br> ✅ <strong>PSK (预共享密钥，适用于 IoT 设备)</strong></p>
-<hr>
-<h2 id="📋-Step-4-密钥交换流程-mbedTLS"><a href="#📋-Step-4-密钥交换流程-mbedTLS" class="headerlink" title="📋 Step 4 密钥交换流程 (mbedTLS)"></a><strong>📋 Step 4 密钥交换流程 (mbedTLS)</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 客户端生成随机数 Random_C</span><br><span class="line">2. 服务器生成随机数 Random_S</span><br><span class="line">3. 双方协商密钥交换算法 (如 ECDHE)</span><br><span class="line">4. 生成共享密钥 (Pre-Master Secret)</span><br><span class="line">5. 生成对称密钥 (Master Secret)</span><br></pre></td></tr></table></figure>
+<h3 id="6-实际应用示例"><a href="#6-实际应用示例" class="headerlink" title="6. 实际应用示例"></a><strong>6. 实际应用示例</strong></h3><h4 id="TTL直接通信"><a href="#TTL直接通信" class="headerlink" title="TTL直接通信"></a><strong>TTL直接通信</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// Arduino发送逻辑1（5V）</span><br><span class="line">digitalWrite(TX_PIN, HIGH);</span><br><span class="line">// 接收端检测</span><br><span class="line">if (digitalRead(RX_PIN) == HIGH) &#123; /* 处理逻辑1 */ &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RS-485半双工控制"><a href="#RS-485半双工控制" class="headerlink" title="RS-485半双工控制"></a><strong>RS-485半双工控制</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 使用MAX485芯片控制收发</span><br><span class="line">void sendData(uint8_t *data, int len) &#123;</span><br><span class="line">    digitalWrite(DE_PIN, HIGH);  // 使能发送模式</span><br><span class="line">    delayMicroseconds(10);       // 等待芯片稳定</span><br><span class="line">    Serial.write(data, len);     // 发送数据</span><br><span class="line">    digitalWrite(DE_PIN, LOW);   // 切回接收模式</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RS-232电平转换"><a href="#RS-232电平转换" class="headerlink" title="RS-232电平转换"></a><strong>RS-232电平转换</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 使用MAX232芯片连接MCU与PC</span><br><span class="line">void setup() &#123;</span><br><span class="line">    Serial.begin(9600);         // MCU串口（TTL电平）</span><br><span class="line">    // MAX232自动转换电平到±10V</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h3 id="🟢-1-生成随机数-Random-C-amp-Random-S"><a href="#🟢-1-生成随机数-Random-C-amp-Random-S" class="headerlink" title="🟢 1. 生成随机数 (Random_C &amp; Random_S)"></a><strong>🟢 1. 生成随机数 (Random_C &amp; Random_S)</strong></h3><p>ESP32 在 <code>mbedtls_ssl_handshake()</code> 内部自动完成：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ssl_conf_rng(&amp;conf, mbedtls_ctr_drbg_random, &amp;ctr_drbg);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="🟢-2-协商密钥交换算法"><a href="#🟢-2-协商密钥交换算法" class="headerlink" title="🟢 2. 协商密钥交换算法"></a><strong>🟢 2. 协商密钥交换算法</strong></h3><p><code>mbedtls_ssl_handshake()</code> 根据服务器的 <code>ServerHello</code> 选择合适的加密套件：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="🟢-3-生成共享密钥-Pre-Master-Secret"><a href="#🟢-3-生成共享密钥-Pre-Master-Secret" class="headerlink" title="🟢 3. 生成共享密钥 (Pre-Master Secret)"></a><strong>🟢 3. 生成共享密钥 (Pre-Master Secret)</strong></h3><p>若使用 ECDHE：</p>
-<ul>
-<li>客户端发送其公钥 (ClientKeyExchange)</li>
-<li>服务器生成共享密钥 (Pre-Master Secret)</li>
+<h3 id="7-注意事项"><a href="#7-注意事项" class="headerlink" title="7. 注意事项"></a><strong>7. 注意事项</strong></h3><ul>
+<li><strong>TTL电平兼容</strong>：<ul>
+<li>5V TTL连接3.3V系统时，需串联330Ω电阻或使用电平转换器（如TXB0108）。</li>
 </ul>
-<p><strong>ECDHE 生成密钥示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">mbedtls_ecdh_context ecdh;</span><br><span class="line">mbedtls_ecdh_gen_public(&amp;ecdh.grp, &amp;ecdh.d, &amp;ecdh.Q, mbedtls_ctr_drbg_random, &amp;ctr_drbg);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="🟢-4-生成对称密钥-Master-Secret"><a href="#🟢-4-生成对称密钥-Master-Secret" class="headerlink" title="🟢 4. 生成对称密钥 (Master Secret)"></a><strong>🟢 4. 生成对称密钥 (Master Secret)</strong></h3><p>客户端和服务器使用以下公式生成最终的 <code>Master Secret</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java</span><br><span class="line">Master Secret = PRF(Pre-Master Secret + Random_C + Random_S)</span><br></pre></td></tr></table></figure>
-
-<p><code>PRF()</code> 通常使用 <code>HMAC-SHA256</code> 算法。</p>
-<hr>
-<h3 id="🟢-5-导出对称加密密钥"><a href="#🟢-5-导出对称加密密钥" class="headerlink" title="🟢 5. 导出对称加密密钥"></a><strong>🟢 5. 导出对称加密密钥</strong></h3><p>最终用于加密数据的密钥由 <code>mbedtls_ssl_derive_keys()</code> 生成。</p>
-<hr>
-<h2 id="🧩-密钥交换失败的常见错误码"><a href="#🧩-密钥交换失败的常见错误码" class="headerlink" title="🧩 密钥交换失败的常见错误码"></a><strong>🧩 密钥交换失败的常见错误码</strong></h2><table>
-<thead>
-<tr>
-<th>错误码</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE</code></td>
-<td>握手失败</td>
-</tr>
-<tr>
-<td><code>MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY</code></td>
-<td>服务器主动断开连接</td>
-</tr>
-<tr>
-<td><code>MBEDTLS_ERR_SSL_NO_CIPHER_CHOSEN</code></td>
-<td>没有匹配的加密套件</td>
-</tr>
-</tbody></table>
-<hr>
-<h1 id="🔎-总结"><a href="#🔎-总结" class="headerlink" title="🔎 总结"></a><strong>🔎 总结</strong></h1><p>✅ <strong>Step 3：证书验证</strong></p>
-<ul>
-<li>验证证书链的完整性</li>
-<li>验证证书签名的合法性</li>
-<li>检查证书有效期和域名匹配</li>
+</li>
+<li><strong>RS-485终端电阻</strong>：<ul>
+<li>在总线两端并联120Ω电阻，位置尽量靠近线路末端。</li>
 </ul>
-<p>✅ <strong>Step 4：密钥交换</strong></p>
-<ul>
-<li>协商密钥交换算法</li>
-<li>生成共享密钥</li>
-<li>使用 <code>Master Secret</code> 生成会话密钥，确保加密通信的安全性</li>
+</li>
+<li><strong>RS-232地线</strong>：<ul>
+<li>必须连接GND线，否则可能因共模电压损坏接口。</li>
 </ul>
-<p>这两个步骤是 TLS 握手中最核心的环节，理解它们的机制有助于快速调试 ESP32 HTTPS 应用中的安全问题。</p>
+</li>
+</ul>
 
       
     </div>
@@ -522,7 +600,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" title="esp32_tls握手中证书验证与密钥交换详解" target="_blank" rel="external">http://example.com/2025/03/19/esp32-tls握手中证书验证与密钥交换详解/</a>
+      <a href="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" title="RS485_RS232_RS422_TTL之间的区别" target="_blank" rel="external">http://example.com/2025/03/23/RS485-RS232-RS422-TTL之间的区别/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -568,13 +646,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2025/03/23/FreeRTOS%E9%94%81%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E4%BA%92%E6%96%A5%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE/" title="FreeRTOS锁机制实现互斥资源访问"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2025/03/19/esp32-tls%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" title="esp32_tls密钥交换详解"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2025/03/23/FreeRTOS%E9%94%81%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E4%BA%92%E6%96%A5%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE/" title="FreeRTOS锁机制实现互斥资源访问"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
