@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>modbus详解 | Hexo</title>
+  <meta name="description" content="Modbus RTU 常用功能码详解（发送 &amp; 接收）Modbus RTU 采用主从架构（Master-Slave），主机（Master）发送请求，从机（Slave）响应数据。数据通过串口（RS-485&#x2F;RS-232）以 二进制格式 传输，并采用 CRC16 校验。  1. Modbus RTU 通信格式一个标准的 Modbus RTU 数据帧结构如下：    字节 内容 说明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="modbus详解">
+<meta property="og:url" content="http://example.com/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="Modbus RTU 常用功能码详解（发送 &amp; 接收）Modbus RTU 采用主从架构（Master-Slave），主机（Master）发送请求，从机（Slave）响应数据。数据通过串口（RS-485&#x2F;RS-232）以 二进制格式 传输，并采用 CRC16 校验。  1. Modbus RTU 通信格式一个标准的 Modbus RTU 数据帧结构如下：    字节 内容 说明">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-23T06:54:36.000Z">
+<meta property="article:modified_time" content="2025-03-23T06:55:45.174Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="MODBUS">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Siwats</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Napat</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLASH/" rel="tag">FLASH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FreeRTOS/" rel="tag">FreeRTOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MODBUS/" rel="tag">MODBUS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NR-MICRO-SHELL/" rel="tag">NR_MICRO_SHELL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RS485/" rel="tag">RS485</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" rel="tag">网络通信</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/ESP32-TLS/" style="font-size: 13.83px;">ESP32_TLS</a> <a href="/tags/FLASH/" style="font-size: 13px;">FLASH</a> <a href="/tags/FreeRTOS/" style="font-size: 13px;">FreeRTOS</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.5px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MODBUS/" style="font-size: 13px;">MODBUS</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/NR-MICRO-SHELL/" style="font-size: 13px;">NR_MICRO_SHELL</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/RS485/" style="font-size: 13px;">RS485</a> <a href="/tags/git/" style="font-size: 13.33px;">git</a> <a href="/tags/hexo/" style="font-size: 13.17px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.33px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" style="font-size: 13px;">网络通信</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">十二月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" class="title">modbus详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T06:54:36.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" class="title">RS485_RS232_RS422_TTL之间的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T06:21:04.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/FreeRTOS%E9%94%81%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E4%BA%92%E6%96%A5%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE/" class="title">FreeRTOS锁机制实现互斥资源访问</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T04:32:49.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-tls%E6%8F%A1%E6%89%8B%E4%B8%AD%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" class="title">esp32_tls握手中证书验证与密钥交换详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:44:17.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/19/esp32-tls%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E8%AF%A6%E8%A7%A3/" class="title">esp32_tls密钥交换详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-19T14:43:27.000Z" itemprop="datePublished">2025-03-19</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-modbus详解" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      modbus详解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-23T06:54:36.000Z" itemprop="datePublished">2025-03-23</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/MODBUS/" rel="tag">MODBUS</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="Modbus-RTU-常用功能码详解（发送-amp-接收）"><a href="#Modbus-RTU-常用功能码详解（发送-amp-接收）" class="headerlink" title="Modbus RTU 常用功能码详解（发送 &amp; 接收）"></a><strong>Modbus RTU 常用功能码详解（发送 &amp; 接收）</strong></h2><p>Modbus RTU 采用主从架构（Master-Slave），主机（Master）发送请求，从机（Slave）响应数据。数据通过串口（RS-485&#x2F;RS-232）以 <strong>二进制格式</strong> 传输，并采用 <strong>CRC16</strong> 校验。</p>
+<hr>
+<h2 id="1-Modbus-RTU-通信格式"><a href="#1-Modbus-RTU-通信格式" class="headerlink" title="1. Modbus RTU 通信格式"></a><strong>1. Modbus RTU 通信格式</strong></h2><p>一个标准的 Modbus RTU 数据帧结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>从机地址（Slave ID）</strong></td>
+<td>1~247（0 号用于广播）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>功能码（Function Code）</strong></td>
+<td>指定操作（读&#x2F;写寄存器等）</td>
+</tr>
+<tr>
+<td>3~x</td>
+<td><strong>数据字段（Data Field）</strong></td>
+<td>读&#x2F;写的地址、数量、数据等</td>
+</tr>
+<tr>
+<td>x+1, x+2</td>
+<td><strong>CRC 校验（CRC Check）</strong></td>
+<td>16 位 CRC-16 校验，低字节在前</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-常用功能码"><a href="#2-常用功能码" class="headerlink" title="2. 常用功能码"></a><strong>2. 常用功能码</strong></h2><h3 id="📌-功能码-0x01-读线圈状态（Read-Coils）"><a href="#📌-功能码-0x01-读线圈状态（Read-Coils）" class="headerlink" title="📌 功能码 0x01 - 读线圈状态（Read Coils）"></a><strong>📌 功能码 0x01 - 读线圈状态（Read Coils）</strong></h3><blockquote>
+<p>读取多个 <strong>开关量输出（DO）</strong> 的状态，每个线圈 1bit。</p>
+</blockquote>
+<h4 id="📤-发送请求"><a href="#📤-发送请求" class="headerlink" title="📤 发送请求"></a><strong>📤 发送请求</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  起始地址  线圈数量  CRC校验</span><br><span class="line">01       01    00 13    00 0A    0CD1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>01</code> —— 从机地址 1</li>
+<li><code>01</code> —— 功能码 0x01（读取线圈状态）</li>
+<li><code>00 13</code> —— 起始地址 0x0013（第 19 号线圈）</li>
+<li><code>00 0A</code> —— 读取 10 个线圈状态</li>
+<li><code>0C D1</code> —— CRC 校验（低字节在前）</li>
+</ul>
+<h4 id="📥-响应数据"><a href="#📥-响应数据" class="headerlink" title="📥 响应数据"></a><strong>📥 响应数据</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  字节数  数据   CRC校验</span><br><span class="line">01       01    02    CD  6B   A1E3</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>02</code> —— 返回字节数 2（10 位线圈状态，按 8 位对齐）</li>
+<li><code>CD</code>（11001101）—— 低 8 位（线圈 19-26）</li>
+<li><code>6B</code>（01101011）—— 高 8 位（线圈 27-28，其余填 0）</li>
+<li><code>A1 E3</code> —— CRC 校验</li>
+</ul>
+<hr>
+<h3 id="📌-功能码-0x03-读保持寄存器（Read-Holding-Registers）"><a href="#📌-功能码-0x03-读保持寄存器（Read-Holding-Registers）" class="headerlink" title="📌 功能码 0x03 - 读保持寄存器（Read Holding Registers）"></a><strong>📌 功能码 0x03 - 读保持寄存器（Read Holding Registers）</strong></h3><blockquote>
+<p>读取多个 <strong>保持寄存器（AO）</strong>，每个寄存器 16bit。</p>
+</blockquote>
+<h4 id="📤-发送请求-1"><a href="#📤-发送请求-1" class="headerlink" title="📤 发送请求"></a><strong>📤 发送请求</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  起始地址  寄存器数量  CRC校验</span><br><span class="line">01       03    00 10    00 02    C5 CD</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>01</code> —— 从机地址 1</li>
+<li><code>03</code> —— 读取保持寄存器</li>
+<li><code>00 10</code> —— 起始地址 0x0010（第 16 号寄存器）</li>
+<li><code>00 02</code> —— 读取 2 个寄存器</li>
+<li><code>C5 CD</code> —— CRC 校验</li>
+</ul>
+<h4 id="📥-响应数据-1"><a href="#📥-响应数据-1" class="headerlink" title="📥 响应数据"></a><strong>📥 响应数据</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  字节数  数据1  数据2  CRC校验</span><br><span class="line">01       03    04    00 64  27 10   72 30</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>04</code> —— 返回字节数 4（2 个寄存器，每个 2 字节）</li>
+<li><code>00 64</code>（十进制 100）—— 第 16 号寄存器数据</li>
+<li><code>27 10</code>（十进制 10000）—— 第 17 号寄存器数据</li>
+<li><code>72 30</code> —— CRC 校验</li>
+</ul>
+<hr>
+<h3 id="📌-功能码-0x06-写单个保持寄存器（Write-Single-Register）"><a href="#📌-功能码-0x06-写单个保持寄存器（Write-Single-Register）" class="headerlink" title="📌 功能码 0x06 - 写单个保持寄存器（Write Single Register）"></a><strong>📌 功能码 0x06 - 写单个保持寄存器（Write Single Register）</strong></h3><blockquote>
+<p>设置 <strong>一个</strong> 保持寄存器的值。</p>
+</blockquote>
+<h4 id="📤-发送请求-2"><a href="#📤-发送请求-2" class="headerlink" title="📤 发送请求"></a><strong>📤 发送请求</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  寄存器地址  数据值   CRC校验</span><br><span class="line">01       06    00 20    00 64    09 E9</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>01</code> —— 从机地址 1</li>
+<li><code>06</code> —— 写单个寄存器</li>
+<li><code>00 20</code> —— 寄存器地址 0x0020（第 32 号寄存器）</li>
+<li><code>00 64</code>（十进制 100）—— 要写入的数据</li>
+<li><code>09 E9</code> —— CRC 校验</li>
+</ul>
+<h4 id="📥-响应数据-2"><a href="#📥-响应数据-2" class="headerlink" title="📥 响应数据"></a><strong>📥 响应数据</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  寄存器地址  数据值   CRC校验</span><br><span class="line">01       06    00 20    00 64    09 E9</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>响应数据与请求相同，表示写入成功</strong></p>
+</blockquote>
+<hr>
+<h3 id="📌-功能码-0x0F-写多个线圈（Write-Multiple-Coils）"><a href="#📌-功能码-0x0F-写多个线圈（Write-Multiple-Coils）" class="headerlink" title="📌 功能码 0x0F - 写多个线圈（Write Multiple Coils）"></a><strong>📌 功能码 0x0F - 写多个线圈（Write Multiple Coils）</strong></h3><blockquote>
+<p>设置 <strong>多个</strong> 开关量输出（DO）。</p>
+</blockquote>
+<h4 id="📤-发送请求-3"><a href="#📤-发送请求-3" class="headerlink" title="📤 发送请求"></a><strong>📤 发送请求</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r复制编辑从机地址  功能码  起始地址  线圈数量  字节数  数据   CRC校验</span><br><span class="line">01       0F    00 13    00 0A    02    CD  01   5B  99</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>0F</code> —— 写多个线圈</li>
+<li><code>00 13</code> —— 起始地址 0x0013（第 19 号线圈）</li>
+<li><code>00 0A</code> —— 写入 10 个线圈</li>
+<li><code>02</code> —— 数据字节数（10bit 需 2 字节存储）</li>
+<li><code>CD 01</code> —— 线圈数据（11001101 00000001）</li>
+<li><code>5B 99</code> —— CRC 校验</li>
+</ul>
+<h4 id="📥-响应数据-3"><a href="#📥-响应数据-3" class="headerlink" title="📥 响应数据"></a><strong>📥 响应数据</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r复制编辑从机地址  功能码  起始地址  线圈数量  CRC校验</span><br><span class="line">01       0F    00 13    00 0A    C4 4E</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>表示从机确认已写入数据</strong></p>
+</blockquote>
+<hr>
+<h3 id="📌-功能码-0x10-写多个保持寄存器（Write-Multiple-Registers）"><a href="#📌-功能码-0x10-写多个保持寄存器（Write-Multiple-Registers）" class="headerlink" title="📌 功能码 0x10 - 写多个保持寄存器（Write Multiple Registers）"></a><strong>📌 功能码 0x10 - 写多个保持寄存器（Write Multiple Registers）</strong></h3><blockquote>
+<p>写入 <strong>多个</strong> 寄存器（AO）。</p>
+</blockquote>
+<h4 id="📤-发送请求-4"><a href="#📤-发送请求-4" class="headerlink" title="📤 发送请求"></a><strong>📤 发送请求</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  起始地址  寄存器数量  字节数  数据       CRC校验</span><br><span class="line">01       10    00 10    00 02    04    00 64  27 10   48 08</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>10</code> —— 写多个寄存器</li>
+<li><code>00 10</code> —— 起始地址 0x0010（第 16 号寄存器）</li>
+<li><code>00 02</code> —— 写入 2 个寄存器</li>
+<li><code>04</code> —— 数据字节数 4</li>
+<li><code>00 64 27 10</code> —— 数据（100、10000）</li>
+<li><code>48 08</code> —— CRC 校验</li>
+</ul>
+<h4 id="📥-响应数据-4"><a href="#📥-响应数据-4" class="headerlink" title="📥 响应数据"></a><strong>📥 响应数据</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">复制编辑从机地址  功能码  起始地址  寄存器数量  CRC校验</span><br><span class="line">01       10    00 10    00 02    71 CB</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>从机确认写入成功</strong></p>
+</blockquote>
+<hr>
+<h2 id="3-Modbus-RTU-数据帧解析"><a href="#3-Modbus-RTU-数据帧解析" class="headerlink" title="3. Modbus RTU 数据帧解析"></a><strong>3. Modbus RTU 数据帧解析</strong></h2><p>Modbus RTU 采用 <strong>小端格式（Little Endian）</strong>：</p>
+<ul>
+<li><strong>CRC 校验</strong> 低字节在前</li>
+<li><strong>多字节数据</strong> 高字节在前（Big Endian）</li>
+</ul>
+<p><strong>解析 Modbus 数据包的关键：</strong></p>
+<ul>
+<li>解析从机地址，判断是否匹配</li>
+<li>解析功能码，决定操作类型</li>
+<li>解析数据区，提取地址、值等信息</li>
+<li>计算 CRC 校验，判断数据是否正确</li>
+</ul>
+<hr>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a><strong>4. 总结</strong></h2><table>
+<thead>
+<tr>
+<th>功能码</th>
+<th>作用</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x01</td>
+<td>读线圈（DO）</td>
+<td>读取开关状态</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>读保持寄存器（AO）</td>
+<td>读取设备参数</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>写单个寄存器</td>
+<td>修改设备设置</td>
+</tr>
+<tr>
+<td>0x0F</td>
+<td>写多个线圈</td>
+<td>批量开关控制</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>写多个寄存器</td>
+<td>批量参数修改</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" title="modbus详解" target="_blank" rel="external">http://example.com/2025/03/23/modbus详解/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Siwats</span><small class="ml-1x">Napat</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" title="RS485_RS232_RS422_TTL之间的区别"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
