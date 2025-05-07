@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2025-05-07T11:57:37.763Z</updated>
+  <updated>2025-05-07T12:24:55.782Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>git如何在主仓库中添加子仓库</title>
+    <link href="http://example.com/2025/05/07/git%E5%A6%82%E4%BD%95%E5%9C%A8%E4%B8%BB%E4%BB%93%E5%BA%93%E4%B8%AD%E6%B7%BB%E5%8A%A0%E5%AD%90%E4%BB%93%E5%BA%93/"/>
+    <id>http://example.com/2025/05/07/git%E5%A6%82%E4%BD%95%E5%9C%A8%E4%B8%BB%E4%BB%93%E5%BA%93%E4%B8%AD%E6%B7%BB%E5%8A%A0%E5%AD%90%E4%BB%93%E5%BA%93/</id>
+    <published>2025-05-07T12:03:28.000Z</published>
+    <updated>2025-05-07T12:24:55.782Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="🔧-添加子模块（子仓库）的步骤："><a href="#🔧-添加子模块（子仓库）的步骤：" class="headerlink" title="🔧 添加子模块（子仓库）的步骤："></a>🔧 添加子模块（子仓库）的步骤：</h1><p>假设你已经有一个主仓库（main-repo），想在其中添加一个子仓库（libs&#x2F;lib-repo）。</p><h3 id="✅-1-添加子模块"><a href="#✅-1-添加子模块" class="headerlink" title="✅ 1. 添加子模块"></a>✅ 1. 添加子模块</h3><p>添加子模块格式：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule add &lt;子仓库地址&gt; &lt;本地路径&gt;</span><br></pre></td></tr></table></figure><p>例子：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule add https://github.com/example/lib-repo.git libs/lib-repo</span><br></pre></td></tr></table></figure><p>这会在<code>libs/lib-repo</code>目录中添加子仓库。</p><h3 id="✅-2-初始化并拉取子模块"><a href="#✅-2-初始化并拉取子模块" class="headerlink" title="✅ 2. 初始化并拉取子模块"></a>✅ 2. 初始化并拉取子模块</h3><p>1、拉去子仓库之后执行</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git submodule init</span><br><span class="line">git submodule update</span><br></pre></td></tr></table></figure><p>2、如果你是克隆别人含有子模块的仓库，使用以下命令初始化并拉取子模块内容：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule update --init --recursive</span><br></pre></td></tr></table></figure><h3 id="✅-3-提交主仓库更改"><a href="#✅-3-提交主仓库更改" class="headerlink" title="✅ 3. 提交主仓库更改"></a>✅ 3. 提交主仓库更改</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .gitmodules libs/lib-repo</span><br><span class="line">git commit -m &quot;添加子模块 libs/lib-repo&quot;</span><br></pre></td></tr></table></figure><h3 id="🧼4-删除子模块"><a href="#🧼4-删除子模块" class="headerlink" title="🧼4. 删除子模块"></a>🧼4. 删除子模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git submodule deinit -f libs/lib-repo</span><br><span class="line">git rm -f libs/lib-repo</span><br><span class="line">rm -rf .git/modules/libs/lib-repo</span><br></pre></td></tr></table></figure><h1 id="🧹-步骤：删除错误路径下的子模块"><a href="#🧹-步骤：删除错误路径下的子模块" class="headerlink" title="🧹 步骤：删除错误路径下的子模块"></a>🧹 步骤：删除错误路径下的子模块</h1><p>假设你误添加到了 <code>wrong/path/lib-repo</code>，正确路径应是 <code>libs/lib-repo</code>。</p><h3 id="✅-1-删除子模块"><a href="#✅-1-删除子模块" class="headerlink" title="✅ 1. 删除子模块"></a>✅ 1. 删除子模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bash复制编辑git submodule deinit -f wrong/path/lib-repo</span><br><span class="line">git rm -f wrong/path/lib-repo</span><br><span class="line">rm -rf .git/modules/wrong/path/lib-repo</span><br></pre></td></tr></table></figure><h3 id="✅-2-清理-gitmodules-文件中对应的条目（手动或自动）"><a href="#✅-2-清理-gitmodules-文件中对应的条目（手动或自动）" class="headerlink" title="✅ 2. 清理 .gitmodules 文件中对应的条目（手动或自动）"></a>✅ 2. 清理 <code>.gitmodules</code> 文件中对应的条目（手动或自动）</h3><p>手动打开 <code>.gitmodules</code> 文件，删除相关的 <code>[submodule &quot;wrong/path/lib-repo&quot;]</code> 段落。</p><p>如果你想自动处理，也可以这样：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config -f .gitmodules --remove-section submodule.wrong/path/lib-repo</span><br></pre></td></tr></table></figure><hr><h2 id="🔁-然后重新添加子模块到正确位置"><a href="#🔁-然后重新添加子模块到正确位置" class="headerlink" title="🔁 然后重新添加子模块到正确位置"></a>🔁 然后重新添加子模块到正确位置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git submodule add https://github.com/example/lib-repo.git libs/lib-repo</span><br><span class="line">git commit -m &quot;修正子模块路径为 libs/lib-repo&quot;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;🔧-添加子模块（子仓库）的步骤：&quot;&gt;&lt;a href=&quot;#🔧-添加子模块（子仓库）的步骤：&quot; class=&quot;headerlink&quot; title=&quot;🔧 添加子模块（子仓库）的步骤：&quot;&gt;&lt;/a&gt;🔧 添加子模块（子仓库）的步骤：&lt;/h1&gt;&lt;p&gt;假设你已经有一个主仓</summary>
+      
+    
+    
+    
+    
+    <category term="git" scheme="http://example.com/tags/git/"/>
+    
+  </entry>
   
   <entry>
     <title>git本地仓库添加到云仓库</title>
@@ -432,28 +454,6 @@
     
     
     <category term="Qt" scheme="http://example.com/tags/Qt/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>代码编程规范</title>
-    <link href="http://example.com/2023/09/20/%E4%BB%A3%E7%A0%81%E7%BC%96%E7%A8%8B%E8%A7%84%E8%8C%83/"/>
-    <id>http://example.com/2023/09/20/%E4%BB%A3%E7%A0%81%E7%BC%96%E7%A8%8B%E8%A7%84%E8%8C%83/</id>
-    <published>2023-09-20T09:10:10.000Z</published>
-    <updated>2023-09-20T09:14:17.722Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="代码编程规范"><a href="#代码编程规范" class="headerlink" title="代码编程规范"></a>代码编程规范</h2><h3 id="宏定义"><a href="#宏定义" class="headerlink" title="宏定义"></a>宏定义</h3><p>宏定义使用字母加下划线</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define EXAMPLE_A_B</span><br></pre></td></tr></table></figure><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>变量使用小写字母加下划线</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char example_a_b;</span><br></pre></td></tr></table></figure><h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数使用驼峰命名法</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void functionExample(void)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;代码编程规范&quot;&gt;&lt;a href=&quot;#代码编程规范&quot; class=&quot;headerlink&quot; title=&quot;代码编程规范&quot;&gt;&lt;/a&gt;代码编程规范&lt;/h2&gt;&lt;h3 id=&quot;宏定义&quot;&gt;&lt;a href=&quot;#宏定义&quot; class=&quot;headerlink&quot; title=&quot;宏定义</summary>
-      
-    
-    
-    
-    
-    <category term="C语言" scheme="http://example.com/tags/C%E8%AF%AD%E8%A8%80/"/>
     
   </entry>
   
