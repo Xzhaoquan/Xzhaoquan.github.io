@@ -47,7 +47,7 @@ export class ProjectContext {
     const root = await fs.realpath(candidate);
     if (!await exists(path.join(root, '_config.yml')) || !await exists(path.join(root, 'package.json'))) throw new AppError('INVALID_PROJECT', 'The selected directory is not a valid Hexo project.', false, 'Select a directory containing _config.yml and package.json.');
     const context = new ProjectContext(root);
-    await Promise.all(['recycle-bin', 'backups', 'snapshots', 'logs'].map(name => ensureDirectory(path.join(context.metaRoot, name))));
+    await Promise.all(['recycle-bin', 'backups', 'snapshots', 'logs', 'ssh'].map(name => ensureDirectory(path.join(context.metaRoot, name))));
     return context;
   }
 
@@ -235,13 +235,19 @@ export class ProjectContext {
 
   async git(args: string[]) {
     // Keep Unicode filenames readable and avoid a broken global excludes-file
-    // from leaking warnings into the local management UI.
-    return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args]);
+    // from leaking warnings into the local management UI.  Git's normal SSH
+    // known_hosts file can be inaccessible to a locally sandboxed process, so
+    // use a project-local trust store instead. accept-new trusts GitHub only on
+    // first use and will still reject a changed key afterwards.
+    const knownHosts = path.join(this.metaRoot, 'ssh', 'known_hosts').replace(/\\/g, '/');
+    await ensureDirectory(path.dirname(knownHosts));
+    const environment = { ...process.env, GIT_SSH_COMMAND: `ssh -o UserKnownHostsFile="${knownHosts}" -o StrictHostKeyChecking=accept-new` };
+    return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args], false, environment);
   }
 
-  async command(command: string, args: string[], detached = false) {
+  async command(command: string, args: string[], detached = false, environment: NodeJS.ProcessEnv = process.env) {
     return new Promise<{ code: number; stdout: string; stderr: string }>((resolve, reject) => {
-      const child = spawn(command, args, { cwd: this.root, shell: false, windowsHide: true, detached });
+      const child = spawn(command, args, { cwd: this.root, shell: false, windowsHide: true, detached, env: environment });
       let stdout = ''; let stderr = '';
       child.stdout?.on('data', data => { stdout += data.toString(); });
       child.stderr?.on('data', data => { stderr += data.toString(); });
