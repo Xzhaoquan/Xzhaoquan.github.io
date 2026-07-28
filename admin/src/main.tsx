@@ -36,21 +36,30 @@ nav.splice(5, 0, ['recycle', 'Recycle bin', 'R']);
 
 function MarkdownEditor({ value, onChange, onSave }: { value: string; onChange: (value: string) => void; onSave?: () => void }) {
   const host = useRef<HTMLDivElement>(null);
+  const editorView = useRef<EditorView | null>(null);
   const latest = useRef(value);
   const callback = useRef(onChange);
   const saveCallback = useRef(onSave);
   callback.current = onChange;
   saveCallback.current = onSave;
+  const insert = (before: string, after = '') => {
+    const view = editorView.current; if (!view) return;
+    const { from, to } = view.state.selection.main;
+    const selected = view.state.sliceDoc(from, to);
+    view.dispatch({ changes: { from, to, insert: `${before}${selected}${after}` }, selection: { anchor: from + before.length, head: from + before.length + selected.length } });
+    view.focus();
+  };
   useEffect(() => {
     if (!host.current) return;
     const view = new EditorView({
       state: EditorState.create({ doc: latest.current, extensions: [lineNumbers(), markdown(), keymap.of([...defaultKeymap, indentWithTab, { key: 'Mod-s', run: () => { saveCallback.current?.(); return true; } }]), EditorView.lineWrapping, EditorView.updateListener.of(update => { if (update.docChanged) { latest.current = update.state.doc.toString(); callback.current(latest.current); } })] }),
       parent: host.current
     });
-    return () => view.destroy();
+    editorView.current = view;
+    return () => { editorView.current = null; view.destroy(); };
   }, []);
   useEffect(() => { latest.current = value; }, [value]);
-  return <div className="markdown" ref={host} aria-label="Markdown editor" />;
+  return <div className="markdown-shell"><div className="markdown-toolbar"><button onClick={() => insert('## ')}>H2</button><button onClick={() => insert('**', '**')}>Bold</button><button onClick={() => insert('*', '*')}>Italic</button><button onClick={() => insert('> ')}>Quote</button><button onClick={() => insert('[', '](https://)')}>Link</button><button onClick={() => insert('\n```text\n', '\n```\n')}>Code</button><button onClick={() => insert('\n| Column | Value |\n| --- | --- |\n| ', ' | |\n')}>Table</button></div><div className="markdown" ref={host} aria-label="Markdown editor" /></div>;
 }
 
 function App() {
