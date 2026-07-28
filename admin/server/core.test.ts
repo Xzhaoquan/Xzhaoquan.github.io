@@ -160,6 +160,16 @@ describe('ProjectContext', () => {
     await expect(context.readMedia(post.path, '../image.png')).rejects.toMatchObject({ code: 'INVALID_MEDIA_PATH' } satisfies Partial<AppError>);
   });
 
+  it('renames media and updates its Markdown reference', async () => {
+    const { context } = await fixture();
+    let post = await context.createContent('post', { title: 'Rename asset', body: '![Old](old.png)' });
+    await context.uploadMedia(post.path, 'old.png', Buffer.from('image'));
+    await context.renameMedia(post.path, 'old.png', 'new.png');
+    post = await context.getContent('post', post.path);
+    expect(post.body).toContain('new.png');
+    await expect(context.mediaFor(post.path)).resolves.toMatchObject([{ name: 'new.png', used: true }]);
+  });
+
   it('redacts credential-like log fragments', () => {
     expect(redact('token: abc123 password=secret')).toContain('[REDACTED]');
   });

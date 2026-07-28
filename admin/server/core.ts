@@ -351,8 +351,9 @@ export class ProjectContext {
     this.assertContentPath('post', full);
     const assets = path.join(path.dirname(full), path.basename(full, '.md'));
     if (!await exists(assets)) return [];
+    const markdown = await fs.readFile(full, 'utf8');
     const entries = await fs.readdir(assets, { withFileTypes: true });
-    return Promise.all(entries.filter(entry => entry.isFile()).map(async entry => { const stat = await fs.stat(path.join(assets, entry.name)); return { name: entry.name, size: stat.size, path: path.relative(this.root, path.join(assets, entry.name)).replace(/\\/g, '/') }; }));
+    return Promise.all(entries.filter(entry => entry.isFile()).map(async entry => { const stat = await fs.stat(path.join(assets, entry.name)); return { name: entry.name, size: stat.size, used: markdown.includes(entry.name), path: path.relative(this.root, path.join(assets, entry.name)).replace(/\\/g, '/') }; }));
   }
 
   async uploadMedia(postPath: string, filename: string, bytes: Buffer) {
@@ -377,6 +378,22 @@ export class ProjectContext {
     if (!await exists(target)) throw new AppError('MEDIA_NOT_FOUND', 'The media file no longer exists.');
     await fs.rm(target, { force: true });
     await this.appendLog('media.delete', 'succeeded', { postPath, filename: safeName });
+  }
+
+  async renameMedia(postPath: string, filename: string, newFilename: string) {
+    const full = await this.resolve(postPath);
+    this.assertContentPath('post', full);
+    const oldName = path.basename(filename); const newName = path.basename(newFilename).replace(/[<>:"/\\|?*]/g, '-');
+    if (!oldName || oldName !== filename || !newName || newName !== newFilename) throw new AppError('INVALID_MEDIA_PATH', 'The media filename is invalid.');
+    const base = path.join(path.dirname(full), path.basename(full, '.md'));
+    const source = path.join(base, oldName); const target = path.join(base, newName);
+    if (!await exists(source)) throw new AppError('MEDIA_NOT_FOUND', 'The media file no longer exists.');
+    if (await exists(target)) throw new AppError('MEDIA_EXISTS', 'A media file with that name already exists.');
+    await fs.rename(source, target);
+    const markdown = await fs.readFile(full, 'utf8');
+    if (markdown.includes(oldName)) await this.writeAtomic(full, markdown.split(oldName).join(newName));
+    await this.appendLog('media.rename', 'succeeded', { postPath, filename: oldName, newFilename: newName });
+    return { name: newName };
   }
 
   async readMedia(postPath: string, filename: string) {
