@@ -99,6 +99,19 @@ ignore:
 ## Themes: https://hexo.io/themes/
 #theme: landscape 官方
 theme: pure
+
+# Hexo's local server resolves generated directory pages with a trailing slash.
+theme_config:
+  menu:
+    Home: /
+    Archives: archives/
+    Categories: categories/
+    Tags: tags/
+    Repository: repository/
+    Books: books/
+    Links: links/
+    About: about/
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
