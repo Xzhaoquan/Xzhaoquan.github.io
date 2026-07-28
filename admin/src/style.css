@@ -64,6 +64,7 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .related-post small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dropzone { display: grid; min-height: 180px; color: #526279; border: 2px dashed #b9c7da; border-radius: 9px; place-items: center; cursor: pointer; }
 .dropzone input, .file-button input { display: none; }
+.media-thumb { width: 64px; height: 46px; object-fit: cover; border-radius: 5px; border: 1px solid #d4dce9; }
 .editor-card textarea { width: 100%; height: 62vh; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; }
 .config-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .config-fields label { display: grid; gap: 5px; color: #56657a; font-size: 13px; }

@@ -130,6 +130,14 @@ describe('ProjectContext', () => {
     await expect(context.mediaFor(post.path)).resolves.toEqual([]);
   });
 
+  it('reads media only from the selected post asset directory', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Read asset' });
+    await context.uploadMedia(post.path, 'image.png', Buffer.from('binary-image'));
+    await expect(context.readMedia(post.path, 'image.png')).resolves.toMatchObject({ name: 'image.png', bytes: Buffer.from('binary-image') });
+    await expect(context.readMedia(post.path, '../image.png')).rejects.toMatchObject({ code: 'INVALID_MEDIA_PATH' } satisfies Partial<AppError>);
+  });
+
   it('redacts credential-like log fragments', () => {
     expect(redact('token: abc123 password=secret')).toContain('[REDACTED]');
   });

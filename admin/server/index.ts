@@ -53,6 +53,7 @@ app.post('/api/media/upload', async request => {
   return success(await context.uploadMedia(postPath, data.filename, Buffer.concat(chunks)));
 });
 app.delete('/api/media', async request => { const query = z.object({ postPath: z.string().min(1), name: z.string().min(1) }).parse(request.query); await context.deleteMedia(query.postPath, query.name); return success({ deleted: true }); });
+app.get('/api/media/file', async (request, reply) => { const query = z.object({ postPath: z.string().min(1), name: z.string().min(1) }).parse(request.query); const media = await context.readMedia(query.postPath, query.name); const extension = path.extname(media.name).toLowerCase(); const types: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.pdf': 'application/pdf' }; return reply.type(types[extension] ?? 'application/octet-stream').send(media.bytes); });
 
 app.get('/api/config', async () => success(await context.readYaml('_config.yml')));
 app.put('/api/config', async request => { const body = z.object({ raw: z.string() }).parse(request.body); await context.saveYaml('_config.yml', body.raw); return success(await context.readYaml('_config.yml')); });
