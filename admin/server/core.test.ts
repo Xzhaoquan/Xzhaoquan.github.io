@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { mkdtemp, readFile, rm, writeFile, mkdir } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { AppError, ProjectContext, redact } from './core.js';
@@ -30,6 +30,17 @@ describe('ProjectContext', () => {
     const created = await context.createContent('post', { title: 'Legacy date', data: { date: '2022-09-10 22:04:20' } });
     const saved = await context.saveContent('post', created.path, { data: created.data, body: `${created.body}\nUpdated`, hash: created.hash });
     expect(saved.data.date).toBe('2022-09-10 22:04:20');
+  });
+
+  it('keeps only the ten most recent recovery snapshots for a post', async () => {
+    const { root, context } = await fixture();
+    let post = await context.createContent('post', { title: 'Snapshot limit', body: 'Initial' });
+    for (let index = 0; index < 12; index += 1) {
+      post = await context.saveContent('post', post.path, { data: post.data, body: `Revision ${index}`, hash: post.hash });
+      await new Promise(resolve => setTimeout(resolve, 2));
+    }
+    const snapshots = await readdir(path.join(root, '.hexo-admin', 'snapshots'));
+    expect(snapshots.filter(name => name.endsWith(`-${path.basename(post.path)}`))).toHaveLength(10);
   });
 
   it('rejects traversal beyond the project root', async () => {

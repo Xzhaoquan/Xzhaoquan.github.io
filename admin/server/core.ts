@@ -156,6 +156,20 @@ export class ProjectContext {
     return this.parseDocument(kind, target);
   }
 
+  private async pruneSnapshots(filename: string, keep = 10) {
+    const directory = path.join(this.metaRoot, 'snapshots');
+    const suffix = `-${filename}`;
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+    const obsolete = entries
+      .filter(entry => entry.isFile() && entry.name.endsWith(suffix))
+      .map(entry => entry.name)
+      // Snapshot names start with a millisecond timestamp, so descending name
+      // order is also newest-first and works consistently on every platform.
+      .sort((left, right) => right.localeCompare(left))
+      .slice(keep);
+    await Promise.all(obsolete.map(name => fs.rm(path.join(directory, name), { force: true })));
+  }
+
   async saveContent(kind: ContentKind, relativePath: string, input: { data: Record<string, unknown>; body: string; hash?: string }) {
     const full = await this.resolve(relativePath);
     this.assertContentPath(kind, full);
@@ -163,6 +177,7 @@ export class ProjectContext {
     if (input.hash && input.hash !== digest(current)) throw new AppError('EXTERNAL_MODIFICATION', 'The file changed outside the admin, so saving was cancelled.', false, 'Reload the content and merge your changes.');
     const snapshot = path.join(this.metaRoot, 'snapshots', `${Date.now()}-${path.basename(full)}`);
     await fs.writeFile(snapshot, current, 'utf8');
+    await this.pruneSnapshots(path.basename(full));
     await this.writeAtomic(full, matter.stringify(input.body, input.data, frontMatterOptions));
     await this.appendLog('content.save', 'succeeded', { kind, path: relativePath, snapshot: path.relative(this.root, snapshot) });
     return this.parseDocument(kind, full);
