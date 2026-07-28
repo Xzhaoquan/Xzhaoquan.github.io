@@ -1,7 +1,8 @@
 ---
 title: Linux设备模型
+categories: Linux
 date: 2022-11-23 20:31:45
-tags: Linux设备驱动
+tags: Linux驱动开发
 ---
 
 ## Linux 设备模型

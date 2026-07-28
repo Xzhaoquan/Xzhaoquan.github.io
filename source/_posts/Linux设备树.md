@@ -1,7 +1,8 @@
 ---
 title: Linux设备树
+categories: Linux
 date: 2022-11-27 19:04:04
-tags: Linux设备驱动
+tags: Linux驱动开发
 ---
 
 ## Linux设备树

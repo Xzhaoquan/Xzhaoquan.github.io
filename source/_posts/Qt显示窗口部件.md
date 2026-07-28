@@ -1,5 +1,6 @@
 ---
 title: Qt显示窗口部件
+categories: Qt
 date: 2023-09-14 13:30:35
 tags: Qt
 ---

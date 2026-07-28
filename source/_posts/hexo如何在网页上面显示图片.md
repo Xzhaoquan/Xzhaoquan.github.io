@@ -1,8 +1,8 @@
 ---
 title: hexo如何在网页上面显示图片
-categories: hexo
+categories: 博客搭建
 date: 2022-08-29 17:24:28
-tags: hexo
+tags: Hexo
 ---
 
 ## hexo如何在网页上面显示图片

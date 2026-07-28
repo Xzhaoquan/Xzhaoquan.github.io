@@ -1,7 +1,8 @@
 ---
 title: git如何在主仓库中添加子仓库
+categories: 开发工具
 date: 2025-05-07 20:03:28
-tags: git
+tags: Git
 ---
 
 # 🔧 添加子模块（子仓库）的步骤：

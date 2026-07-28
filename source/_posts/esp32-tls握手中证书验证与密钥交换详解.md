@@ -1,7 +1,8 @@
 ---
 title: esp32_tls握手中证书验证与密钥交换详解
+categories: 嵌入式开发
 date: 2025-03-19 22:44:17
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **ESP32 TLS 握手中证书验证与密钥交换详解**

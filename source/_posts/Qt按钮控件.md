@@ -1,5 +1,6 @@
 ---
 title: Qt按钮控件
+categories: Qt
 date: 2023-09-12 17:26:21
 tags: Qt
 ---

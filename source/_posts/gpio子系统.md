@@ -1,7 +1,8 @@
 ---
 title: gpio子系统
+categories: Linux
 date: 2022-12-05 14:59:46
-tags: Linux设备驱动
+tags: Linux驱动开发
 ---
 
 ## gpio子系统

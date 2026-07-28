@@ -1,7 +1,8 @@
 ---
 title: esp32_https证书验证握手流程简解
+categories: 嵌入式开发
 date: 2025-03-19 22:40:11
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ### **ESP32 证书验证的详细过程 (mbedTLS 内部机制)**

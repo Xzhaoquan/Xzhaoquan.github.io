@@ -1,7 +1,8 @@
 ---
 title: markdown使用说明
+categories: 博客搭建
 date: 2022-08-25 23:17:46
-tags: md
+tags: Markdown
 ---
 
 ## markdown 使用说明

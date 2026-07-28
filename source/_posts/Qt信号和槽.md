@@ -1,5 +1,6 @@
 ---
 title: Qt信号和槽
+categories: Qt
 date: 2023-09-12 17:27:00
 tags: Qt
 ---

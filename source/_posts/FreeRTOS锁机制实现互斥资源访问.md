@@ -1,5 +1,6 @@
 ---
 title: FreeRTOS锁机制实现互斥资源访问
+categories: 嵌入式开发
 date: 2025-03-23 12:32:49
 tags: FreeRTOS
 ---

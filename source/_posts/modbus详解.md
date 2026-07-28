@@ -1,7 +1,8 @@
 ---
 title: modbus详解
+categories: 网络通信
 date: 2025-03-23 14:54:36
-tags: MODBUS
+tags: Modbus
 ---
 
 ## **Modbus RTU 常用功能码详解（发送 & 接收）**

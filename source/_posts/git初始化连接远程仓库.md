@@ -1,7 +1,8 @@
 ---
 title: git初始化连接远程仓库
+categories: 开发工具
 date: 2022-08-26 22:47:35
-tags: git
+tags: Git
 ---
 
 ## 如何使用git
@@ -63,4 +64,3 @@ git init
   git pull origin master 
   ```
 
-  

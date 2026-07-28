@@ -1,5 +1,6 @@
 ---
 title: Qt显示窗口部件之浏览器
+categories: Qt
 date: 2023-09-14 16:03:01
 tags: Qt
 ---

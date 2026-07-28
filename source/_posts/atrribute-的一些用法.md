@@ -1,5 +1,6 @@
 ---
 title: __atrribute__的一些用法
+categories: C/C++
 date: 2023-01-27 20:00:31
 tags: C语言
 ---

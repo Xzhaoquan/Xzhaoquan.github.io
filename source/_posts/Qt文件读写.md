@@ -1,5 +1,6 @@
 ---
 title: Qt文件读写
+categories: Qt
 date: 2023-09-21 16:17:49
 tags: Qt
 ---

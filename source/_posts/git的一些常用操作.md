@@ -1,7 +1,8 @@
 ---
 title: git的一些常用操作
+categories: 开发工具
 date: 2022-08-26 21:42:20
-tags: git
+tags: Git
 ---
 
 ## git常用命令

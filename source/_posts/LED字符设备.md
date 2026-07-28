@@ -2,7 +2,7 @@
 title: LED字符设备
 categories: Linux
 date: 2022-09-14 22:01:58
-tags: linux驱动开发
+tags: Linux驱动开发
 ---
 
 ## LED字符设备

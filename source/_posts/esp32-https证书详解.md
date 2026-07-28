@@ -1,7 +1,8 @@
 ---
 title: esp32_https证书详解
+categories: 嵌入式开发
 date: 2025-03-19 22:39:01
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **一、HTTPS 证书验证机制概述**

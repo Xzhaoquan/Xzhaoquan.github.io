@@ -1,7 +1,8 @@
 ---
 title: pinctrl子系统
+categories: Linux
 date: 2022-12-05 14:09:03
-tags: Linux设备驱动
+tags: Linux驱动开发
 ---
 
 ## pinctrl子系统

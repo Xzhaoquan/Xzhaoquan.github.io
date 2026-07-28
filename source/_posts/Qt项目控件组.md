@@ -1,5 +1,6 @@
 ---
 title: Qt项目控件组
+categories: Qt
 date: 2023-09-21 14:03:41
 tags: Qt
 ---

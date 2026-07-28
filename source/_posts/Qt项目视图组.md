@@ -1,5 +1,6 @@
 ---
 title: Qt项目视图组
+categories: Qt
 date: 2023-09-20 16:03:13
 tags: Qt
 ---

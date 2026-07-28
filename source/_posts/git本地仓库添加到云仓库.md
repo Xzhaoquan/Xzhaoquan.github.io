@@ -1,7 +1,8 @@
 ---
 title: git本地仓库添加到云仓库
+categories: 开发工具
 date: 2025-05-07 19:49:13
-tags: git
+tags: Git
 ---
 
 ## 如何将git本地仓库添加到云仓库

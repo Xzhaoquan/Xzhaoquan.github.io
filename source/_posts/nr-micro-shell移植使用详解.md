@@ -1,7 +1,8 @@
 ---
 title: nr_micro_shell移植使用详解
+categories: 嵌入式开发
 date: 2024-12-02 17:32:24
-tags: NR_MICRO_SHELL
+tags: NR Micro Shell
 ---
 
 ## nr_micro_shell的移植使用

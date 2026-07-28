@@ -1,7 +1,8 @@
 ---
 title: esp32_tls单项认证和双向认证的区别
+categories: 嵌入式开发
 date: 2025-03-19 22:41:27
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **🔹 TLS 单向认证 vs 双向认证详解**

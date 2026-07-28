@@ -1,7 +1,8 @@
 ---
 title: esp32_tls密钥交换详解
+categories: 嵌入式开发
 date: 2025-03-19 22:43:27
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **ESP32 TLS 握手中的密钥交换机制详解**

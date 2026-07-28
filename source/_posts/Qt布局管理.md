@@ -1,5 +1,6 @@
 ---
 title: Qt布局管理
+categories: Qt
 date: 2023-09-20 09:39:49
 tags: Qt
 ---

@@ -1,7 +1,8 @@
 ---
 title: RS232_RS485_TTL电平标准
+categories: 网络通信
 date: 2023-10-10 09:55:34
-tags: 
+tags: 串口通信
 ---
 
 ## RS232 RS485 TTL电平标准

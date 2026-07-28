@@ -1,7 +1,8 @@
 ---
 title: ECDHE密钥交换的原理
+categories: 嵌入式开发
 date: 2025-03-19 22:35:38
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？**

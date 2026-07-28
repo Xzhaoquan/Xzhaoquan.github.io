@@ -1,7 +1,8 @@
 ---
 title: gitbash安装使用gcc和make
+categories: 开发工具
 date: 2022-09-24 19:50:14
-tags: git
+tags: Git
 ---
 
 ## Git安装gcc编译器和make工具

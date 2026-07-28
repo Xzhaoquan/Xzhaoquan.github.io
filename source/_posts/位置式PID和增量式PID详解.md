@@ -1,5 +1,6 @@
 ---
 title: 位置式PID和增量式PID详解
+categories: 嵌入式开发
 date: 2025-03-23 21:12:04
 tags: PID
 ---

@@ -1,7 +1,8 @@
 ---
 title: SFUD串行flash通用库的移植
+categories: 嵌入式开发
 date: 2024-12-01 18:24:17
-tags: FLASH
+tags: Flash
 ---
 
 # sfud移植使用

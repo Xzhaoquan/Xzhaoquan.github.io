@@ -1,5 +1,6 @@
 ---
 title: mqtt协议解析
+categories: 网络通信
 date: 2023-01-18 14:53:02
 tags: MQTT
 ---

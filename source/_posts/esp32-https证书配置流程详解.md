@@ -1,7 +1,8 @@
 ---
 title: esp32_https证书配置流程详解
+categories: 嵌入式开发
 date: 2025-03-19 22:38:20
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **一、ESP32 证书校验的原理**

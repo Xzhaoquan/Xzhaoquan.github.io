@@ -1,5 +1,6 @@
 ---
 title: Qt容器
+categories: Qt
 date: 2023-09-20 13:27:12
 tags: Qt
 ---

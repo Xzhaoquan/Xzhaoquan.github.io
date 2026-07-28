@@ -1,7 +1,8 @@
 ---
 title: 使用hexo搭建个人博客
+categories: 博客搭建
 date: 2022-09-09 00:21:19
-tags: hexo
+tags: Hexo
 ---
 
 ## 使用hexo搭建个人博客

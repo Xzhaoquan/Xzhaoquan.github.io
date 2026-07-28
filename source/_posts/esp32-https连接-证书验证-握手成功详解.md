@@ -1,7 +1,8 @@
 ---
 title: esp32_https连接-证书验证-握手成功详解
+categories: 嵌入式开发
 date: 2025-03-19 22:37:23
-tags: ESP32_TLS
+tags: ESP32 TLS
 ---
 
 ## **ESP32 HTTPS 通信中的 TLS 握手及证书验证详解**
