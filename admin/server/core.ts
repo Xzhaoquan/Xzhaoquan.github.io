@@ -233,7 +233,11 @@ export class ProjectContext {
     return { path: path.relative(this.root, target).replace(/\\/g, '/'), markdown };
   }
 
-  async git(args: string[]) { return this.command('git', args); }
+  async git(args: string[]) {
+    // Keep Unicode filenames readable and avoid a broken global excludes-file
+    // from leaking warnings into the local management UI.
+    return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args]);
+  }
 
   async command(command: string, args: string[], detached = false) {
     return new Promise<{ code: number; stdout: string; stderr: string }>((resolve, reject) => {
@@ -246,7 +250,20 @@ export class ProjectContext {
     });
   }
 
-  private hexoExecutable() { return path.join(this.root, 'node_modules', '.bin', process.platform === 'win32' ? 'hexo.cmd' : 'hexo'); }
+  private hexoInvocation(args: string[]) {
+    if (process.platform === 'win32') {
+      return {
+        command: process.execPath,
+        args: [path.join(this.root, 'node_modules', 'hexo-cli', 'bin', 'hexo'), ...args]
+      };
+    }
+    return { command: path.join(this.root, 'node_modules', '.bin', 'hexo'), args };
+  }
+
+  private runHexo(args: string[]) {
+    const invocation = this.hexoInvocation(args);
+    return this.command(invocation.command, invocation.args);
+  }
 
   private async portAvailable(port: number) {
     return new Promise<boolean>(resolve => {
@@ -260,7 +277,7 @@ export class ProjectContext {
     for (const step of ['clean', 'generate', 'deploy']) {
       task.stdout += `\n$ hexo ${step}\n`;
       try {
-        const result = await this.command(this.hexoExecutable(), [step]);
+        const result = await this.runHexo([step]);
         task.stdout += result.stdout;
         task.stderr += result.stderr;
         if (result.code !== 0) {
@@ -294,16 +311,32 @@ export class ProjectContext {
     this.tasks.set(id, task);
     if (type === 'deploy') { void this.runDeployment(task); return task; }
     const args = type === 'preview' ? ['server', '--ip', '127.0.0.1', '--port', String(selectedPort)] : [type];
-    const child = spawn(this.hexoExecutable(), args, { cwd: this.root, shell: false, windowsHide: true });
+    const invocation = this.hexoInvocation(args);
+    const child = spawn(invocation.command, invocation.args, { cwd: this.root, shell: false, windowsHide: true });
     const append = (field: 'stdout' | 'stderr', value: Buffer) => { task[field] += redact(value.toString()); };
     child.stdout?.on('data', data => append('stdout', data)); child.stderr?.on('data', data => append('stderr', data));
     child.on('error', error => { task.status = 'failed'; task.stderr += error.message; task.endedAt = new Date().toISOString(); });
     child.on('close', code => { if (type !== 'preview') { task.status = code === 0 ? 'succeeded' : 'failed'; task.exitCode = code ?? 1; task.endedAt = new Date().toISOString(); this.appendLog(`task.${type}`, task.status === 'succeeded' ? 'succeeded' : 'failed', { id, exitCode: task.exitCode }).catch(() => undefined); } });
-    if (type === 'preview') { this.preview = { process: child, port: selectedPort, taskId: id }; child.on('close', () => { if (this.preview?.taskId === id) { task.status = 'stopped'; task.endedAt = new Date().toISOString(); this.preview = undefined; } }); }
+    if (type === 'preview') {
+      this.preview = { process: child, port: selectedPort, taskId: id };
+      child.on('close', code => {
+        if (this.preview?.taskId !== id) return;
+        task.status = code === null || code === 0 ? 'stopped' : 'failed';
+        task.exitCode = code ?? 0;
+        task.endedAt = new Date().toISOString();
+        if (task.status === 'failed') this.appendLog('task.preview', 'failed', { id, exitCode: task.exitCode }).catch(() => undefined);
+        this.preview = undefined;
+      });
+    }
     return task;
   }
 
-  stopPreview() { if (!this.preview) throw new AppError('PREVIEW_NOT_RUNNING', 'No preview service is currently managed by the admin.'); this.preview.process.kill(); return { stopped: true }; }
+  stopPreview() {
+    if (!this.preview) throw new AppError('PREVIEW_NOT_RUNNING', 'No preview service is currently managed by the admin.');
+    const task = this.tasks.get(this.preview.taskId); if (task) task.status = 'stopping';
+    this.preview.process.kill();
+    return { stopped: true };
+  }
 
   async status() {
     const [posts, drafts, pages, taxonomy, gitStatus, branch] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.listContent('page'), this.taxonomy(), this.git(['status', '--porcelain=v1']), this.git(['branch', '--show-current'])]);
