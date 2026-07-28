@@ -255,6 +255,15 @@ export class ProjectContext {
     await this.appendLog('content.recycle.delete', 'succeeded', { ticket });
   }
 
+  async clearRecycle() {
+    const base = path.join(this.metaRoot, 'recycle-bin');
+    const entries = await fs.readdir(base, { withFileTypes: true });
+    const tickets = entries.filter(entry => entry.isDirectory()).map(entry => entry.name);
+    await Promise.all(tickets.map(ticket => fs.rm(path.join(base, ticket), { recursive: true, force: true })));
+    await this.appendLog('content.recycle.clear', 'succeeded', { count: tickets.length });
+    return { deleted: tickets.length };
+  }
+
   async transitionContent(from: Extract<ContentKind, 'post' | 'draft'>, to: Extract<ContentKind, 'post' | 'draft'>, relativePath: string) {
     if (from === to) throw new AppError('INVALID_CONTENT_TRANSITION', 'The source and destination content types are the same.');
     const full = await this.resolve(relativePath);

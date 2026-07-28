@@ -123,6 +123,16 @@ describe('ProjectContext', () => {
     await expect(context.listRecycle()).resolves.toEqual([]);
   });
 
+  it('clears every recycle-bin item when explicitly requested', async () => {
+    const { context } = await fixture();
+    const first = await context.createContent('post', { title: 'First removed' });
+    const second = await context.createContent('post', { title: 'Second removed' });
+    await context.moveToRecycle('post', first.path, true);
+    await context.moveToRecycle('post', second.path, true);
+    await expect(context.clearRecycle()).resolves.toMatchObject({ deleted: 2 });
+    await expect(context.listRecycle()).resolves.toEqual([]);
+  });
+
   it('renames and removes taxonomy references without deleting posts', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Taxonomy', data: { categories: ['Old'], tags: ['legacy'] } });
