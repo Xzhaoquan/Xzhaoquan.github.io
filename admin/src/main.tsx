@@ -11,7 +11,7 @@ import './style.css';
 type Kind = 'post' | 'draft' | 'page';
 type Document = { kind: Kind; path: string; title: string; data: Record<string, unknown>; body: string; mtimeMs: number; hash: string };
 type Task = { id: string; type: string; status: string; startedAt: string; stdout: string; stderr: string };
-type Status = { root: string; theme: string; posts: number; drafts: number; pages: number; categories: number; tags: number; branch: string; changedFiles: number; preview: { port: number; url: string } | null; recentTasks: Task[] };
+type Status = { root: string; theme: string; posts: number; drafts: number; pages: number; categories: number; tags: number; branch: string; changedFiles: number; preview: { port: number; url: string } | null; recentPosts: Array<{ title: string; path: string; mtimeMs: number }>; recentTasks: Task[] };
 type RecycleItem = { ticket: string; kind: Kind; originalPath: string; deletedAt: string; items: string[] };
 type MediaAsset = { name: string; size: number; path: string };
 type OperationLog = { at: string; action: string; result: 'succeeded' | 'failed'; detail: Record<string, unknown> };
@@ -68,6 +68,7 @@ function App() {
   const [notice, setNotice] = useState('');
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
+  const [dark, setDark] = useState(() => localStorage.getItem('hexo-admin-color-mode') === 'dark');
   const saveTimer = useRef<number | undefined>();
   const watchedTask = useRef<{ id: string; type: string } | null>(null);
 
@@ -113,6 +114,7 @@ function App() {
     return () => window.clearInterval(poll);
   }, [view]);
   useEffect(() => () => { if (saveTimer.current) window.clearTimeout(saveTimer.current); }, []);
+  useEffect(() => { localStorage.setItem('hexo-admin-color-mode', dark ? 'dark' : 'light'); }, [dark]);
 
   const currentKind: Kind = view === 'drafts' ? 'draft' : view === 'pages' ? 'page' : 'post';
   const filtered = useMemo(() => documents.filter(item => item.title.toLowerCase().includes(query.toLowerCase())), [documents, query]);
@@ -148,11 +150,11 @@ function App() {
     try { const response = await fetch('/api/media/upload', { method: 'POST', body: form }); const data = await response.json(); if (!data.ok) throw new Error(data.error?.message); scheduleSave({ ...editor, body: `${editor.body}\n\n${data.data.markdown}\n` }); setNotice('Media uploaded and inserted.'); } catch (error) { setNotice(error instanceof Error ? error.message : 'Upload failed.'); }
   };
 
-  return <div className="app-shell">
+  return <div className={dark ? 'app-shell dark' : 'app-shell'}>
     <aside className="sidebar"><div className="brand"><span>◆</span> Hexo Admin</div><nav>{nav.map(([key, label, icon]) => <button key={key} className={view === key ? 'nav active' : 'nav'} onClick={() => setView(key)}><span>{icon}</span>{label}</button>)}</nav><div className="sidebar-foot">Local only<br /><span>{status?.branch ?? 'Loading'} branch</span></div></aside>
-    <main className="main"><header><div><h1>{nav.find(item => item[0] === view)?.[1]}</h1><p>{status?.root ?? 'Reading Hexo project...'}</p></div><div className="header-actions"><button onClick={() => refreshStatus()} disabled={busy}>Refresh</button>{(['posts', 'drafts', 'pages'] as View[]).includes(view) && <button className="primary" onClick={create}>New</button>}</div></header>
+    <main className="main"><header><div><h1>{nav.find(item => item[0] === view)?.[1]}</h1><p>{status?.root ?? 'Reading Hexo project...'}</p></div><div className="header-actions"><button onClick={() => setDark(value => !value)}>{dark ? 'Light mode' : 'Dark mode'}</button><button onClick={() => refreshStatus()} disabled={busy}>Refresh</button>{(['posts', 'drafts', 'pages'] as View[]).includes(view) && <button className="primary" onClick={create}>New</button>}</div></header>
       {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice('')}>×</button></div>}
-      {view === 'dashboard' && <Dashboard status={status} onTask={runTask} onView={setView} />}
+      {view === 'dashboard' && <><Dashboard status={status} onTask={runTask} onView={setView} /><DashboardDetails status={status} /></>}
       {(['posts', 'drafts', 'pages'] as View[]).includes(view) && <ContentView items={filtered} query={query} onQuery={setQuery} onOpen={item => action(async () => setEditor(await api<Document>(`/content/${item.kind}/read?path=${encodeURIComponent(item.path)}`)))} onRecycle={recycle} onTransition={transition} />}
       {view === 'recycle' && <RecycleBin items={recycleItems} onRestore={restoreRecycle} onDelete={deleteRecycle} />}
       {view === 'taxonomy' && <Taxonomy data={taxonomy} posts={taxonomyPosts} onOpen={item => action(async () => setEditor(await api<Document>(`/content/post/read?path=${encodeURIComponent(item.path)}`)))} onManage={manageTaxonomy} />}
@@ -171,6 +173,7 @@ function Dashboard({ status, onTask, onView }: { status: Status | null; onTask: 
   const cards = [['Posts', status?.posts ?? 0, 'posts'], ['Drafts', status?.drafts ?? 0, 'drafts'], ['Categories', status?.categories ?? 0, 'taxonomy'], ['Tags', status?.tags ?? 0, 'taxonomy'], ['Pages', status?.pages ?? 0, 'pages'], ['Uncommitted', status?.changedFiles ?? 0, 'git']] as const;
   return <><section className="stats">{cards.map(([label, value, target]) => <button className="stat" key={label} onClick={() => onView(target as View)}><span>{label}</span><strong>{value}</strong></button>)}</section><section className="grid two"><article className="card"><h2>Quick actions</h2><div className="actions"><button className="primary" onClick={() => onView('posts')}>New post</button><button onClick={() => onTask('generate')}>Generate</button><button onClick={() => onTask('preview')}>Preview</button><button className="danger" onClick={() => onTask('deploy')}>Deploy</button></div></article><article className="card"><h2>Project status</h2><dl><dt>Theme</dt><dd>{status?.theme || '—'}</dd><dt>Source branch</dt><dd>{status?.branch || '—'}</dd><dt>Local preview</dt><dd>{status?.preview ? <a href={status.preview.url} target="_blank">{status.preview.url}</a> : 'Not running'}</dd></dl></article></section></>;
 }
+function DashboardDetails({ status }: { status: Status | null }) { return <section className="grid two dashboard-details"><article className="card"><h2>Recently modified posts</h2>{status?.recentPosts.length ? status.recentPosts.map(post => <div className="list-row" key={post.path}><span>{post.title}</span><small>{new Date(post.mtimeMs).toLocaleDateString()}</small></div>) : <p>No posts yet.</p>}</article><article className="card"><h2>Recent tasks</h2>{status?.recentTasks.length ? status.recentTasks.map(task => <div className="list-row" key={task.id}><span>{task.type}</span><b>{task.status}</b></div>) : <p>No tasks in this session.</p>}</article></section>; }
 
 function ContentView({ items, query, onQuery, onOpen, onRecycle, onTransition }: { items: Document[]; query: string; onQuery: (value: string) => void; onOpen: (item: Document) => void; onRecycle: (item: Document) => void; onTransition: (item: Document) => void }) { return <section className="card"><div className="toolbar"><input value={query} onChange={event => onQuery(event.target.value)} placeholder="Search titles" /><span>{items.length} items</span></div><table><thead><tr><th>Title</th><th>Categories / tags</th><th>Updated</th><th /></tr></thead><tbody>{items.map(item => <tr key={item.path}><td><button className="text-button" onClick={() => onOpen(item)}>{item.title}</button><small>{item.path}</small></td><td>{[...(Array.isArray(item.data.categories) ? item.data.categories : item.data.categories ? [item.data.categories] : []), ...(Array.isArray(item.data.tags) ? item.data.tags : item.data.tags ? [item.data.tags] : [])].map(String).map(tag => <span className="chip" key={tag}>{tag}</span>)}</td><td>{new Date(item.mtimeMs).toLocaleString()}</td><td><div className="actions"><button onClick={() => onOpen(item)}>Edit</button>{item.kind !== 'page' && <button onClick={() => onTransition(item)}>{item.kind === 'draft' ? 'Publish' : 'To draft'}</button>}<button className="danger" onClick={() => onRecycle(item)}>Delete</button></div></td></tr>)}</tbody></table></section>; }
 function RecycleBin({ items, onRestore, onDelete }: { items: RecycleItem[]; onRestore: (item: RecycleItem) => void; onDelete: (item: RecycleItem) => void }) { return <section className="card"><div className="toolbar"><h2>Recycle bin</h2><span>{items.length} item(s)</span></div>{items.length ? <table><thead><tr><th>Original path</th><th>Deleted</th><th>Files</th><th /></tr></thead><tbody>{items.map(item => <tr key={item.ticket}><td><b>{item.kind}</b><small>{item.originalPath}</small></td><td>{new Date(item.deletedAt).toLocaleString()}</td><td>{item.items.join(', ')}</td><td><div className="actions"><button onClick={() => onRestore(item)}>Restore</button><button className="danger" onClick={() => onDelete(item)}>Delete permanently</button></div></td></tr>)}</tbody></table> : <p>No recycled content.</p>}</section>; }

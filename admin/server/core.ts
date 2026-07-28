@@ -466,6 +466,6 @@ export class ProjectContext {
   async status() {
     const [posts, drafts, pages, taxonomy, gitStatus, branch] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.listContent('page'), this.taxonomy(), this.git(['status', '--porcelain=v1']), this.git(['branch', '--show-current'])]);
     const config = await this.readYaml('_config.yml');
-    return { root: this.root, theme: config.value.theme ?? '', posts: posts.length, drafts: drafts.length, pages: pages.length, categories: taxonomy.categories.length, tags: taxonomy.tags.length, branch: branch.stdout.trim(), changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length, preview: this.preview ? { port: this.preview.port, url: `http://127.0.0.1:${this.preview.port}/` } : null, recentTasks: [...this.tasks.values()].slice(-6).reverse() };
+    return { root: this.root, theme: config.value.theme ?? '', posts: posts.length, drafts: drafts.length, pages: pages.length, categories: taxonomy.categories.length, tags: taxonomy.tags.length, branch: branch.stdout.trim(), changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length, preview: this.preview ? { port: this.preview.port, url: `http://127.0.0.1:${this.preview.port}/` } : null, recentPosts: posts.slice(0, 5).map(post => ({ title: post.title, path: post.path, mtimeMs: post.mtimeMs })), recentTasks: [...this.tasks.values()].slice(-6).reverse() };
   }
 }

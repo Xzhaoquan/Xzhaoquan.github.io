@@ -26,6 +26,7 @@ button:hover { border-color: #7ba5eb; }
 .notice { display: flex; justify-content: space-between; padding: 10px 12px; margin-bottom: 16px; color: #1f4d94; border-radius: 8px; background: #e7f0ff; }
 .notice button { padding: 0; border: 0; background: transparent; }
 .stats { display: grid; grid-template-columns: repeat(6, minmax(110px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.dashboard-details { margin-top: 16px; }
 .stat, .card { border: 1px solid #e0e6f0; border-radius: 10px; background: #fff; }
 .stat { padding: 16px; text-align: left; }
 .stat span { display: block; color: #6b778b; font-size: 13px; }
@@ -63,6 +64,15 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .config-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .config-fields label { display: grid; gap: 5px; color: #56657a; font-size: 13px; }
 .theme-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.dark { color: #dce5f5; background: #101827; }
+.dark .main, .dark .markdown, .dark .preview, .dark .editor-modal { background: #101827; }
+.dark .card, .dark .stat, .dark button, .dark input, .dark textarea, .dark select { color: #dce5f5; border-color: #34445d; background: #172033; }
+.dark .stat span, .dark header p, .dark .muted, .dark small, .dark .toolbar span, .dark th, .dark .card dt { color: #9eafc7; }
+.dark .list-row, .dark th, .dark td, .dark .task-log details { border-color: #34445d; }
+.dark .text-button { color: #8ab4ff; }
+.dark .chip { color: #b7d0ff; background: #253b60; }
+.dark .editor-tabs, .dark .markdown .cm-gutters { background: #172033; border-color: #34445d; }
+.dark .markdown .cm-content, .dark .markdown .cm-editor { color: #dce5f5; background: #101827; }
 .task-log { grid-column: 1 / -1; }
 .task-log details { padding: 10px 0; border-top: 1px solid #e4e9f1; }
 .task-log pre { max-height: 180px; padding: 12px; overflow: auto; color: #d8e4f5; white-space: pre-wrap; border-radius: 7px; background: #121a27; }
