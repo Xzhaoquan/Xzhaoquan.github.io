@@ -15,7 +15,11 @@ type Status = { root: string; theme: string; posts: number; drafts: number; page
 type View = 'dashboard' | 'posts' | 'drafts' | 'taxonomy' | 'pages' | 'media' | 'config' | 'theme' | 'publish' | 'git' | 'logs';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`/api${path}`, { headers: { 'content-type': 'application/json', ...(init?.headers ?? {}) }, ...init });
+  const headers = new Headers(init?.headers);
+  // Do not send an empty JSON body declaration for body-less requests (such as
+  // stopping preview). Fastify correctly rejects an empty JSON request body.
+  if (init?.body && !headers.has('content-type')) headers.set('content-type', 'application/json');
+  const response = await fetch(`/api${path}`, { ...init, headers });
   const payload = await response.json();
   if (!response.ok || !payload.ok) throw new Error(payload.error?.message ?? 'Operation failed.');
   return payload.data as T;
@@ -55,8 +59,25 @@ function App() {
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
   const saveTimer = useRef<number | undefined>();
+  const watchedTask = useRef<{ id: string; type: string } | null>(null);
 
-  const refreshStatus = async () => { const [next, allTasks] = await Promise.all([api<Status>('/project/status'), api<Task[]>('/tasks')]); setStatus(next); setTasks(allTasks); };
+  const refreshStatus = async () => {
+    const [next, allTasks] = await Promise.all([api<Status>('/project/status'), api<Task[]>('/tasks')]);
+    setStatus(next); setTasks(allTasks);
+    const watched = watchedTask.current;
+    const task = watched && allTasks.find(item => item.id === watched.id);
+    if (!watched || !task) return;
+    if (task.status === 'succeeded') {
+      setNotice(`${watched.type} completed successfully.`);
+      watchedTask.current = null;
+    } else if (task.status === 'failed') {
+      setNotice(`${watched.type} failed. Open Task logs for details.`);
+      watchedTask.current = null;
+    } else if (watched.type === 'preview' && task.status === 'running') {
+      setNotice(`Preview started successfully${next.preview ? `: ${next.preview.url}` : '.'}`);
+      watchedTask.current = null;
+    }
+  };
   const loadContent = async (kind: Kind, closeEditor = true) => { setDocuments(await api<Document[]>(`/content/${kind}`)); if (closeEditor) setEditor(null); };
   const action = async (work: () => Promise<void>) => { try { setBusy(true); await work(); await refreshStatus(); } catch (error) { setNotice(error instanceof Error ? error.message : 'Operation failed.'); } finally { setBusy(false); } };
 
@@ -91,7 +112,7 @@ function App() {
     await action(async () => { const created = await api<Document>(`/content/${currentKind}`, { method: 'POST', body: JSON.stringify({ title, data: currentKind !== 'page' ? { categories: [], tags: [] } : {} }) }); await loadContent(currentKind, false); setEditor(created); });
   };
   const recycle = async (item: Document) => { if (!window.confirm(`Move “${item.title}” to the recycle bin?`)) return; await action(async () => { await api(`/content/${item.kind}/recycle`, { method: 'POST', body: JSON.stringify({ path: item.path, includeAssets: true }) }); await loadContent(item.kind); }); };
-  const runTask = async (type: 'clean' | 'generate' | 'deploy' | 'preview') => { if (busy) return; const confirmed = type !== 'deploy' || window.confirm('Deploy will publish generated files to the configured deployment branch (main). Continue?'); if (!confirmed) return; await action(async () => { await api(`/tasks/${type}`, { method: 'POST', body: JSON.stringify({ confirmed, port: 4000 }) }); setNotice(`${type} task started.`); }); };
+  const runTask = async (type: 'clean' | 'generate' | 'deploy' | 'preview') => { if (busy) return; const confirmed = type !== 'deploy' || window.confirm('Deploy will publish generated files to the configured deployment branch (main). Continue?'); if (!confirmed) return; await action(async () => { const task = await api<Task>(`/tasks/${type}`, { method: 'POST', body: JSON.stringify({ confirmed, port: 4000 }) }); watchedTask.current = { id: task.id, type }; setNotice(`${type} task started.`); }); };
   const upload = async (file: File) => {
     if (!editor) return setNotice('Open a post before uploading media.');
     const form = new FormData(); form.append('postPath', editor.path); form.append('file', file);
@@ -107,7 +128,7 @@ function App() {
       {view === 'taxonomy' && <Taxonomy data={taxonomy} />}
       {view === 'media' && <Media editor={editor} onUpload={upload} />}
       {(view === 'config' || view === 'theme') && <ConfigEditor raw={rawConfig} onChange={setRawConfig} onSave={() => action(async () => { await api(view === 'config' ? '/config' : '/theme', { method: 'PUT', body: JSON.stringify({ raw: rawConfig }) }); setNotice('YAML validated, backed up, and saved.'); })} />}
-      {view === 'publish' && <Publish status={status} tasks={tasks} busy={busy} onTask={runTask} onStop={() => action(async () => { await api('/preview/stop', { method: 'POST' }); })} />}
+      {view === 'publish' && <Publish status={status} tasks={tasks} busy={busy} onTask={runTask} onStop={() => action(async () => { await api('/preview/stop', { method: 'POST' }); setNotice('Preview stopped successfully.'); })} />}
       {view === 'git' && <GitView data={git} onRefresh={() => action(async () => setGit(await api('/git/status')))} onPull={() => { if (window.confirm('Pull updates for the current source branch?')) action(async () => { await api('/git/pull', { method: 'POST', body: JSON.stringify({ confirmed: true }) }); setNotice('Pull complete.'); }); }} onCommit={(paths, message) => action(async () => { await api('/git/commit', { method: 'POST', body: JSON.stringify({ paths, message, confirmed: true }) }); setNotice('Commit complete.'); setGit(await api('/git/status')); })} onPush={() => { if (window.confirm('Push the current source branch?')) action(async () => { await api('/git/push', { method: 'POST', body: JSON.stringify({ confirmed: true }) }); setNotice('Push complete.'); }); }} />}
       {view === 'logs' && <TaskLogs tasks={tasks} />}
       {editor && <Editor item={editor} onChange={scheduleSave} onSave={() => action(() => save())} onClose={() => setEditor(null)} onUpload={upload} />}

@@ -327,7 +327,10 @@ export class ProjectContext {
       this.preview = { process: child, port: selectedPort, taskId: id };
       child.on('close', code => {
         if (this.preview?.taskId !== id) return;
-        task.status = code === null || code === 0 ? 'stopped' : 'failed';
+        // taskkill ends the Windows process tree with a non-zero code. That is
+        // an expected result after the user explicitly chose Stop preview.
+        const wasStoppedByUser = task.status === 'stopping';
+        task.status = wasStoppedByUser || code === null || code === 0 ? 'stopped' : 'failed';
         task.exitCode = code ?? 0;
         task.endedAt = new Date().toISOString();
         if (task.status === 'failed') this.appendLog('task.preview', 'failed', { id, exitCode: task.exitCode }).catch(() => undefined);
@@ -337,11 +340,19 @@ export class ProjectContext {
     return task;
   }
 
-  stopPreview() {
-    if (!this.preview) throw new AppError('PREVIEW_NOT_RUNNING', 'No preview service is currently managed by the admin.');
-    const task = this.tasks.get(this.preview.taskId); if (task) task.status = 'stopping';
-    this.preview.process.kill();
-    return { stopped: true };
+  async stopPreview() {
+    // A stop request is intentionally idempotent: a double click or a delayed
+    // UI refresh must not surface a spurious backend error to the user.
+    if (!this.preview) return { stopped: true, alreadyStopped: true };
+    const preview = this.preview;
+    const task = this.tasks.get(preview.taskId); if (task) task.status = 'stopping';
+    if (process.platform === 'win32' && preview.process.pid) {
+      const result = await this.command('taskkill', ['/PID', String(preview.process.pid), '/T', '/F']);
+      if (result.code !== 0 && task) task.stderr += result.stderr || result.stdout;
+    } else {
+      preview.process.kill();
+    }
+    return { stopped: true, alreadyStopped: false };
   }
 
   async status() {

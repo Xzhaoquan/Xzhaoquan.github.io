@@ -56,7 +56,7 @@ app.put('/api/theme', async request => { const config = await context.readYaml('
 
 app.get('/api/tasks', async () => success([...context.tasks.values()].reverse()));
 app.post('/api/tasks/:type', async request => { const params = request.params as { type: string }; const body = z.object({ confirmed: z.boolean().optional(), port: z.number().int().min(1024).max(65535).optional() }).parse(request.body ?? {}); if (!['clean', 'generate', 'deploy', 'preview'].includes(params.type)) throw new AppError('TASK_FORBIDDEN', '该命令不在允许的任务列表内。'); return success(await context.runTask(params.type as 'clean' | 'generate' | 'deploy' | 'preview', body.confirmed, body.port)); });
-app.post('/api/preview/stop', async () => success(context.stopPreview()));
+app.post('/api/preview/stop', async () => success(await context.stopPreview()));
 
 app.get('/api/git/status', async () => { const [status, branch, log] = await Promise.all([context.git(['status', '--porcelain=v1']), context.git(['branch', '--show-current']), context.git(['log', '-8', '--pretty=format:%h%x09%s%x09%ci'])]); return success({ branch: branch.stdout.trim(), changes: status.stdout.split('\n').filter(Boolean), log: log.stdout.split('\n').filter(Boolean).map(line => { const [hash, message, date] = line.split('\t'); return { hash, message, date }; }) }); });
 app.get('/api/git/diff', async request => { const query = request.query as { path?: string }; const args = ['diff', '--']; if (query.path) args.push(query.path); return success(await context.git(args)); });
