@@ -103,6 +103,18 @@ describe('ProjectContext', () => {
     await expect(context.getContent('draft', draft.path)).rejects.toBeDefined();
   });
 
+  it('copies content and safely renames a page path', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Original', body: 'Keep body' });
+    const copy = await context.copyContent('post', post.path, { title: 'Copy' });
+    expect(copy.title).toBe('Copy');
+    expect(copy.body).toContain('Keep body');
+    const page = await context.createContent('page', { title: 'About' });
+    const renamed = await context.renameContent('page', page.path, 'company/about');
+    expect(renamed.path).toBe('source/company/about.md');
+    await expect(context.renameContent('page', renamed.path, '../outside')).rejects.toMatchObject({ code: 'INVALID_PATH' } satisfies Partial<AppError>);
+  });
+
   it('permanently removes an item from the recycle bin only when requested', async () => {
     const { context } = await fixture();
     const created = await context.createContent('post', { title: 'Discard me' });

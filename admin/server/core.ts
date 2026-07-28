@@ -274,6 +274,35 @@ export class ProjectContext {
     return this.parseDocument(to, destination);
   }
 
+  async copyContent(kind: ContentKind, relativePath: string, input: { title: string; filename?: string }) {
+    const source = await this.getContent(kind, relativePath);
+    const data: Record<string, unknown> = { ...source.data, title: input.title };
+    delete data.date; delete data.updated;
+    const copy = await this.createContent(kind, { title: input.title, filename: input.filename, data, body: source.body });
+    await this.appendLog('content.copy', 'succeeded', { kind, from: relativePath, path: copy.path });
+    return copy;
+  }
+
+  async renameContent(kind: ContentKind, relativePath: string, targetRelativePath: string) {
+    const source = await this.resolve(relativePath);
+    this.assertContentPath(kind, source);
+    const normalized = path.normalize(targetRelativePath).replace(/\\/g, '/').replace(/^\/+/, '');
+    if (!normalized || normalized.split('/').includes('..') || path.isAbsolute(normalized)) throw new AppError('INVALID_PATH', 'The new path must remain inside the content directory.');
+    const filename = normalized.endsWith('.md') ? normalized : `${normalized}.md`;
+    const target = path.resolve(this.root, CONTENT_DIRS[kind], filename);
+    this.assertContentPath(kind, target);
+    if (await exists(target)) throw new AppError('ALREADY_EXISTS', 'Content already exists at the selected path.');
+    const sourceAssets = path.join(path.dirname(source), path.basename(source, '.md'));
+    const targetAssets = path.join(path.dirname(target), path.basename(target, '.md'));
+    if (await exists(targetAssets)) throw new AppError('ALREADY_EXISTS', 'An asset directory already exists at the selected path.');
+    await ensureDirectory(path.dirname(target));
+    await fs.rename(source, target);
+    if (await exists(sourceAssets)) await fs.rename(sourceAssets, targetAssets);
+    const outputPath = path.relative(this.root, target).replace(/\\/g, '/');
+    await this.appendLog('content.rename', 'succeeded', { kind, from: relativePath, path: outputPath });
+    return this.parseDocument(kind, target);
+  }
+
   async listRecycle() {
     const base = path.join(this.metaRoot, 'recycle-bin');
     const entries = await fs.readdir(base, { withFileTypes: true });
