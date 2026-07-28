@@ -39,6 +39,8 @@ button:hover { border-color: #7ba5eb; }
 .card dd { margin: 0; font-weight: 600; }
 .toolbar { margin-bottom: 15px; }
 .toolbar input { max-width: 280px; }
+.content-filters { justify-content: flex-start; flex-wrap: wrap; }
+.content-filters select { min-width: 150px; }
 .toolbar span { color: #6b778b; font-size: 13px; }
 input, textarea, select { padding: 8px; color: #172033; font: inherit; border: 1px solid #cdd6e4; border-radius: 6px; background: #fff; }
 table { width: 100%; border-collapse: collapse; }
