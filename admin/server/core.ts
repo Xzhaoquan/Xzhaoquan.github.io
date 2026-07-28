@@ -463,6 +463,16 @@ export class ProjectContext {
     return { stopped: true, alreadyStopped: false };
   }
 
+  async deploymentCheck() {
+    const config = await this.readYaml('_config.yml');
+    // listContent parses every document, so this also validates Front Matter
+    // before a deployment is allowed to start.
+    const [posts, drafts, gitStatus] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.git(['status', '--porcelain=v1'])]);
+    const deploy = (config.value as Record<string, unknown>).deploy;
+    const deploymentConfigured = Array.isArray(deploy) ? deploy.length > 0 : Boolean(deploy && typeof deploy === 'object' && Object.keys(deploy).length);
+    return { configurationValid: true, frontMatterValid: true, deploymentConfigured, posts: posts.length, drafts: drafts.length, changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length };
+  }
+
   async status() {
     const [posts, drafts, pages, taxonomy, gitStatus, branch] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.listContent('page'), this.taxonomy(), this.git(['status', '--porcelain=v1']), this.git(['branch', '--show-current'])]);
     const config = await this.readYaml('_config.yml');

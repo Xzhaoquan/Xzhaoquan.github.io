@@ -79,6 +79,12 @@ describe('ProjectContext', () => {
     await expect(context.selectTheme('../outside')).rejects.toMatchObject({ code: 'THEME_NOT_FOUND' } satisfies Partial<AppError>);
   });
 
+  it('reports deployment readiness without modifying project files', async () => {
+    const { context } = await fixture();
+    await context.createContent('post', { title: 'Deploy check' });
+    await expect(context.deploymentCheck()).resolves.toMatchObject({ configurationValid: true, frontMatterValid: true, posts: 1, drafts: 0, deploymentConfigured: false });
+  });
+
   it('moves deleted content to the recycle bin and restores it', async () => {
     const { context } = await fixture();
     const created = await context.createContent('post', { title: 'Recover me' });

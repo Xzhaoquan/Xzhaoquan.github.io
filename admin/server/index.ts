@@ -65,6 +65,7 @@ app.post('/api/theme/select', async request => success(await context.selectTheme
 app.get('/api/logs', async request => { const query = request.query as { limit?: string }; const limit = Math.min(500, Math.max(1, Number(query.limit ?? 100) || 100)); return success(await context.listOperationLogs(limit)); });
 
 app.get('/api/tasks', async () => success([...context.tasks.values()].reverse()));
+app.get('/api/deploy/check', async () => success(await context.deploymentCheck()));
 app.post('/api/tasks/:type', async request => { const params = request.params as { type: string }; const body = z.object({ confirmed: z.boolean().optional(), port: z.number().int().min(1024).max(65535).optional() }).parse(request.body ?? {}); if (!['clean', 'generate', 'deploy', 'preview'].includes(params.type)) throw new AppError('TASK_FORBIDDEN', '该命令不在允许的任务列表内。'); return success(await context.runTask(params.type as 'clean' | 'generate' | 'deploy' | 'preview', body.confirmed, body.port)); });
 app.post('/api/preview/stop', async () => success(await context.stopPreview()));
 
