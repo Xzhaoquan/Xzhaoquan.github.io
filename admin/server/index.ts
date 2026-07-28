@@ -57,6 +57,7 @@ app.post('/api/content/:kind/transition', async request => { const params = requ
 app.get('/api/taxonomy', async () => success(await context.taxonomy()));
 app.patch('/api/taxonomy/:field', async request => { const field = z.enum(['categories', 'tags']).parse((request.params as { field: string }).field); const body = z.object({ action: z.enum(['rename', 'delete']), name: z.string().min(1), replacement: z.string().optional() }).parse(request.body); return success(await context.updateTaxonomy(field, body.action, body.name, body.replacement)); });
 app.get('/api/media', async request => { const query = request.query as { postPath?: string }; if (!query.postPath) throw new AppError('INVALID_PATH', '缺少文章路径。'); return success(await context.mediaFor(query.postPath)); });
+app.get('/api/media/library', async () => success(await context.mediaLibrary()));
 app.post('/api/media/upload', async request => {
   const data = await request.file(); if (!data) throw new AppError('NO_FILE', '请选择需要上传的文件。');
   const postPath = String((data.fields as Record<string, { value?: unknown }>).postPath?.value ?? ''); if (!postPath) throw new AppError('INVALID_PATH', 'Missing article path.');

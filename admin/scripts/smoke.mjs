@@ -8,6 +8,7 @@ const endpoints = [
   '/api/content/draft',
   '/api/content/page',
   '/api/taxonomy',
+  '/api/media/library',
   '/api/recycle',
   '/api/config',
   '/api/config/common',

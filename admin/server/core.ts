@@ -358,6 +358,12 @@ export class ProjectContext {
     return Promise.all(entries.filter(entry => entry.isFile()).map(async entry => { const stat = await fs.stat(path.join(assets, entry.name)); return { name: entry.name, size: stat.size, used: markdown.includes(entry.name), path: path.relative(this.root, path.join(assets, entry.name)).replace(/\\/g, '/') }; }));
   }
 
+  async mediaLibrary() {
+    const posts = await this.listContent('post');
+    const groups = await Promise.all(posts.map(async post => (await this.mediaFor(post.path)).map(asset => ({ ...asset, postPath: post.path, postTitle: post.title }))));
+    return groups.flat().sort((left, right) => left.postTitle.localeCompare(right.postTitle) || left.name.localeCompare(right.name));
+  }
+
   async uploadMedia(postPath: string, filename: string, bytes: Buffer) {
     const full = await this.resolve(postPath);
     this.assertContentPath('post', full);
