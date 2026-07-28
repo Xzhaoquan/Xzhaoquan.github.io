@@ -5,8 +5,9 @@
 
 ## Start
 
-On Windows, double-click `start_databoard.cmd` in the project root. Reopening
-the script detects an existing panel and only opens the browser.
+On Windows, double-click `start_databoard.cmd` in the project root. On macOS
+and Linux, run `./start_databoard.sh`. Reopening either launcher detects an
+existing panel and only opens the browser.
 
 From a terminal (Windows, macOS, or Linux):
 
