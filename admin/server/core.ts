@@ -11,6 +11,19 @@ const META_DIR = '.hexo-admin';
 const CONTENT_DIRS: Record<ContentKind, string> = { post: 'source/_posts', draft: 'source/_drafts', page: 'source' };
 const BLOCKED_SEGMENTS = new Set(['.git', 'node_modules', 'public', '.deploy_git', META_DIR, 'admin']);
 const SECRET_PATTERN = /(token|secret|password|private[_-]?key|access[_-]?key)\s*[:=]\s*([^\s,]+)/gi;
+const frontMatterOptions = {
+  engines: {
+    yaml: {
+      parse: (source: string): object => (YAML.parse(source) ?? {}) as object,
+      stringify: (value: object) => YAML.stringify(value)
+    }
+  }
+};
+
+function hexoDate(value = new Date()) {
+  const pad = (part: number) => String(part).padStart(2, '0');
+  return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())} ${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
+}
 
 export class AppError extends Error {
   constructor(public readonly code: string, message: string, public readonly changed = false, public readonly recovery?: string) { super(message); }
@@ -106,7 +119,7 @@ export class ProjectContext {
   private async parseDocument(kind: ContentKind, fullPath: string): Promise<ContentDocument> {
     const raw = await fs.readFile(fullPath, 'utf8');
     let parsed: ReturnType<typeof matter>;
-    try { parsed = matter(raw); } catch { throw new AppError('INVALID_FRONT_MATTER', `Cannot parse Front Matter in ${path.basename(fullPath)}.`, false, 'Fix the YAML Front Matter and try again.'); }
+    try { parsed = matter(raw, frontMatterOptions); } catch { throw new AppError('INVALID_FRONT_MATTER', `Cannot parse Front Matter in ${path.basename(fullPath)}.`, false, 'Fix the YAML Front Matter and try again.'); }
     const stat = await fs.stat(fullPath);
     const relative = path.relative(this.root, fullPath).replace(/\\/g, '/');
     return { id: digest(relative), kind, path: relative, title: String(parsed.data.title ?? path.basename(fullPath, '.md')), data: parsed.data as Record<string, unknown>, body: parsed.content, mtimeMs: stat.mtimeMs, hash: digest(raw), createdAt: typeof parsed.data.date === 'string' ? parsed.data.date : undefined, updatedAt: typeof parsed.data.updated === 'string' ? parsed.data.updated : undefined };
@@ -137,8 +150,8 @@ export class ProjectContext {
     const base = path.join(this.root, CONTENT_DIRS[kind]);
     const target = path.join(base, file);
     if (await exists(target)) throw new AppError('ALREADY_EXISTS', 'Content with the same filename already exists.');
-    const data = { title: input.title, ...(kind !== 'page' ? { date: new Date().toISOString() } : {}), ...(input.data ?? {}) };
-    await this.writeAtomic(target, matter.stringify(input.body ?? '', data));
+    const data = { title: input.title, ...(kind !== 'page' ? { date: hexoDate() } : {}), ...(input.data ?? {}) };
+    await this.writeAtomic(target, matter.stringify(input.body ?? '', data, frontMatterOptions));
     await this.appendLog('content.create', 'succeeded', { kind, path: path.relative(this.root, target) });
     return this.parseDocument(kind, target);
   }
@@ -150,7 +163,7 @@ export class ProjectContext {
     if (input.hash && input.hash !== digest(current)) throw new AppError('EXTERNAL_MODIFICATION', 'The file changed outside the admin, so saving was cancelled.', false, 'Reload the content and merge your changes.');
     const snapshot = path.join(this.metaRoot, 'snapshots', `${Date.now()}-${path.basename(full)}`);
     await fs.writeFile(snapshot, current, 'utf8');
-    await this.writeAtomic(full, matter.stringify(input.body, input.data));
+    await this.writeAtomic(full, matter.stringify(input.body, input.data, frontMatterOptions));
     await this.appendLog('content.save', 'succeeded', { kind, path: relativePath, snapshot: path.relative(this.root, snapshot) });
     return this.parseDocument(kind, full);
   }

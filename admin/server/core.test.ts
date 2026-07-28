@@ -21,7 +21,15 @@ describe('ProjectContext', () => {
     const created = await context.createContent('post', { title: 'First post', data: { categories: ['Guide'], custom_field: 'keep-me' }, body: '# Hello' });
     const read = await context.getContent('post', created.path);
     expect(read.data.custom_field).toBe('keep-me');
+    expect(read.data.date).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
     expect(read.body).toContain('# Hello');
+  });
+
+  it('does not convert legacy Hexo dates to ISO strings when saving', async () => {
+    const { context } = await fixture();
+    const created = await context.createContent('post', { title: 'Legacy date', data: { date: '2022-09-10 22:04:20' } });
+    const saved = await context.saveContent('post', created.path, { data: created.data, body: `${created.body}\nUpdated`, hash: created.hash });
+    expect(saved.data.date).toBe('2022-09-10 22:04:20');
   });
 
   it('rejects traversal beyond the project root', async () => {
