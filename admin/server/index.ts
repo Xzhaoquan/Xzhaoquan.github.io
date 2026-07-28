@@ -80,7 +80,14 @@ app.post('/api/git/commit', async request => { const body = z.object({ paths: z.
 app.post('/api/git/:operation', async request => { const operation = (request.params as { operation: string }).operation; const body = z.object({ confirmed: z.boolean() }).parse(request.body); if (!body.confirmed) throw new AppError('CONFIRMATION_REQUIRED', 'Git 远端操作需要确认。'); if (!['pull', 'push'].includes(operation)) throw new AppError('GIT_OPERATION_FORBIDDEN', '不允许该 Git 操作。'); const result = await context.git([operation]); if (result.code !== 0) throw new AppError(`GIT_${operation.toUpperCase()}_FAILED`, result.stderr || result.stdout, false, '请在外部 Git 工具中处理冲突后重试。'); return success(result); });
 
 const clientDist = path.resolve(here, '../dist');
-try { await fs.access(clientDist); await app.register(staticFiles, { root: clientDist, wildcard: false }); app.get('/*', async (_request, reply) => reply.sendFile('index.html')); } catch { /* Vite dev server serves the client. */ }
+try {
+  await fs.access(clientDist);
+  // Vite emits hashed bundles below /assets. Register that directory explicitly
+  // before the SPA fallback, otherwise a request for a JavaScript bundle is
+  // answered with index.html and the production panel renders blank.
+  await app.register(staticFiles, { root: path.join(clientDist, 'assets'), prefix: '/assets/' });
+  app.get('/*', async (_request, reply) => reply.type('text/html; charset=utf-8').send(await fs.readFile(path.join(clientDist, 'index.html'), 'utf8')));
+} catch { /* Vite dev server serves the client. */ }
 
 await app.listen({ host: '127.0.0.1', port: Number(process.env.HEXO_ADMIN_PORT ?? 4190) });
 console.log(`Hexo Admin API: http://127.0.0.1:${process.env.HEXO_ADMIN_PORT ?? 4190}`);

@@ -39,7 +39,14 @@ for (const endpoint of endpoints) {
     const response = await request(endpoint);
     if (response.status < 200 || response.status >= 300) throw new Error(`HTTP ${response.status}`);
     const body = response.body;
-    if (endpoint === '/' && !body.includes('<div id="root">')) throw new Error('missing frontend mount node');
+    if (endpoint === '/') {
+      if (!body.includes('<div id="root">')) throw new Error('missing frontend mount node');
+      const script = body.match(/<script[^>]+src="([^"]+)"/i)?.[1];
+      if (!script) throw new Error('missing frontend JavaScript bundle');
+      const asset = await request(script);
+      if (asset.status < 200 || asset.status >= 300 || asset.body.includes('<div id="root">')) throw new Error('frontend JavaScript bundle was not served');
+      console.log(`OK  ${script}`);
+    }
     if (endpoint.startsWith('/api/') && !body.includes('"ok":true')) throw new Error('unexpected API response envelope');
     console.log(`OK  ${endpoint}`);
   } catch (error) {
