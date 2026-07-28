@@ -45,8 +45,18 @@ th, td { padding: 12px 8px; font-size: 14px; text-align: left; vertical-align: t
 th { color: #68758a; font-weight: 500; }
 td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; }
 .chip { display: inline-block; padding: 3px 7px; margin: 1px; color: #315c9d; font-size: 12px; border-radius: 99px; background: #edf3ff; }
+.chip { border: 0; cursor: pointer; }
+.active-chip { color: #fff; background: #2563d9; }
 .list-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e7ebf1; }
 .list-row:last-child { border: 0; }
+.taxonomy-button { width: 100%; font: inherit; text-align: left; border-width: 0 0 1px; border-radius: 0; }
+.taxonomy-button:hover { color: #165cc2; background: #f5f8ff; }
+.taxonomy-results { margin-top: 16px; }
+.taxonomy-results h2 { margin-bottom: 5px; }
+.related-posts { display: grid; gap: 8px; }
+.related-post { display: grid; gap: 4px; width: 100%; padding: 11px; text-align: left; border-color: #e2e8f2; }
+.related-post:hover { border-color: #7ba5eb; background: #f7faff; }
+.related-post small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dropzone { display: grid; min-height: 180px; color: #526279; border: 2px dashed #b9c7da; border-radius: 9px; place-items: center; cursor: pointer; }
 .dropzone input, .file-button input { display: none; }
 .editor-card textarea { width: 100%; height: 62vh; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; }
