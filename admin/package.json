@@ -9,7 +9,8 @@
     "dev:client": "vite --host 127.0.0.1",
     "build": "tsc -p tsconfig.server.json && vite build",
     "start": "node dist-server/index.js",
-    "test": "vitest run --exclude dist-server/**"
+    "test": "vitest run --exclude dist-server/**",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.4",

@@ -10,7 +10,8 @@
     "admin:dev": "npm --prefix admin run dev",
     "admin:build": "npm --prefix admin run build",
     "admin:start": "npm --prefix admin run start",
-    "admin:test": "npm --prefix admin run test"
+    "admin:test": "npm --prefix admin run test",
+    "admin:smoke": "npm --prefix admin run smoke"
   },
   "hexo": {
     "version": "6.2.0"

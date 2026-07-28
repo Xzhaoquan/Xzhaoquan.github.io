@@ -8,7 +8,7 @@
 On Windows, double-click `start_databoard.cmd` in the project root. Reopening
 the script detects an existing panel and only opens the browser.
 
-From a terminal:
+From a terminal (Windows, macOS, or Linux):
 
 ```bash
 npm install
@@ -56,8 +56,12 @@ Git:
 ```bash
 npm run admin:build
 npm run admin:test
+npm run admin:smoke
 ```
 
 The test suite covers path restriction, Front Matter preservation, atomic file
 writes, conflict detection, recovery, taxonomy updates, media operations,
 configuration protection and deployment readiness checks.
+
+`admin:smoke` is a read-only runtime check. Run it after the panel is started;
+it verifies the browser shell and all primary read APIs on `127.0.0.1:4190`.
