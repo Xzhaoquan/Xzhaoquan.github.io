@@ -16,7 +16,7 @@ export interface ContentDocument {
 export interface TaskRecord {
   id: string;
   type: 'clean' | 'generate' | 'deploy' | 'preview';
-  status: 'running' | 'stopping' | 'succeeded' | 'failed' | 'stopped';
+  status: 'starting' | 'running' | 'stopping' | 'succeeded' | 'failed' | 'stopped';
   startedAt: string;
   endedAt?: string;
   stdout: string;

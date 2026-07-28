@@ -488,13 +488,19 @@ export class ProjectContext {
       while (selectedPort < port + 20 && !await this.portAvailable(selectedPort)) selectedPort += 1;
       if (selectedPort === port + 20) throw new AppError('PORT_UNAVAILABLE', `Ports ${port}-${port + 19} are already in use.`, false, 'Stop a preview service or choose another port.');
     }
-    const id = randomUUID(); const task: TaskRecord = { id, type, status: 'running', startedAt: new Date().toISOString(), stdout: selectedPort === port ? '' : `Port ${port} is in use; preview moved to ${selectedPort}.\n`, stderr: '' };
+    const id = randomUUID(); const task: TaskRecord = { id, type, status: type === 'preview' ? 'starting' : 'running', startedAt: new Date().toISOString(), stdout: selectedPort === port ? '' : `Port ${port} is in use; preview moved to ${selectedPort}.\n`, stderr: '' };
     this.tasks.set(id, task);
     if (type === 'deploy') { void this.runDeployment(task); return task; }
     const args = type === 'preview' ? ['server', '--ip', '127.0.0.1', '--port', String(selectedPort)] : [type];
     const invocation = this.hexoInvocation(args);
     const child = spawn(invocation.command, invocation.args, { cwd: this.root, shell: false, windowsHide: true });
-    const append = (field: 'stdout' | 'stderr', value: Buffer) => { task[field] += redact(value.toString()); };
+    const append = (field: 'stdout' | 'stderr', value: Buffer) => {
+      const output = redact(value.toString());
+      task[field] += output;
+      // Hexo forks the HTTP server after the child process exists. Do not tell
+      // the UI that preview is ready until its own startup message is seen.
+      if (type === 'preview' && field === 'stdout' && /Hexo is running at\s+http/i.test(output)) task.status = 'running';
+    };
     child.stdout?.on('data', data => append('stdout', data)); child.stderr?.on('data', data => append('stderr', data));
     child.on('error', error => { task.status = 'failed'; task.stderr += error.message; task.endedAt = new Date().toISOString(); });
     child.on('close', code => { if (type !== 'preview') { task.status = code === 0 ? 'succeeded' : 'failed'; task.exitCode = code ?? 1; task.endedAt = new Date().toISOString(); this.appendLog(`task.${type}`, task.status === 'succeeded' ? 'succeeded' : 'failed', { id, exitCode: task.exitCode }).catch(() => undefined); } });
@@ -544,6 +550,7 @@ export class ProjectContext {
     const [posts, drafts, pages, taxonomy, gitStatus, branch, gitVersion, packageRaw] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.listContent('page'), this.taxonomy(), this.git(['status', '--porcelain=v1']), this.git(['branch', '--show-current']), this.git(['--version']), fs.readFile(path.join(this.root, 'package.json'), 'utf8')]);
     const config = await this.readYaml('_config.yml');
     const packageJson = JSON.parse(packageRaw) as { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
-    return { root: this.root, theme: config.value.theme ?? '', posts: posts.length, drafts: drafts.length, pages: pages.length, categories: taxonomy.categories.length, tags: taxonomy.tags.length, branch: branch.stdout.trim(), changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length, preview: this.preview ? { port: this.preview.port, url: `http://127.0.0.1:${this.preview.port}/` } : null, recentPosts: posts.slice(0, 5).map(post => ({ title: post.title, path: post.path, mtimeMs: post.mtimeMs })), recentTasks: [...this.tasks.values()].slice(-6).reverse(), environment: { node: process.version, platform: `${process.platform}/${process.arch}`, git: gitVersion.stdout.trim() || 'unavailable', hexo: packageJson.dependencies?.hexo ?? packageJson.devDependencies?.hexo ?? 'unknown', adminUrl: `http://127.0.0.1:${process.env.HEXO_ADMIN_PORT ?? 4190}` } };
+    const previewTask = this.preview ? this.tasks.get(this.preview.taskId) : undefined;
+    return { root: this.root, theme: config.value.theme ?? '', posts: posts.length, drafts: drafts.length, pages: pages.length, categories: taxonomy.categories.length, tags: taxonomy.tags.length, branch: branch.stdout.trim(), changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length, preview: this.preview && previewTask?.status === 'running' ? { port: this.preview.port, url: `http://127.0.0.1:${this.preview.port}/` } : null, recentPosts: posts.slice(0, 5).map(post => ({ title: post.title, path: post.path, mtimeMs: post.mtimeMs })), recentTasks: [...this.tasks.values()].slice(-6).reverse(), environment: { node: process.version, platform: `${process.platform}/${process.arch}`, git: gitVersion.stdout.trim() || 'unavailable', hexo: packageJson.dependencies?.hexo ?? packageJson.devDependencies?.hexo ?? 'unknown', adminUrl: `http://127.0.0.1:${process.env.HEXO_ADMIN_PORT ?? 4190}` } };
   }
 }
