@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>RS485_RS232_RS422_TTL之间的区别 | Hexo</title>
+  <meta name="description" content="RS-485、RS-232、RS-422和TTL的详解以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：  1. TTL（Transistor-Transistor Logic）逻辑电平定义 逻辑0（LOW）： 电压范围：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统） 典型场景：微控制器GPIO输出低电平，传感器信号接地。   逻辑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RS485_RS232_RS422_TTL之间的区别">
+<meta property="og:url" content="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="RS-485、RS-232、RS-422和TTL的详解以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：  1. TTL（Transistor-Transistor Logic）逻辑电平定义 逻辑0（LOW）： 电压范围：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统） 典型场景：微控制器GPIO输出低电平，传感器信号接地。   逻辑">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-23T06:21:04.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:03:56.688Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="RS485">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">昵称</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Web Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository/">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books/">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links/">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLASH/" rel="tag">FLASH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FreeRTOS/" rel="tag">FreeRTOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MODBUS/" rel="tag">MODBUS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NR-MICRO-SHELL/" rel="tag">NR_MICRO_SHELL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PID/" rel="tag">PID</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RS485/" rel="tag">RS485</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" rel="tag">网络通信</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/ESP32-TLS/" style="font-size: 13.83px;">ESP32_TLS</a> <a href="/tags/FLASH/" style="font-size: 13px;">FLASH</a> <a href="/tags/FreeRTOS/" style="font-size: 13px;">FreeRTOS</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.5px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MODBUS/" style="font-size: 13px;">MODBUS</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/NR-MICRO-SHELL/" style="font-size: 13px;">NR_MICRO_SHELL</a> <a href="/tags/PID/" style="font-size: 13px;">PID</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/RS485/" style="font-size: 13px;">RS485</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.17px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.33px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" style="font-size: 13px;">网络通信</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">十二月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2026/07/28/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2026-07-28T02:03:56.702Z" itemprop="datePublished">2026-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E5%A6%82%E4%BD%95%E5%9C%A8%E4%B8%BB%E4%BB%93%E5%BA%93%E4%B8%AD%E6%B7%BB%E5%8A%A0%E5%AD%90%E4%BB%93%E5%BA%93/" class="title">git如何在主仓库中添加子仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T12:03:28.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E6%B7%BB%E5%8A%A0%E5%88%B0%E4%BA%91%E4%BB%93%E5%BA%93/" class="title">git本地仓库添加到云仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T11:49:13.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/%E4%BD%8D%E7%BD%AE%E5%BC%8FPID%E5%92%8C%E5%A2%9E%E9%87%8F%E5%BC%8FPID%E8%AF%A6%E8%A7%A3/" class="title">位置式PID和增量式PID详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T13:12:04.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" class="title">modbus详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T06:54:36.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-RS485-RS232-RS422-TTL之间的区别" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RS485_RS232_RS422_TTL之间的区别
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" class="article-date">
+	  <time datetime="2025-03-23T06:21:04.000Z" itemprop="datePublished">2025-03-23</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/RS485/" rel="tag">RS485</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="RS-485、RS-232、RS-422和TTL的详解"><a href="#RS-485、RS-232、RS-422和TTL的详解" class="headerlink" title="RS-485、RS-232、RS-422和TTL的详解"></a>RS-485、RS-232、RS-422和TTL的详解</h2><p>以下是RS-485、RS-232、RS-422和TTL在表示二进制数据（0和1）时的详细对比：</p>
+<hr>
+<h3 id="1-TTL（Transistor-Transistor-Logic）"><a href="#1-TTL（Transistor-Transistor-Logic）" class="headerlink" title="1. TTL（Transistor-Transistor Logic）"></a><strong>1. TTL（Transistor-Transistor Logic）</strong></h3><h4 id="逻辑电平定义"><a href="#逻辑电平定义" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑0（LOW）</strong>：<ul>
+<li><strong>电压范围</strong>：0V ~ 0.8V（5V系统）或 0V ~ 0.4V（3.3V系统）</li>
+<li><strong>典型场景</strong>：微控制器GPIO输出低电平，传感器信号接地。</li>
+</ul>
+</li>
+<li><strong>逻辑1（HIGH）</strong>：<ul>
+<li><strong>电压范围</strong>：2V ~ 5V（5V系统）或 1.7V ~ 3.3V（3.3V系统）</li>
+<li><strong>典型场景</strong>：微控制器输出高电平，LED点亮信号。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点"><a href="#物理层特点" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：单端电压信号（单线传输）</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>单工</strong>：单向传输（如传感器到MCU）。</li>
+<li><strong>半双工</strong>：同一线路分时双向传输（需协议控制方向）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MCU_TX ----[电阻]----&gt; MCU_RX（直接连接，无电平转换）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键问题</strong>：</p>
+<ul>
+<li><strong>电平兼容性</strong>：5V TTL与3.3V系统需电平转换（如分压电阻或缓冲器）。</li>
+<li><strong>抗干扰差</strong>：长距离易受噪声影响，通常限制在1米以内。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-RS-232"><a href="#2-RS-232" class="headerlink" title="2. RS-232"></a><strong>2. RS-232</strong></h3><h4 id="逻辑电平定义-1"><a href="#逻辑电平定义-1" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑0（SPACE）</strong>：<ul>
+<li><strong>电压范围</strong>：+3V ~ +15V（驱动端）</li>
+<li><strong>接收阈值</strong>：&gt; +3V 识别为0。</li>
+</ul>
+</li>
+<li><strong>逻辑1（MARK）</strong>：<ul>
+<li><strong>电压范围</strong>：-3V ~ -15V（驱动端）</li>
+<li><strong>接收阈值</strong>：&lt; -3V 识别为1。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-1"><a href="#物理层特点-1" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：单端负逻辑（高电压为0，低电压为1）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>全双工</strong>：独立TX（发送）和RX（接收）线路。</li>
+<li><strong>典型连接</strong>：DB9接口（如计算机串口）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MCU_TX --[MAX232]--&gt; RS-232_TX  </span><br><span class="line">MCU_RX &lt;--[MAX232]-- RS-232_RX</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键问题</strong>：</p>
+<ul>
+<li><strong>电平转换</strong>：需专用芯片（如MAX232）转换TTL与RS-232电平。</li>
+<li><strong>传输距离</strong>：最长15米（速率≤20kbps时）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-RS-422"><a href="#3-RS-422" class="headerlink" title="3. RS-422"></a><strong>3. RS-422</strong></h3><h4 id="逻辑电平定义-2"><a href="#逻辑电平定义-2" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑1</strong>：<ul>
+<li><strong>差分电压</strong>：B线电压 &gt; A线电压 +0.2V（典型差值±2V）。</li>
+</ul>
+</li>
+<li><strong>逻辑0</strong>：<ul>
+<li><strong>差分电压</strong>：A线电压 &gt; B线电压 +0.2V。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-2"><a href="#物理层特点-2" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：差分信号（两条线传输一个信号）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>全双工</strong>：两对差分线（TX+&#x2F;- 和 RX+&#x2F;-）。</li>
+<li><strong>拓扑结构</strong>：点对点或1发多收（最多10个接收器）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Driver_A+ ---- 120Ω ---- Receiver_A+  </span><br><span class="line">Driver_A- ---- 120Ω ---- Receiver_A-</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键优势</strong>：</p>
+<ul>
+<li><strong>抗干扰</strong>：差分信号抵消共模噪声，适合工业环境。</li>
+<li><strong>长距离</strong>：支持1200米（速率≤100kbps时）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-RS-485"><a href="#4-RS-485" class="headerlink" title="4. RS-485"></a><strong>4. RS-485</strong></h3><h4 id="逻辑电平定义-3"><a href="#逻辑电平定义-3" class="headerlink" title="逻辑电平定义"></a><strong>逻辑电平定义</strong></h4><ul>
+<li><strong>逻辑1（Idle&#x2F;MARK）</strong>：<ul>
+<li><strong>差分电压</strong>：B线电压 &gt; A线电压 +0.2V（典型差值±1.5V）。</li>
+</ul>
+</li>
+<li><strong>逻辑0（Active&#x2F;SPACE）</strong>：<ul>
+<li><strong>差分电压</strong>：A线电压 &gt; B线电压 +0.2V。</li>
+</ul>
+</li>
+</ul>
+<h4 id="物理层特点-3"><a href="#物理层特点-3" class="headerlink" title="物理层特点"></a><strong>物理层特点</strong></h4><ul>
+<li><p><strong>信号类型</strong>：差分信号（半双工）或两对差分线（全双工）。</p>
+</li>
+<li><p><strong>传输方式</strong>：</p>
+<ul>
+<li><strong>半双工</strong>：单对差分线（A&#x2F;B），分时双向传输。</li>
+<li><strong>全双工</strong>：两对差分线（需4线制）。</li>
+</ul>
+</li>
+<li><p><strong>典型电路</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Node1_A ----|  </span><br><span class="line">            |---- Bus_A ---- 120Ω终端电阻  </span><br><span class="line">Node1_B ----|  </span><br><span class="line">            |---- Bus_B ---- 120Ω终端电阻  </span><br><span class="line">Node2_A ----|  </span><br><span class="line">Node2_B ----|</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>关键配置</strong>：</p>
+<ul>
+<li><strong>终端电阻</strong>：总线两端需120Ω电阻，防止信号反射。</li>
+<li><strong>偏置电阻</strong>：空闲时通过电阻拉高B线、拉低A线，避免总线悬空。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-对比总结"><a href="#5-对比总结" class="headerlink" title="5. 对比总结"></a><strong>5. 对比总结</strong></h3><table>
+<thead>
+<tr>
+<th align="left"><strong>特性</strong></th>
+<th align="left"><strong>TTL</strong></th>
+<th align="left"><strong>RS-232</strong></th>
+<th align="left"><strong>RS-422</strong></th>
+<th align="left"><strong>RS-485</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>逻辑表示</strong></td>
+<td align="left">单端电压</td>
+<td align="left">单端负逻辑</td>
+<td align="left">差分电压</td>
+<td align="left">差分电压</td>
+</tr>
+<tr>
+<td align="left"><strong>0的电压</strong></td>
+<td align="left">0V~0.8V (5V)</td>
+<td align="left">+3V~+15V</td>
+<td align="left">A &gt; B +0.2V</td>
+<td align="left">A &gt; B +0.2V</td>
+</tr>
+<tr>
+<td align="left"><strong>1的电压</strong></td>
+<td align="left">2V~5V (5V)</td>
+<td align="left">-3V~-15V</td>
+<td align="left">B &gt; A +0.2V</td>
+<td align="left">B &gt; A +0.2V</td>
+</tr>
+<tr>
+<td align="left"><strong>抗噪能力</strong></td>
+<td align="left">弱</td>
+<td align="left">中等</td>
+<td align="left">强</td>
+<td align="left">极强</td>
+</tr>
+<tr>
+<td align="left"><strong>拓扑结构</strong></td>
+<td align="left">点对点</td>
+<td align="left">点对点</td>
+<td align="left">1主多从</td>
+<td align="left">多主多从总线</td>
+</tr>
+<tr>
+<td align="left"><strong>最大节点数</strong></td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">10</td>
+<td align="left">32~256</td>
+</tr>
+<tr>
+<td align="left"><strong>典型应用</strong></td>
+<td align="left">板级通信</td>
+<td align="left">老式外设</td>
+<td align="left">工业长距离点对点</td>
+<td align="left">工业Modbus网络</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="6-实际应用示例"><a href="#6-实际应用示例" class="headerlink" title="6. 实际应用示例"></a><strong>6. 实际应用示例</strong></h3><h4 id="TTL直接通信"><a href="#TTL直接通信" class="headerlink" title="TTL直接通信"></a><strong>TTL直接通信</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// Arduino发送逻辑1（5V）</span><br><span class="line">digitalWrite(TX_PIN, HIGH);</span><br><span class="line">// 接收端检测</span><br><span class="line">if (digitalRead(RX_PIN) == HIGH) &#123; /* 处理逻辑1 */ &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RS-485半双工控制"><a href="#RS-485半双工控制" class="headerlink" title="RS-485半双工控制"></a><strong>RS-485半双工控制</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 使用MAX485芯片控制收发</span><br><span class="line">void sendData(uint8_t *data, int len) &#123;</span><br><span class="line">    digitalWrite(DE_PIN, HIGH);  // 使能发送模式</span><br><span class="line">    delayMicroseconds(10);       // 等待芯片稳定</span><br><span class="line">    Serial.write(data, len);     // 发送数据</span><br><span class="line">    digitalWrite(DE_PIN, LOW);   // 切回接收模式</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RS-232电平转换"><a href="#RS-232电平转换" class="headerlink" title="RS-232电平转换"></a><strong>RS-232电平转换</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 使用MAX232芯片连接MCU与PC</span><br><span class="line">void setup() &#123;</span><br><span class="line">    Serial.begin(9600);         // MCU串口（TTL电平）</span><br><span class="line">    // MAX232自动转换电平到±10V</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="7-注意事项"><a href="#7-注意事项" class="headerlink" title="7. 注意事项"></a><strong>7. 注意事项</strong></h3><ul>
+<li><strong>TTL电平兼容</strong>：<ul>
+<li>5V TTL连接3.3V系统时，需串联330Ω电阻或使用电平转换器（如TXB0108）。</li>
+</ul>
+</li>
+<li><strong>RS-485终端电阻</strong>：<ul>
+<li>在总线两端并联120Ω电阻，位置尽量靠近线路末端。</li>
+</ul>
+</li>
+<li><strong>RS-232地线</strong>：<ul>
+<li>必须连接GND线，否则可能因共模电压损坏接口。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2025/03/23/RS485-RS232-RS422-TTL%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/" title="RS485_RS232_RS422_TTL之间的区别" target="_blank" rel="external">http://example.com/2025/03/23/RS485-RS232-RS422-TTL之间的区别/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">昵称</span><small class="ml-1x">Web Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" title="modbus详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2025/03/23/FreeRTOS%E9%94%81%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E4%BA%92%E6%96%A5%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE/" title="FreeRTOS锁机制实现互斥资源访问"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

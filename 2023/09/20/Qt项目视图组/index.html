@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Qt项目视图组 | Hexo</title>
+  <meta name="description" content="Qt项目视图组QListViewQListView 类提供模型上的列表或图标视图。   QListView 以简单的非分层列表或图标集合的形式显示存储在模型中的项。   QT 提供了一些现成的 models 用于处理数据项（这些是 Qt 处理数据模型的精华，如果用到Qt 数据模型，下面这些是经常要用到的）：    QStringListModel 用于存储简单的 QString 列表。   QSt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt项目视图组">
+<meta property="og:url" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="Qt项目视图组QListViewQListView 类提供模型上的列表或图标视图。   QListView 以简单的非分层列表或图标集合的形式显示存储在模型中的项。   QT 提供了一些现成的 models 用于处理数据项（这些是 Qt 处理数据模型的精华，如果用到Qt 数据模型，下面这些是经常要用到的）：    QStringListModel 用于存储简单的 QString 列表。   QSt">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230920162231401.png">
+<meta property="og:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921102401703.png">
+<meta property="og:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921104143600.png">
+<meta property="og:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921105547479.png">
+<meta property="og:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921135931326.png">
+<meta property="article:published_time" content="2023-09-20T08:03:13.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:03:56.686Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="Qt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230920162231401.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">昵称</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Web Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository/">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books/">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links/">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLASH/" rel="tag">FLASH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FreeRTOS/" rel="tag">FreeRTOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MODBUS/" rel="tag">MODBUS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NR-MICRO-SHELL/" rel="tag">NR_MICRO_SHELL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PID/" rel="tag">PID</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RS485/" rel="tag">RS485</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" rel="tag">网络通信</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/ESP32-TLS/" style="font-size: 13.83px;">ESP32_TLS</a> <a href="/tags/FLASH/" style="font-size: 13px;">FLASH</a> <a href="/tags/FreeRTOS/" style="font-size: 13px;">FreeRTOS</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.5px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MODBUS/" style="font-size: 13px;">MODBUS</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/NR-MICRO-SHELL/" style="font-size: 13px;">NR_MICRO_SHELL</a> <a href="/tags/PID/" style="font-size: 13px;">PID</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/RS485/" style="font-size: 13px;">RS485</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.17px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.33px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" style="font-size: 13px;">网络通信</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">十二月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2026/07/28/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2026-07-28T02:03:56.702Z" itemprop="datePublished">2026-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E5%A6%82%E4%BD%95%E5%9C%A8%E4%B8%BB%E4%BB%93%E5%BA%93%E4%B8%AD%E6%B7%BB%E5%8A%A0%E5%AD%90%E4%BB%93%E5%BA%93/" class="title">git如何在主仓库中添加子仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T12:03:28.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E6%B7%BB%E5%8A%A0%E5%88%B0%E4%BA%91%E4%BB%93%E5%BA%93/" class="title">git本地仓库添加到云仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T11:49:13.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/%E4%BD%8D%E7%BD%AE%E5%BC%8FPID%E5%92%8C%E5%A2%9E%E9%87%8F%E5%BC%8FPID%E8%AF%A6%E8%A7%A3/" class="title">位置式PID和增量式PID详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T13:12:04.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" class="title">modbus详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T06:54:36.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Qt项目视图组" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Qt项目视图组
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/" class="article-date">
+	  <time datetime="2023-09-20T08:03:13.000Z" itemprop="datePublished">2023-09-20</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Qt/" rel="tag">Qt</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="Qt项目视图组"><a href="#Qt项目视图组" class="headerlink" title="Qt项目视图组"></a>Qt项目视图组</h2><h3 id="QListView"><a href="#QListView" class="headerlink" title="QListView"></a>QListView</h3><p>QListView 类提供模型上的列表或图标视图。  </p>
+<p>QListView 以简单的非分层列表或图标集合的形式显示存储在模型中的项。  </p>
+<p>QT 提供了一些现成的 models 用于处理数据项（这些是 Qt 处理数据模型的精华，如果用到Qt 数据模型，下面这些是经常要用到的）：  </p>
+<ul>
+<li>QStringListModel 用于存储简单的 QString 列表。  </li>
+<li>QStandardItemModel 管理复杂的树型结构数据项，每项都可以包含任意数据。  </li>
+<li>QDirModel 提供本地文件系统中的文件与目录信息。  </li>
+<li>QSqlQueryModel, QSqlTableModel,QSqlRelationTableModel 用来访问数据库。</li>
+</ul>
+<h5 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line">    listView = new QListView(this);</span><br><span class="line">    this-&gt;setCentralWidget(listView);</span><br><span class="line"></span><br><span class="line">    QStringList strList;</span><br><span class="line">    strList&lt;&lt;&quot;高三(1)班&quot;&lt;&lt;&quot;高三(2)班&quot;&lt;&lt;&quot;高三(3)班&quot;&lt;&lt;&quot;高三(4)班&quot;;</span><br><span class="line"></span><br><span class="line">    /*实例化字符串模型*/</span><br><span class="line">    stringListModel = new QStringListModel(strList);</span><br><span class="line">    /*向表中插入一段数据*/</span><br><span class="line">    listView-&gt;setModel(stringListModel);</span><br><span class="line">    /*设置视图为图标模式*/</span><br><span class="line">    listView-&gt;setViewMode(QListView::IconMode);</span><br><span class="line">    /*设置为不可拖动*/</span><br><span class="line">    listView-&gt;setDragEnabled(false);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ui示例"><a href="#ui示例" class="headerlink" title="ui示例"></a>ui示例</h5><p><img src="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230920162231401.png" alt="image-20230920162231401"></p>
+<h3 id="QTreeView"><a href="#QTreeView" class="headerlink" title="QTreeView"></a>QTreeView</h3><p>QTreeView 类提供树视图的默认模型&#x2F;视图实现。 QTreeView 实现了模型项的树表示。  要使一个 QTreeView 能够显示数据，需要构造一个 model 并设置 QTreeView。 Qt 提供了一些类型的 Model，其中最常用的就是这个<br>QStandardItemModel 类，一般可以满足大部分需求。  另外，表头的内容也由这个 model管理，setHorizontalHeaderLabels  函数可以设置共有多少列、每列文字。一级标题直接使用 appendRow方法添加到 model 上，次级标题则是添加到第一个父级标题上，依次构成父子关系树。  </p>
+<h5 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QStandardItem&gt;</span><br><span class="line">#include &lt;QStandardItemModel&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line">    treeView = new QTreeView(this);</span><br><span class="line"></span><br><span class="line">    this-&gt;setCentralWidget(treeView);</span><br><span class="line"></span><br><span class="line">    /*构建modle*/</span><br><span class="line">    QStandardItemModel *sdiModule = new QStandardItemModel(treeView);</span><br><span class="line">    sdiModule-&gt;setHorizontalHeaderLabels(QStringList()&lt;&lt;QStringLiteral(&quot;标题&quot;)</span><br><span class="line">                                         &lt;&lt; QStringLiteral(&quot;名称&quot;));</span><br><span class="line">    for(int i = 0;i &lt; 5;i ++)&#123;</span><br><span class="line">        /*一级标题*/</span><br><span class="line">        QList &lt;QStandardItem *&gt; items1;</span><br><span class="line">        QStandardItem *item1 = new QStandardItem(QString::number(i));</span><br><span class="line">        QStandardItem *item2 = new QStandardItem(QStringLiteral(&quot;一级标题&quot;));</span><br><span class="line">        /*添加项1*/</span><br><span class="line">        items1.append(item1);</span><br><span class="line">        /*添加项2*/</span><br><span class="line">        items1.append(item2);</span><br><span class="line">        /*将items1添加到sdiModule*/</span><br><span class="line">        sdiModule-&gt;appendRow(items1);</span><br><span class="line">        for(int j = 0;j &lt; 5;j ++)&#123;</span><br><span class="line">            /*在一级标题后面插入二级标题*/</span><br><span class="line">            QList &lt;QStandardItem *&gt; items2;</span><br><span class="line">            QStandardItem * item3 = new QStandardItem(QString::number(j));</span><br><span class="line">            QStandardItem * item4 = new QStandardItem(QStringLiteral(&quot;二级标题&quot;));</span><br><span class="line"></span><br><span class="line">            items2.append(item3);</span><br><span class="line">            items2.append(item4);</span><br><span class="line">            item1-&gt;appendRow(items2);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    treeView-&gt;setModel(sdiModule);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ui示例-1"><a href="#ui示例-1" class="headerlink" title="ui示例"></a>ui示例</h5><p><img src="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921102401703.png" alt="image-20230921102401703"></p>
+<h3 id="QTableView"><a href="#QTableView" class="headerlink" title="QTableView"></a>QTableView</h3><p>QTableView 类提供了表视图的默认模型&#x2F;视图实现。 QTableView 实现了一个表视图，用于显示来自模型的项。  Qt 提供了一些类型的 Model，其中最常用的就是这个QStandardItemModel 类，一般可以满足大部分需求。另外，表头的内容也由这个 model 管理，setHorizontalHeaderLabels 函数可以设置共有多少列、每列文字。  </p>
+<h5 id="代码示例-2"><a href="#代码示例-2" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QStandardItemModel&gt;</span><br><span class="line">#include &lt;QHeaderView&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line"></span><br><span class="line">    tableView = new QTableView(this);</span><br><span class="line">    this-&gt;setCentralWidget(tableView);</span><br><span class="line"></span><br><span class="line">    /*显示网格线*/</span><br><span class="line">    tableView-&gt;setShowGrid(true);</span><br><span class="line"></span><br><span class="line">    QStandardItemModel *model = new QStandardItemModel();</span><br><span class="line">    QStringList lables = QObject::tr(&quot;语文,数学,英语&quot;).simplified().split(&quot;,&quot;);</span><br><span class="line">    /*设置水平头标签*/</span><br><span class="line">    model-&gt;setHorizontalHeaderLabels(lables);</span><br><span class="line">    /*model插入内容*/</span><br><span class="line">    QStandardItem * item = 0;</span><br><span class="line">    for(int i = 0;i &lt; 5;i ++)&#123;</span><br><span class="line">        item = new  QStandardItem(&quot;80&quot;);</span><br><span class="line">        model-&gt;setItem(i,0,item);</span><br><span class="line">        item = new  QStandardItem(&quot;90&quot;);</span><br><span class="line">        model-&gt;setItem(i,1,item);</span><br><span class="line">        item = new  QStandardItem(&quot;100&quot;);</span><br><span class="line">        model-&gt;setItem(i,2,item);</span><br><span class="line">    &#125;</span><br><span class="line">    /*将model设置给tableView*/</span><br><span class="line">    tableView-&gt;setModel(model);</span><br><span class="line">    /*平均分列*/</span><br><span class="line">    tableView-&gt;horizontalHeader()-&gt;setSectionResizeMode(QHeaderView::Stretch);</span><br><span class="line">    /*平均分行*/</span><br><span class="line">    tableView-&gt;verticalHeader()-&gt;setSectionResizeMode(QHeaderView::Stretch);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ui示例-2"><a href="#ui示例-2" class="headerlink" title="ui示例"></a>ui示例</h5><p><img src="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921104143600.png" alt="image-20230921104143600"></p>
+<h3 id="QColumnView"><a href="#QColumnView" class="headerlink" title="QColumnView"></a>QColumnView</h3><p>QColumnView 在许多 QListViews 中显示一个模型，每个 QListViews 对应树中的每个层次结构。这有时被称为级联列表。 QColumnView 类是模型&#x2F;视图类之一，是 Qt 模型&#x2F;视图框架的一部分。   </p>
+<h5 id="代码示例-3"><a href="#代码示例-3" class="headerlink" title="代码示例"></a>代码示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QStandardItem&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    this-&gt;setGeometry(0,0,800,480);</span><br><span class="line"></span><br><span class="line">    columnView = new QColumnView(this);</span><br><span class="line">    this-&gt;setCentralWidget(columnView);</span><br><span class="line"></span><br><span class="line">    QStandardItemModel *model = new QStandardItemModel(this);</span><br><span class="line">    /*省份*/</span><br><span class="line">    QStandardItem *province = new QStandardItem(&quot;四川省&quot;);</span><br><span class="line">    /*城市*/</span><br><span class="line">    QStandardItem *city1 = new QStandardItem(&quot;成都市&quot;);</span><br><span class="line">    QStandardItem *city2 = new QStandardItem(&quot;绵阳市&quot;);</span><br><span class="line">    /*将城市添加到省份*/</span><br><span class="line">    province-&gt;appendRow(city1);</span><br><span class="line">    province-&gt;appendRow(city2);</span><br><span class="line"></span><br><span class="line">    /*区域*/</span><br><span class="line">    QStandardItem *area1 = new QStandardItem(&quot;武侯区&quot;);</span><br><span class="line">    QStandardItem *area2 = new QStandardItem(&quot;金牛区&quot;);</span><br><span class="line">    /*将区域添加到城市*/</span><br><span class="line">    city1-&gt;appendRow(area1);</span><br><span class="line">    city1-&gt;appendRow(area2);</span><br><span class="line"></span><br><span class="line">    model-&gt;appendRow(province);</span><br><span class="line">    columnView-&gt;setModel(model);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ui示例-3"><a href="#ui示例-3" class="headerlink" title="ui示例"></a>ui示例</h5><p><img src="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921105547479.png" alt="image-20230921105547479"></p>
+<h3 id="QundoView"><a href="#QundoView" class="headerlink" title="QundoView"></a>QundoView</h3><p>QUndoView 类显示 QUndoStack 的内容。 QUndoView 是一个QListView，它显示在撤销堆栈上推送的命令列表。总是选择最近执行的命令。选择不同的命令会导致调用QUndoStack::setIndex()，将文档的状态向后或向前滚动到新命令。可以使用setStack()显式地设置堆栈。  </p>
+<h5 id="代码示例-4"><a href="#代码示例-4" class="headerlink" title="代码示例"></a>代码示例</h5><p>mainWindow.cpp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;mainwindow.h&quot;</span><br><span class="line">#include &lt;QDebug&gt;</span><br><span class="line"></span><br><span class="line">MainWindow::MainWindow(QWidget *parent)</span><br><span class="line">    : QMainWindow(parent)</span><br><span class="line">&#123;</span><br><span class="line">    /* 设置主窗体显示的位置与大小 */</span><br><span class="line">    this-&gt;setGeometry(0, 0, 800, 480);</span><br><span class="line"></span><br><span class="line">    /* 实例一个水平布局，用于左侧按钮区域与右侧历史记录面板 */</span><br><span class="line">    hLayout = new QHBoxLayout();</span><br><span class="line"></span><br><span class="line">    /* 实例一个水平布局，用于左侧标签与按钮 */</span><br><span class="line">    vLayout = new QVBoxLayout();</span><br><span class="line"></span><br><span class="line">    /* 主Widget, 因为MainWindow自带一个布局，</span><br><span class="line">     * 我们要新建一个Widget容纳新布局</span><br><span class="line">     */</span><br><span class="line">    mainWidget = new QWidget();</span><br><span class="line"></span><br><span class="line">    /* 用于存放命令行栈 */</span><br><span class="line">    undoStack = new QUndoStack(this);</span><br><span class="line"></span><br><span class="line">    /* 用于容纳左侧标签与按钮布局 */</span><br><span class="line">    widget = new QWidget();</span><br><span class="line"></span><br><span class="line">    /* 历史记录面板实例化 */</span><br><span class="line">    undoView = new QUndoView(undoStack);</span><br><span class="line"></span><br><span class="line">    /* 实例化一个按钮，用于加一操作 */</span><br><span class="line">    pushButton = new QPushButton();</span><br><span class="line"></span><br><span class="line">    /* 标签，用于显示计算结果 */</span><br><span class="line">    label = new QLabel();</span><br><span class="line"></span><br><span class="line">    /* 设置widget的大小 */</span><br><span class="line">    widget-&gt;setMinimumSize(400, 480);</span><br><span class="line"></span><br><span class="line">    /* 将两个widget添加到水平布局 */</span><br><span class="line">    hLayout-&gt;addWidget(widget);</span><br><span class="line">    hLayout-&gt;addWidget(undoView);</span><br><span class="line"></span><br><span class="line">    /* 初始化count的值 */</span><br><span class="line">    count = 0;</span><br><span class="line"></span><br><span class="line">    /* 显示初始化计算结果 */</span><br><span class="line">    label-&gt;setText(&quot;计算结果：&quot; + QString::number(count));</span><br><span class="line">    label-&gt;setAlignment(Qt::AlignCenter);</span><br><span class="line"></span><br><span class="line">    /* 左侧布局 */</span><br><span class="line">    vLayout-&gt;addWidget(label);</span><br><span class="line">    vLayout-&gt;addWidget(pushButton);</span><br><span class="line"></span><br><span class="line">    /* 左侧布局控件的高度设置 */</span><br><span class="line">    label-&gt;setMaximumHeight(this-&gt;height() / 5);</span><br><span class="line">    pushButton-&gt;setMaximumHeight(this-&gt;height() / 5);</span><br><span class="line"></span><br><span class="line">    /* 按钮文件设置 */</span><br><span class="line">    pushButton-&gt;setText(&quot;加1&quot;);</span><br><span class="line"></span><br><span class="line">    /* 设置widget的布局为vLayout */</span><br><span class="line">    widget-&gt;setLayout(vLayout);</span><br><span class="line"></span><br><span class="line">    /* 将主窗体的布局设置为hLayout */</span><br><span class="line">    mainWidget-&gt;setLayout(hLayout);</span><br><span class="line"></span><br><span class="line">    /* 设置mainWidget为主窗体的居中widget */</span><br><span class="line">    this-&gt;setCentralWidget(mainWidget);</span><br><span class="line"></span><br><span class="line">    /* 信号槽连接，按钮点击，执行加一操作 */</span><br><span class="line">    connect(pushButton, SIGNAL(clicked()), this,</span><br><span class="line">            SLOT(pushButtonClieked()));</span><br><span class="line"></span><br><span class="line">    /* 信号槽连接，历史记录项index发生变化，显示count大小 */</span><br><span class="line">    connect(undoStack, SIGNAL(indexChanged(int) ),</span><br><span class="line">            this, SLOT(showCountValue(int)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* 入栈操作会自动调用addCommand的redo */</span><br><span class="line">void MainWindow::pushButtonClieked()</span><br><span class="line">&#123;</span><br><span class="line">    /* 变量值加一 */</span><br><span class="line">    count++;</span><br><span class="line"></span><br><span class="line">    /* value指向count的地址 */</span><br><span class="line">    int *value = &amp;count;</span><br><span class="line"></span><br><span class="line">    /* 用重写的addCommand类实例化 */</span><br><span class="line">    QUndoCommand *add = new addCommand(value);</span><br><span class="line"></span><br><span class="line">    /* 入栈 */</span><br><span class="line">    undoStack-&gt;push(add);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void MainWindow::showCountValue(int)</span><br><span class="line">&#123;</span><br><span class="line">    /* 标签用于显示计算结果 */</span><br><span class="line">    label-&gt;setText(&quot;计算结果：&quot; + QString::number(count));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>command.h</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#ifndef COMMAND_H</span><br><span class="line">#define COMMAND_H</span><br><span class="line"></span><br><span class="line">#include &lt;QUndoCommand&gt;</span><br><span class="line">#include &lt;QObject&gt;</span><br><span class="line"></span><br><span class="line">class addCommand : public QUndoCommand</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    addCommand(int *value, QUndoCommand* parent = 0);</span><br><span class="line">    ~addCommand();</span><br><span class="line"></span><br><span class="line">    /* 重写重做与撤回方法 */</span><br><span class="line">    void redo() override;</span><br><span class="line">    void undo() override;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    /* 新的count */</span><br><span class="line">    int *new_count;</span><br><span class="line"></span><br><span class="line">    /* 旧的count */</span><br><span class="line">    int old_count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">#endif // COMMAND_H</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>command.cpp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;command.h&quot;</span><br><span class="line">#include &lt;QDebug&gt;</span><br><span class="line"></span><br><span class="line">addCommand::addCommand(int *value, QUndoCommand *parent)</span><br><span class="line">&#123;</span><br><span class="line">    /* 使用Q_UNUSED,避免未使用的数据类型 */</span><br><span class="line">    Q_UNUSED(parent);</span><br><span class="line"></span><br><span class="line">    /* undoView显示的操作信息 */</span><br><span class="line">    setText(&quot;进行了加1操作&quot;);</span><br><span class="line"></span><br><span class="line">    /* value的地址赋值给new_count */</span><br><span class="line">    new_count = value;</span><br><span class="line"></span><br><span class="line">    /* 让构造函数传过来的*new_count的值赋值给old_count */</span><br><span class="line">    old_count = *new_count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* 执行stack push时或者重做操作时会自动调用 */</span><br><span class="line">void addCommand::redo()</span><br><span class="line">&#123;</span><br><span class="line">    /* 重新赋值给new_count */</span><br><span class="line">    *new_count = old_count;</span><br><span class="line"></span><br><span class="line">    /* 打印出*new_count的值 */</span><br><span class="line">    qDebug()&lt;&lt;&quot;redo:&quot;&lt;&lt;*new_count&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* 回撤操作时执行 */</span><br><span class="line">void addCommand::undo()</span><br><span class="line">&#123;</span><br><span class="line">    /* 回撤操作每次应减一 */</span><br><span class="line">    (*new_count)--;</span><br><span class="line"></span><br><span class="line">    /* 打印出*new_count的值 */</span><br><span class="line">    qDebug()&lt;&lt;&quot;undo:&quot;&lt;&lt;*new_count&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">addCommand::~addCommand()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ui示例-4"><a href="#ui示例-4" class="headerlink" title="ui示例"></a>ui示例</h5><p><img src="/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/image-20230921135931326.png" alt="image-20230921135931326"></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2023/09/20/Qt%E9%A1%B9%E7%9B%AE%E8%A7%86%E5%9B%BE%E7%BB%84/" title="Qt项目视图组" target="_blank" rel="external">http://example.com/2023/09/20/Qt项目视图组/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">昵称</span><small class="ml-1x">Web Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/09/20/%E4%BB%A3%E7%A0%81%E7%BC%96%E7%A8%8B%E8%A7%84%E8%8C%83/" title="代码编程规范"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2023/09/20/Qt%E5%AE%B9%E5%99%A8/" title="Qt容器"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

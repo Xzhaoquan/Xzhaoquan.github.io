@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>esp32_https连接-证书验证-握手成功详解 | Hexo</title>
+  <meta name="description" content="ESP32 HTTPS 通信中的 TLS 握手及证书验证详解TLS（Transport Layer Security）协议在 ESP32 HTTPS 通信中至关重要。完整的 TLS 握手过程包含 TCP 连接建立、ServerHello、证书验证 和 密钥协商 等环节。以下将结合 ESP32 (mbedTLS) 的具体流程，详细解析 TLS 握手的内部机制。 一、TLS 握手流程概览完整的 TLS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="esp32_https连接-证书验证-握手成功详解">
+<meta property="og:url" content="http://example.com/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="ESP32 HTTPS 通信中的 TLS 握手及证书验证详解TLS（Transport Layer Security）协议在 ESP32 HTTPS 通信中至关重要。完整的 TLS 握手过程包含 TCP 连接建立、ServerHello、证书验证 和 密钥协商 等环节。以下将结合 ESP32 (mbedTLS) 的具体流程，详细解析 TLS 握手的内部机制。 一、TLS 握手流程概览完整的 TLS">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-19T14:37:23.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:03:56.697Z">
+<meta property="article:author" content="Napat">
+<meta property="article:tag" content="ESP32_TLS">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">昵称</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Web Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository/">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books/">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links/">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLASH/" rel="tag">FLASH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FreeRTOS/" rel="tag">FreeRTOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux应用开发</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="tag">Linux设备驱动</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">Linux驱动开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MODBUS/" rel="tag">MODBUS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQTT/" rel="tag">MQTT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NR-MICRO-SHELL/" rel="tag">NR_MICRO_SHELL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PID/" rel="tag">PID</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Qt/" rel="tag">Qt</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RS485/" rel="tag">RS485</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">linux驱动开发</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" rel="tag">网络通信</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 13.67px;">C语言</a> <a href="/tags/ESP32-TLS/" style="font-size: 13.83px;">ESP32_TLS</a> <a href="/tags/FLASH/" style="font-size: 13px;">FLASH</a> <a href="/tags/FreeRTOS/" style="font-size: 13px;">FreeRTOS</a> <a href="/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.67px;">Linux应用开发</a> <a href="/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" style="font-size: 13.5px;">Linux设备驱动</a> <a href="/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13px;">Linux驱动开发</a> <a href="/tags/MODBUS/" style="font-size: 13px;">MODBUS</a> <a href="/tags/MQTT/" style="font-size: 13px;">MQTT</a> <a href="/tags/NR-MICRO-SHELL/" style="font-size: 13px;">NR_MICRO_SHELL</a> <a href="/tags/PID/" style="font-size: 13px;">PID</a> <a href="/tags/Qt/" style="font-size: 14px;">Qt</a> <a href="/tags/RS485/" style="font-size: 13px;">RS485</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13.17px;">hexo</a> <a href="/tags/linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.33px;">linux驱动开发</a> <a href="/tags/md/" style="font-size: 13px;">md</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 13px;">单片机</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 13px;">数据结构</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" style="font-size: 13px;">网络通信</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">十二月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">九月 2023</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2026/07/28/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2026-07-28T02:03:56.702Z" itemprop="datePublished">2026-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E5%A6%82%E4%BD%95%E5%9C%A8%E4%B8%BB%E4%BB%93%E5%BA%93%E4%B8%AD%E6%B7%BB%E5%8A%A0%E5%AD%90%E4%BB%93%E5%BA%93/" class="title">git如何在主仓库中添加子仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T12:03:28.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/05/07/git%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E6%B7%BB%E5%8A%A0%E5%88%B0%E4%BA%91%E4%BB%93%E5%BA%93/" class="title">git本地仓库添加到云仓库</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-05-07T11:49:13.000Z" itemprop="datePublished">2025-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/%E4%BD%8D%E7%BD%AE%E5%BC%8FPID%E5%92%8C%E5%A2%9E%E9%87%8F%E5%BC%8FPID%E8%AF%A6%E8%A7%A3/" class="title">位置式PID和增量式PID详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T13:12:04.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2025/03/23/modbus%E8%AF%A6%E8%A7%A3/" class="title">modbus详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2025-03-23T06:54:36.000Z" itemprop="datePublished">2025-03-23</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-esp32-https连接-证书验证-握手成功详解" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      esp32_https连接-证书验证-握手成功详解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-19T14:37:23.000Z" itemprop="datePublished">2025-03-19</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/ESP32-TLS/" rel="tag">ESP32_TLS</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="ESP32-HTTPS-通信中的-TLS-握手及证书验证详解"><a href="#ESP32-HTTPS-通信中的-TLS-握手及证书验证详解" class="headerlink" title="ESP32 HTTPS 通信中的 TLS 握手及证书验证详解"></a><strong>ESP32 HTTPS 通信中的 TLS 握手及证书验证详解</strong></h2><p>TLS（Transport Layer Security）协议在 ESP32 HTTPS 通信中至关重要。完整的 TLS 握手过程包含 <strong>TCP 连接建立</strong>、<strong>ServerHello</strong>、<strong>证书验证</strong> 和 <strong>密钥协商</strong> 等环节。以下将结合 <strong>ESP32 (mbedTLS)</strong> 的具体流程，详细解析 TLS 握手的内部机制。</p>
+<h1 id="一、TLS-握手流程概览"><a href="#一、TLS-握手流程概览" class="headerlink" title="一、TLS 握手流程概览"></a><strong>一、TLS 握手流程概览</strong></h1><p>完整的 TLS 握手过程可分为以下几个阶段：</p>
+<h3 id="🔹-阶段-1：TCP-连接建立"><a href="#🔹-阶段-1：TCP-连接建立" class="headerlink" title="🔹 阶段 1：TCP 连接建立"></a>🔹 <strong>阶段 1：TCP 连接建立</strong></h3><blockquote>
+<p>➡️ ESP32 作为客户端发起 TCP 连接请求，完成三次握手。</p>
+</blockquote>
+<h3 id="🔹-阶段-2：TLS-握手阶段"><a href="#🔹-阶段-2：TLS-握手阶段" class="headerlink" title="🔹 阶段 2：TLS 握手阶段"></a>🔹 <strong>阶段 2：TLS 握手阶段</strong></h3><blockquote>
+<p>➡️ 以 <code>mbedtls_ssl_handshake()</code> 为核心，包含以下步骤：</p>
+</blockquote>
+<ol>
+<li>ClientHello</li>
+<li>ServerHello</li>
+<li>证书传输与验证</li>
+<li>密钥交换 (Key Exchange)</li>
+<li>Finished（握手完成）</li>
+</ol>
+<h3 id="🔹-阶段-3：加密通信阶段"><a href="#🔹-阶段-3：加密通信阶段" class="headerlink" title="🔹 阶段 3：加密通信阶段"></a>🔹 <strong>阶段 3：加密通信阶段</strong></h3><blockquote>
+<p>➡️ 双方使用协商好的密钥进行加密数据传输。</p>
+</blockquote>
+<h1 id="二、TLS-握手的详细过程"><a href="#二、TLS-握手的详细过程" class="headerlink" title="二、TLS 握手的详细过程"></a><strong>二、TLS 握手的详细过程</strong></h1><h3 id="🟢-阶段-1：TCP-连接建立"><a href="#🟢-阶段-1：TCP-连接建立" class="headerlink" title="🟢 阶段 1：TCP 连接建立"></a><strong>🟢 阶段 1：TCP 连接建立</strong></h3><p>ESP32 发起 TCP 连接，使用 <code>mbedtls_net_connect()</code> 建立 Socket：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mbedtls_net_context server_fd;</span><br><span class="line">mbedtls_net_init(&amp;server_fd);</span><br><span class="line"></span><br><span class="line">int ret = mbedtls_net_connect(&amp;server_fd, &quot;example.com&quot;, &quot;443&quot;, MBEDTLS_NET_PROTO_TCP);</span><br><span class="line">if (ret != 0) &#123;</span><br><span class="line">    ESP_LOGE(TAG, &quot;TCP 连接失败: -0x%x&quot;, -ret);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>example.com</code>：服务器域名</li>
+<li><code>443</code>：HTTPS 标准端口</li>
+</ul>
+<p><strong>TCP 三次握手过程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[Client] SYN ----&gt; [Server]  </span><br><span class="line">[Server] SYN + ACK &lt;---- [Client]  </span><br><span class="line">[Client] ACK ----&gt; [Server]  </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 这一步完成后，TCP 连接已建立，TLS 握手将继续。</p>
+</blockquote>
+<hr>
+<h3 id="🟢-阶段-2：TLS-握手过程"><a href="#🟢-阶段-2：TLS-握手过程" class="headerlink" title="🟢 阶段 2：TLS 握手过程"></a><strong>🟢 阶段 2：TLS 握手过程</strong></h3><p>ESP32 使用 <code>mbedtls_ssl_handshake()</code> 实现 TLS 握手，以下为详细步骤：</p>
+<hr>
+<h3 id="🔹-Step-1：ClientHello（客户端问候）"><a href="#🔹-Step-1：ClientHello（客户端问候）" class="headerlink" title="🔹 Step 1：ClientHello（客户端问候）"></a><strong>🔹 Step 1：ClientHello（客户端问候）</strong></h3><ul>
+<li><p>客户端发送 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClientHello</span><br></pre></td></tr></table></figure>
+
+<p> 消息，包含：</p>
+<ul>
+<li>支持的 TLS 版本</li>
+<li>支持的加密算法（如 <code>ECDHE_RSA_WITH_AES_128_GCM_SHA256</code>）</li>
+<li>随机数 <code>Random_C</code>（用于密钥交换）</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例代码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mbedtls_ssl_context ssl;</span><br><span class="line">mbedtls_ssl_init(&amp;ssl);</span><br><span class="line"></span><br><span class="line">mbedtls_ssl_config_defaults(&amp;conf,</span><br><span class="line">    MBEDTLS_SSL_IS_CLIENT,             // 客户端模式</span><br><span class="line">    MBEDTLS_SSL_TRANSPORT_STREAM,      // 流式传输（TCP）</span><br><span class="line">    MBEDTLS_SSL_PRESET_DEFAULT);       // 默认配置</span><br><span class="line"></span><br><span class="line">mbedtls_ssl_setup(&amp;ssl, &amp;conf);</span><br><span class="line">mbedtls_ssl_set_hostname(&amp;ssl, &quot;example.com&quot;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-Step-2：ServerHello（服务器问候）"><a href="#🔹-Step-2：ServerHello（服务器问候）" class="headerlink" title="🔹 Step 2：ServerHello（服务器问候）"></a><strong>🔹 Step 2：ServerHello（服务器问候）</strong></h3><ul>
+<li><p>服务器响应 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ServerHello</span><br></pre></td></tr></table></figure>
+
+<p> 消息，包含：</p>
+<ul>
+<li>选定的 TLS 版本</li>
+<li>选定的加密算法</li>
+<li>随机数 <code>Random_S</code>（用于密钥交换）</li>
+<li>服务器证书</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例日志输出</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mbedTLS] ServerHello: TLS 1.2</span><br><span class="line">[mbedTLS] Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-Step-3：证书传输与验证"><a href="#🔹-Step-3：证书传输与验证" class="headerlink" title="🔹 Step 3：证书传输与验证"></a><strong>🔹 Step 3：证书传输与验证</strong></h3><p>服务器通过 <code>Certificate</code> 消息发送其证书链（根证书 ➔ 中间证书 ➔ 服务器证书）。</p>
+<p>ESP32 执行以下验证：</p>
+<p>✅ 验证服务器证书的签名<br> ✅ 检查证书是否过期<br> ✅ 确认证书中的 CN（Common Name）与目标域名匹配</p>
+<p><strong>示例代码：加载根证书</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">extern const uint8_t root_cert_pem_start[] asm(&quot;_binary_root_cert_pem_start&quot;);</span><br><span class="line">extern const uint8_t root_cert_pem_end[] asm(&quot;_binary_root_cert_pem_end&quot;);</span><br><span class="line"></span><br><span class="line">mbedtls_x509_crt cacert;</span><br><span class="line">mbedtls_x509_crt_init(&amp;cacert);</span><br><span class="line"></span><br><span class="line">mbedtls_x509_crt_parse(&amp;cacert, root_cert_pem_start,</span><br><span class="line">                      root_cert_pem_end - root_cert_pem_start);</span><br><span class="line"></span><br><span class="line">mbedtls_ssl_conf_ca_chain(&amp;conf, &amp;cacert, NULL);</span><br><span class="line">mbedtls_ssl_conf_authmode(&amp;conf, MBEDTLS_SSL_VERIFY_REQUIRED);  // 强制证书校验</span><br></pre></td></tr></table></figure>
+
+<p><strong>证书验证回调（可选）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static int my_verify(void *data, mbedtls_x509_crt *crt, int depth, uint32_t *flags)</span><br><span class="line">&#123;</span><br><span class="line">    if (*flags) &#123;</span><br><span class="line">        ESP_LOGW(TAG, &quot;证书验证失败，错误码: %x&quot;, *flags);</span><br><span class="line">        return -1;  // 验证失败</span><br><span class="line">    &#125;</span><br><span class="line">    ESP_LOGI(TAG, &quot;证书验证成功&quot;);</span><br><span class="line">    return 0;  // 验证通过</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mbedtls_ssl_conf_verify(&amp;conf, my_verify, NULL);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-Step-4：密钥交换-Key-Exchange"><a href="#🔹-Step-4：密钥交换-Key-Exchange" class="headerlink" title="🔹 Step 4：密钥交换 (Key Exchange)"></a><strong>🔹 Step 4：密钥交换 (Key Exchange)</strong></h3><p>客户端和服务器使用 <code>Random_C</code> 和 <code>Random_S</code> 生成共享密钥。</p>
+<ul>
+<li>支持的密钥交换算法包括：<ul>
+<li><strong>ECDHE</strong>（椭圆曲线 Diffie-Hellman）</li>
+<li><strong>RSA</strong>（更常用）</li>
+</ul>
+</li>
+</ul>
+<p>在 ESP-IDF 中，mbedTLS 自动完成此步骤。</p>
+<hr>
+<h3 id="🔹-Step-5：Finished（握手完成）"><a href="#🔹-Step-5：Finished（握手完成）" class="headerlink" title="🔹 Step 5：Finished（握手完成）"></a><strong>🔹 Step 5：Finished（握手完成）</strong></h3><ul>
+<li>客户端发送 <code>Finished</code> 消息，确认握手完成。</li>
+<li>服务器响应 <code>Finished</code> 消息，确认通信已加密。</li>
+</ul>
+<p><strong>示例代码：触发握手</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int ret = mbedtls_ssl_handshake(&amp;ssl);</span><br><span class="line">if (ret != 0) &#123;</span><br><span class="line">    ESP_LOGE(TAG, &quot;TLS/SSL 握手失败: -0x%x&quot;, -ret);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line">ESP_LOGI(TAG, &quot;TLS/SSL 握手成功&quot;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🟢-阶段-3：加密数据传输"><a href="#🟢-阶段-3：加密数据传输" class="headerlink" title="🟢 阶段 3：加密数据传输"></a><strong>🟢 阶段 3：加密数据传输</strong></h3><p>完成 TLS 握手后，ESP32 使用 <code>mbedtls_ssl_write()</code> 和 <code>mbedtls_ssl_read()</code> 发送和接收加密数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const char *request = &quot;GET / HTTP/1.1\r\nHost: example.com\r\n\r\n&quot;;</span><br><span class="line">mbedtls_ssl_write(&amp;ssl, (const unsigned char *)request, strlen(request));</span><br><span class="line"></span><br><span class="line">char response[1024];</span><br><span class="line">mbedtls_ssl_read(&amp;ssl, (unsigned char *)response, sizeof(response));</span><br><span class="line">ESP_LOGI(TAG, &quot;服务器响应:\n%s&quot;, response);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="三、TLS-握手失败的常见原因及解决方法"><a href="#三、TLS-握手失败的常见原因及解决方法" class="headerlink" title="三、TLS 握手失败的常见原因及解决方法"></a><strong>三、TLS 握手失败的常见原因及解决方法</strong></h1><table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>错误信息</th>
+<th>可能原因</th>
+<th>解决方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-0x2700</code></td>
+<td><code>MBEDTLS_ERR_X509_CERT_VERIFY_FAILED</code></td>
+<td>证书验证失败</td>
+<td>检查根证书是否正确</td>
+</tr>
+<tr>
+<td><code>-0x4f00</code></td>
+<td><code>MBEDTLS_ERR_SSL_CONN_EOF</code></td>
+<td>服务器关闭连接</td>
+<td>检查服务器配置</td>
+</tr>
+<tr>
+<td><code>-0x7100</code></td>
+<td><code>MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY</code></td>
+<td>服务器主动关闭连接</td>
+<td>检查证书有效性及加密算法</td>
+</tr>
+<tr>
+<td><code>-0x3f00</code></td>
+<td><code>MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE</code></td>
+<td>握手失败</td>
+<td>检查客户端和服务器的 TLS 版本及算法</td>
+</tr>
+</tbody></table>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a><strong>四、总结</strong></h1><p>ESP32 TLS 握手流程由 <code>mbedtls_ssl_handshake()</code> 主导，涵盖：</p>
+<p>✅ <strong>TCP 连接</strong><br> ✅ <strong>ClientHello &#x2F; ServerHello</strong><br> ✅ <strong>证书验证</strong><br> ✅ <strong>密钥交换</strong><br> ✅ <strong>Finished（握手完成）</strong></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2025/03/19/esp32-https%E8%BF%9E%E6%8E%A5-%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81-%E6%8F%A1%E6%89%8B%E6%88%90%E5%8A%9F%E8%AF%A6%E8%A7%A3/" title="esp32_https连接-证书验证-握手成功详解" target="_blank" rel="external">http://example.com/2025/03/19/esp32-https连接-证书验证-握手成功详解/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">昵称</span><small class="ml-1x">Web Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2025/03/19/esp32-https%E8%AF%81%E4%B9%A6%E9%85%8D%E7%BD%AE%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/" title="esp32_https证书配置流程详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2025/03/19/ECDHE%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%9A%84%E5%8E%9F%E7%90%86/" title="ECDHE密钥交换的原理"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
