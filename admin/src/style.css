@@ -79,6 +79,10 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .block { display: block; padding: 6px; margin: 5px 0; background: #f2f5f9; }
 .git-change { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #e7ebf1; }
 .git-change input { width: 15px; height: 15px; }
+.git-change code { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.git-conflict { padding: 9px; color: #a62d3d; border-radius: 7px; background: #fff0f1; }
+.git-diff { grid-column: 1 / -1; }
+.git-diff pre { max-height: 420px; padding: 12px; overflow: auto; color: #d8e4f5; white-space: pre-wrap; border-radius: 7px; background: #121a27; }
 .modal { position: fixed; inset: 0; z-index: 5; padding: 24px; background: rgba(10, 18, 32, .45); }
 .editor-modal { display: flex; flex-direction: column; height: calc(100vh - 48px); overflow: hidden; border-radius: 12px; background: #fff; }
 .modal-head { padding: 14px 18px; border-bottom: 1px solid #e1e7f0; }
