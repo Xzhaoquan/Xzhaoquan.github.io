@@ -34,15 +34,17 @@ const nav: Array<[View, string, string]> = [
 
 nav.splice(5, 0, ['recycle', 'Recycle bin', 'R']);
 
-function MarkdownEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function MarkdownEditor({ value, onChange, onSave }: { value: string; onChange: (value: string) => void; onSave?: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const latest = useRef(value);
   const callback = useRef(onChange);
+  const saveCallback = useRef(onSave);
   callback.current = onChange;
+  saveCallback.current = onSave;
   useEffect(() => {
     if (!host.current) return;
     const view = new EditorView({
-      state: EditorState.create({ doc: latest.current, extensions: [lineNumbers(), markdown(), keymap.of([...defaultKeymap, indentWithTab]), EditorView.lineWrapping, EditorView.updateListener.of(update => { if (update.docChanged) { latest.current = update.state.doc.toString(); callback.current(latest.current); } })] }),
+      state: EditorState.create({ doc: latest.current, extensions: [lineNumbers(), markdown(), keymap.of([...defaultKeymap, indentWithTab, { key: 'Mod-s', run: () => { saveCallback.current?.(); return true; } }]), EditorView.lineWrapping, EditorView.updateListener.of(update => { if (update.docChanged) { latest.current = update.state.doc.toString(); callback.current(latest.current); } })] }),
       parent: host.current
     });
     return () => view.destroy();
@@ -209,7 +211,10 @@ function Editor({ item, onChange, onSave, onClose, onUpload }: { item: Document;
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
   const setData = (key: string, value: unknown) => onChange({ ...item, data: { ...item.data, [key]: value } });
   const arrayField = (key: 'categories' | 'tags') => (Array.isArray(item.data[key]) ? item.data[key] : item.data[key] ? [item.data[key]] : []).join(', ');
-  return <div className="modal"><div className="editor-modal"><div className="modal-head"><div><b>{item.title}</b><small>{item.path}</small></div><div><button onClick={onSave}>Save</button><button className="primary" onClick={onClose}>Done</button></div></div><div className="editor-layout"><aside className="properties"><label>Title<input value={String(item.data.title ?? item.title)} onChange={event => setData('title', event.target.value)} /></label><label>Categories<input value={arrayField('categories')} onChange={event => setData('categories', event.target.value.split(',').map(value => value.trim()).filter(Boolean))} /></label><label>Tags<input value={arrayField('tags')} onChange={event => setData('tags', event.target.value.split(',').map(value => value.trim()).filter(Boolean))} /></label><label>Cover image<input value={String(item.data.cover ?? '')} onChange={event => setData('cover', event.target.value)} /></label><label className="file-button">Upload image<input type="file" accept="image/*" onChange={event => event.target.files?.[0] && onUpload(event.target.files[0])} /></label><small>Autosaves source after two seconds. External changes are detected before writing.</small></aside><section className="editor-workspace"><div className="editor-tabs"><button className={mode === 'edit' ? 'active' : ''} onClick={() => setMode('edit')}>Edit Markdown</button><button className={mode === 'preview' ? 'active' : ''} onClick={() => setMode('preview')}>Preview</button></div>{mode === 'edit' ? <MarkdownEditor key={item.path} value={item.body} onChange={body => onChange({ ...item, body })} /> : <article className="preview"><h3>{String(item.data.title ?? item.title)}</h3><p className="muted">{arrayField('categories')}</p><ReactMarkdown remarkPlugins={[remarkGfm]}>{item.body}</ReactMarkdown></article>}</section></div></div></div>;
+  const characters = item.body.replace(/\s/g, '').length;
+  const words = item.body.trim() ? item.body.trim().split(/\s+/).length : 0;
+  const minutes = Math.max(1, Math.ceil(characters / 500));
+  return <div className="modal"><div className="editor-modal"><div className="modal-head"><div><b>{item.title}</b><small>{item.path}</small></div><div><button onClick={onSave}>Save</button><button className="primary" onClick={onClose}>Done</button></div></div><div className="editor-layout"><aside className="properties"><label>Title<input value={String(item.data.title ?? item.title)} onChange={event => setData('title', event.target.value)} /></label><label>Categories<input value={arrayField('categories')} onChange={event => setData('categories', event.target.value.split(',').map(value => value.trim()).filter(Boolean))} /></label><label>Tags<input value={arrayField('tags')} onChange={event => setData('tags', event.target.value.split(',').map(value => value.trim()).filter(Boolean))} /></label><label>Cover image<input value={String(item.data.cover ?? '')} onChange={event => setData('cover', event.target.value)} /></label><label className="file-button">Upload image<input type="file" accept="image/*" onChange={event => event.target.files?.[0] && onUpload(event.target.files[0])} /></label><small>{characters} characters · {words} words · about {minutes} min read</small><small>Autosaves source after two seconds. Use Ctrl+S to save now.</small></aside><section className="editor-workspace"><div className="editor-tabs"><button className={mode === 'edit' ? 'active' : ''} onClick={() => setMode('edit')}>Edit Markdown</button><button className={mode === 'preview' ? 'active' : ''} onClick={() => setMode('preview')}>Preview</button></div>{mode === 'edit' ? <MarkdownEditor key={item.path} value={item.body} onChange={body => onChange({ ...item, body })} onSave={onSave} /> : <article className="preview"><h3>{String(item.data.title ?? item.title)}</h3><p className="muted">{arrayField('categories')}</p><ReactMarkdown remarkPlugins={[remarkGfm]}>{item.body}</ReactMarkdown></article>}</section></div></div></div>;
 }
 
 createRoot(document.getElementById('root')!).render(<App />);
