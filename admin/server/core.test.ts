@@ -97,6 +97,15 @@ describe('ProjectContext', () => {
     expect(saved.data.tags).toEqual([]);
   });
 
+  it('stores and deletes media only within the selected post asset directory', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Assets' });
+    await context.uploadMedia(post.path, 'diagram.png', Buffer.from('image-data'));
+    await expect(context.mediaFor(post.path)).resolves.toMatchObject([{ name: 'diagram.png' }]);
+    await context.deleteMedia(post.path, 'diagram.png');
+    await expect(context.mediaFor(post.path)).resolves.toEqual([]);
+  });
+
   it('redacts credential-like log fragments', () => {
     expect(redact('token: abc123 password=secret')).toContain('[REDACTED]');
   });

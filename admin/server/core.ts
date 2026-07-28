@@ -293,6 +293,17 @@ export class ProjectContext {
     return { path: path.relative(this.root, target).replace(/\\/g, '/'), markdown };
   }
 
+  async deleteMedia(postPath: string, filename: string) {
+    const full = await this.resolve(postPath);
+    this.assertContentPath('post', full);
+    const safeName = path.basename(filename);
+    if (!safeName || safeName !== filename) throw new AppError('INVALID_MEDIA_PATH', 'The media filename is invalid.');
+    const target = path.join(path.dirname(full), path.basename(full, '.md'), safeName);
+    if (!await exists(target)) throw new AppError('MEDIA_NOT_FOUND', 'The media file no longer exists.');
+    await fs.rm(target, { force: true });
+    await this.appendLog('media.delete', 'succeeded', { postPath, filename: safeName });
+  }
+
   async git(args: string[]) {
     // Keep Unicode filenames readable and avoid a broken global excludes-file
     // from leaking warnings into the local management UI.  Git's normal SSH

@@ -51,6 +51,7 @@ app.post('/api/media/upload', async request => {
   const chunks: Buffer[] = []; data.file.on('data', chunk => chunks.push(chunk)); await new Promise<void>((resolve, reject) => { data.file.on('end', resolve); data.file.on('error', reject); });
   return success(await context.uploadMedia(postPath, data.filename, Buffer.concat(chunks)));
 });
+app.delete('/api/media', async request => { const query = z.object({ postPath: z.string().min(1), name: z.string().min(1) }).parse(request.query); await context.deleteMedia(query.postPath, query.name); return success({ deleted: true }); });
 
 app.get('/api/config', async () => success(await context.readYaml('_config.yml')));
 app.put('/api/config', async request => { const body = z.object({ raw: z.string() }).parse(request.body); await context.saveYaml('_config.yml', body.raw); return success(await context.readYaml('_config.yml')); });
