@@ -13,7 +13,7 @@ import type { ContentKind } from './types.js';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const defaultRoot = process.env.HEXO_PROJECT_ROOT ?? path.resolve(here, '../..');
 const app = Fastify({ logger: false });
-const context = await ProjectContext.open(defaultRoot);
+let context = await ProjectContext.open(defaultRoot);
 
 await app.register(cors, { origin: /^http:\/\/127\.0\.0\.1(?::\d+)?$/ });
 await app.register(multipart, { limits: { files: 1, fileSize: 25 * 1024 * 1024 } });
@@ -33,6 +33,14 @@ app.setErrorHandler((error, _request, reply) => {
 });
 
 app.get('/api/project/status', async () => success(await context.status()));
+app.post('/api/project/open', async request => {
+  const root = z.object({ root: z.string().min(1).max(1024) }).parse(request.body).root;
+  const current = await context.status();
+  if (current.preview) throw new AppError('PREVIEW_RUNNING', 'Stop the local preview before changing projects.');
+  const next = await ProjectContext.open(root);
+  context = next;
+  return success(await context.status());
+});
 app.get('/api/content/:kind', async request => success(await context.listContent(kind((request.params as { kind: string }).kind))));
 app.get('/api/content/:kind/read', async request => { const query = request.query as { path?: string }; if (!query.path) throw new AppError('INVALID_PATH', '缺少文件路径。'); return success(await context.getContent(kind((request.params as { kind: string }).kind), query.path)); });
 app.post('/api/content/:kind', async request => success(await context.createContent(kind((request.params as { kind: string }).kind), createSchema.parse(request.body))));

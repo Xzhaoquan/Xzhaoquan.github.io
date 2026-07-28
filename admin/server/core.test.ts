@@ -16,6 +16,10 @@ async function fixture() {
 afterEach(async () => { await Promise.all(fixtures.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
 
 describe('ProjectContext', () => {
+  it('rejects a missing project directory with a usable validation error', async () => {
+    await expect(ProjectContext.open(path.join(tmpdir(), `hexo-admin-missing-${Date.now()}`))).rejects.toMatchObject({ code: 'INVALID_PROJECT' } satisfies Partial<AppError>);
+  });
+
   it('creates and preserves Front Matter content', async () => {
     const { context } = await fixture();
     const created = await context.createContent('post', { title: 'First post', data: { categories: ['Guide'], custom_field: 'keep-me' }, body: '# Hello' });

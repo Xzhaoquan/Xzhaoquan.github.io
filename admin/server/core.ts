@@ -45,7 +45,9 @@ export class ProjectContext {
   private constructor(root: string) { this.root = root; this.metaRoot = path.join(root, META_DIR); }
 
   static async open(candidate: string) {
-    const root = await fs.realpath(candidate);
+    let root: string;
+    try { root = await fs.realpath(candidate); }
+    catch { throw new AppError('INVALID_PROJECT', 'The selected directory does not exist or cannot be accessed.', false, 'Select an existing directory containing _config.yml and package.json.'); }
     if (!await exists(path.join(root, '_config.yml')) || !await exists(path.join(root, 'package.json'))) throw new AppError('INVALID_PROJECT', 'The selected directory is not a valid Hexo project.', false, 'Select a directory containing _config.yml and package.json.');
     const context = new ProjectContext(root);
     await Promise.all(['recycle-bin', 'backups', 'snapshots', 'logs', 'ssh'].map(name => ensureDirectory(path.join(context.metaRoot, name))));
