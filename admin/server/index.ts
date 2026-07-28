@@ -21,6 +21,7 @@ await app.register(multipart, { limits: { files: 1, fileSize: 25 * 1024 * 1024 }
 const kindSchema = z.enum(['post', 'draft', 'page']);
 const contentSchema = z.object({ data: z.record(z.unknown()), body: z.string(), hash: z.string().optional() });
 const createSchema = z.object({ title: z.string().min(1).max(160), filename: z.string().max(180).optional(), data: z.record(z.unknown()).optional(), body: z.string().optional() });
+const commonConfigSchema = z.object({ values: z.object({ title: z.string().optional(), subtitle: z.string().optional(), description: z.string().optional(), author: z.string().optional(), language: z.string().optional(), timezone: z.string().optional(), url: z.string().optional(), root: z.string().optional(), permalink: z.string().optional(), per_page: z.string().optional() }) });
 
 function kind(value: unknown): ContentKind { return kindSchema.parse(value); }
 function success(data: unknown) { return { ok: true, data }; }
@@ -55,6 +56,8 @@ app.delete('/api/media', async request => { const query = z.object({ postPath: z
 
 app.get('/api/config', async () => success(await context.readYaml('_config.yml')));
 app.put('/api/config', async request => { const body = z.object({ raw: z.string() }).parse(request.body); await context.saveYaml('_config.yml', body.raw); return success(await context.readYaml('_config.yml')); });
+app.get('/api/config/common', async () => success(await context.commonConfig()));
+app.put('/api/config/common', async request => success(await context.saveCommonConfig(commonConfigSchema.parse(request.body).values)));
 app.get('/api/theme', async () => { const config = await context.readYaml('_config.yml'); const theme = String(config.value.theme ?? ''); return success({ theme, config: await context.readYaml(`themes/${theme}/_config.yml`) }); });
 app.put('/api/theme', async request => { const config = await context.readYaml('_config.yml'); const body = z.object({ raw: z.string() }).parse(request.body); const relative = `themes/${String(config.value.theme ?? '')}/_config.yml`; await context.saveYaml(relative, body.raw); return success(await context.readYaml(relative)); });
 

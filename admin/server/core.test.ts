@@ -61,6 +61,14 @@ describe('ProjectContext', () => {
     expect(await readFile(path.join(root, '_config.yml'), 'utf8')).toContain('Updated');
   });
 
+  it('updates common config fields while retaining unrelated settings', async () => {
+    const { root, context } = await fixture();
+    await writeFile(path.join(root, '_config.yml'), 'title: Test\ntheme: pure\ncustom: keep\n', 'utf8');
+    await context.saveCommonConfig({ title: 'New title', language: 'zh-CN' });
+    const saved = await context.readYaml('_config.yml');
+    expect(saved.value).toMatchObject({ title: 'New title', language: 'zh-CN', custom: 'keep' });
+  });
+
   it('moves deleted content to the recycle bin and restores it', async () => {
     const { context } = await fixture();
     const created = await context.createContent('post', { title: 'Recover me' });

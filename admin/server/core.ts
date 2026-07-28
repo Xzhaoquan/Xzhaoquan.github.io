@@ -11,6 +11,7 @@ const META_DIR = '.hexo-admin';
 const CONTENT_DIRS: Record<ContentKind, string> = { post: 'source/_posts', draft: 'source/_drafts', page: 'source' };
 const BLOCKED_SEGMENTS = new Set(['.git', 'node_modules', 'public', '.deploy_git', META_DIR, 'admin']);
 const SECRET_PATTERN = /(token|secret|password|private[_-]?key|access[_-]?key)\s*[:=]\s*([^\s,]+)/gi;
+const COMMON_CONFIG_FIELDS = ['title', 'subtitle', 'description', 'author', 'language', 'timezone', 'url', 'root', 'permalink', 'per_page'] as const;
 const frontMatterOptions = {
   engines: {
     yaml: {
@@ -103,6 +104,19 @@ export class ProjectContext {
     await fs.copyFile(target, backup);
     await this.writeAtomic(target, raw);
     await this.appendLog('config.save', 'succeeded', { path: relativePath, backup: path.relative(this.root, backup) });
+  }
+
+  async commonConfig() {
+    const config = await this.readYaml('_config.yml');
+    return Object.fromEntries(COMMON_CONFIG_FIELDS.map(field => [field, String((config.value as Record<string, unknown>)[field] ?? '')]));
+  }
+
+  async saveCommonConfig(values: Partial<Record<(typeof COMMON_CONFIG_FIELDS)[number], string>>) {
+    const config = await this.readYaml('_config.yml');
+    const next = { ...(config.value as Record<string, unknown>) };
+    for (const field of COMMON_CONFIG_FIELDS) if (values[field] !== undefined) next[field] = values[field];
+    await this.saveYaml('_config.yml', YAML.stringify(next));
+    return this.readYaml('_config.yml');
   }
 
   async walk(directory: string): Promise<string[]> {
