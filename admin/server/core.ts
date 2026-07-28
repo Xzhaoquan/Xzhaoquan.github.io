@@ -91,6 +91,13 @@ export class ProjectContext {
     await fs.appendFile(path.join(this.metaRoot, 'logs', 'operations.jsonl'), `${entry}\n`, 'utf8');
   }
 
+  async listOperationLogs(limit = 100) {
+    const file = path.join(this.metaRoot, 'logs', 'operations.jsonl');
+    if (!await exists(file)) return [];
+    const raw = await fs.readFile(file, 'utf8');
+    return raw.split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }).slice(-limit).reverse();
+  }
+
   async readYaml(relativePath: string) {
     const full = await this.resolve(relativePath);
     const raw = await fs.readFile(full, 'utf8');
@@ -117,6 +124,22 @@ export class ProjectContext {
     for (const field of COMMON_CONFIG_FIELDS) if (values[field] !== undefined) next[field] = values[field];
     await this.saveYaml('_config.yml', YAML.stringify(next));
     return this.readYaml('_config.yml');
+  }
+
+  async themes() {
+    const directory = path.join(this.root, 'themes');
+    const entries = await fs.readdir(directory, { withFileTypes: true }).catch(() => []);
+    const config = await this.readYaml('_config.yml');
+    return { current: String((config.value as Record<string, unknown>).theme ?? ''), installed: entries.filter(entry => entry.isDirectory()).map(entry => entry.name).sort() };
+  }
+
+  async selectTheme(theme: string) {
+    const name = path.basename(theme);
+    if (!name || name !== theme || !await exists(path.join(this.root, 'themes', name))) throw new AppError('THEME_NOT_FOUND', 'The selected theme is not installed in this project.');
+    const config = await this.readYaml('_config.yml');
+    await this.saveYaml('_config.yml', YAML.stringify({ ...(config.value as Record<string, unknown>), theme: name }));
+    await this.appendLog('theme.select', 'succeeded', { theme: name });
+    return this.themes();
   }
 
   async walk(directory: string): Promise<string[]> {

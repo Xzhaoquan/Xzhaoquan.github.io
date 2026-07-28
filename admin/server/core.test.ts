@@ -69,6 +69,16 @@ describe('ProjectContext', () => {
     expect(saved.value).toMatchObject({ title: 'New title', language: 'zh-CN', custom: 'keep' });
   });
 
+  it('lists operation logs and switches only to installed themes', async () => {
+    const { root, context } = await fixture();
+    await mkdir(path.join(root, 'themes', 'pure'), { recursive: true });
+    await writeFile(path.join(root, 'themes', 'pure', '_config.yml'), 'menu: []\n', 'utf8');
+    await context.appendLog('test.action', 'succeeded', { object: 'post' });
+    await expect(context.listOperationLogs()).resolves.toMatchObject([{ action: 'test.action', result: 'succeeded' }]);
+    await expect(context.selectTheme('pure')).resolves.toMatchObject({ current: 'pure', installed: ['pure'] });
+    await expect(context.selectTheme('../outside')).rejects.toMatchObject({ code: 'THEME_NOT_FOUND' } satisfies Partial<AppError>);
+  });
+
   it('moves deleted content to the recycle bin and restores it', async () => {
     const { context } = await fixture();
     const created = await context.createContent('post', { title: 'Recover me' });
