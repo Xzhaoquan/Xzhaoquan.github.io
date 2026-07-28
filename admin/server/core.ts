@@ -210,6 +210,33 @@ export class ProjectContext {
     return manifest;
   }
 
+  async deleteRecycle(ticket: string) {
+    if (!/^[a-zA-Z0-9-]+$/.test(ticket)) throw new AppError('INVALID_RECYCLE_TICKET', 'The recycle-bin record is invalid.');
+    const recycle = path.join(this.metaRoot, 'recycle-bin', ticket);
+    if (!await exists(recycle)) throw new AppError('RECYCLE_NOT_FOUND', 'The recycle-bin record no longer exists.');
+    await fs.rm(recycle, { recursive: true, force: true });
+    await this.appendLog('content.recycle.delete', 'succeeded', { ticket });
+  }
+
+  async transitionContent(from: Extract<ContentKind, 'post' | 'draft'>, to: Extract<ContentKind, 'post' | 'draft'>, relativePath: string) {
+    if (from === to) throw new AppError('INVALID_CONTENT_TRANSITION', 'The source and destination content types are the same.');
+    const full = await this.resolve(relativePath);
+    this.assertContentPath(from, full);
+    const fromBase = path.resolve(this.root, CONTENT_DIRS[from]);
+    const relative = path.relative(fromBase, full);
+    if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) throw new AppError('CONTENT_KIND_MISMATCH', 'The file does not belong to this content type.');
+    const destination = path.join(this.root, CONTENT_DIRS[to], relative);
+    const sourceAssets = path.join(path.dirname(full), path.basename(full, '.md'));
+    const destinationAssets = path.join(path.dirname(destination), path.basename(destination, '.md'));
+    if (await exists(destination) || await exists(destinationAssets)) throw new AppError('CONTENT_EXISTS', 'A post or its asset directory already exists at the destination.');
+    await ensureDirectory(path.dirname(destination));
+    await fs.rename(full, destination);
+    if (await exists(sourceAssets)) await fs.rename(sourceAssets, destinationAssets);
+    const outputPath = path.relative(this.root, destination).replace(/\\/g, '/');
+    await this.appendLog('content.transition', 'succeeded', { from, to, fromPath: relativePath, path: outputPath });
+    return this.parseDocument(to, destination);
+  }
+
   async listRecycle() {
     const base = path.join(this.metaRoot, 'recycle-bin');
     const entries = await fs.readdir(base, { withFileTypes: true });
@@ -224,6 +251,24 @@ export class ProjectContext {
       return [...counts].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
     };
     return { categories: aggregate('categories'), tags: aggregate('tags') };
+  }
+
+  async updateTaxonomy(field: 'categories' | 'tags', action: 'rename' | 'delete', name: string, replacement?: string) {
+    const source = name.trim();
+    const target = replacement?.trim();
+    if (!source) throw new AppError('INVALID_TAXONOMY', 'A category or tag name is required.');
+    if (action === 'rename' && (!target || target === source)) throw new AppError('INVALID_TAXONOMY', 'Enter a different replacement name.');
+    const documents = [...await this.listContent('post'), ...await this.listContent('draft')];
+    let affected = 0;
+    for (const document of documents) {
+      const current = Array.isArray(document.data[field]) ? document.data[field].map(String) : document.data[field] ? [String(document.data[field])] : [];
+      if (!current.includes(source)) continue;
+      const next = action === 'rename' ? [...new Set(current.map(value => value === source ? target! : value))] : current.filter(value => value !== source);
+      await this.saveContent(document.kind, document.path, { data: { ...document.data, [field]: next }, body: document.body, hash: document.hash });
+      affected += 1;
+    }
+    await this.appendLog('taxonomy.update', 'succeeded', { field, action, name: source, replacement: target, affected });
+    return { affected };
   }
 
   async mediaFor(postPath: string) {

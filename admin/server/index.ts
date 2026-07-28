@@ -39,8 +39,11 @@ app.put('/api/content/:kind', async request => { const query = request.query as 
 app.post('/api/content/:kind/recycle', async request => { const body = z.object({ path: z.string(), includeAssets: z.boolean().default(true) }).parse(request.body); return success(await context.moveToRecycle(kind((request.params as { kind: string }).kind), body.path, body.includeAssets)); });
 app.get('/api/recycle', async () => success(await context.listRecycle()));
 app.post('/api/recycle/:ticket/restore', async request => success(await context.restoreRecycle((request.params as { ticket: string }).ticket)));
+app.delete('/api/recycle/:ticket', async request => { await context.deleteRecycle((request.params as { ticket: string }).ticket); return success({ deleted: true }); });
+app.post('/api/content/:kind/transition', async request => { const params = request.params as { kind: string }; const from = kind(params.kind); const body = z.object({ path: z.string(), to: z.enum(['post', 'draft']) }).parse(request.body); if (from === 'page' || from === body.to) throw new AppError('INVALID_CONTENT_TRANSITION', 'Only posts and drafts can be moved between these states.'); return success(await context.transitionContent(from, body.to, body.path)); });
 
 app.get('/api/taxonomy', async () => success(await context.taxonomy()));
+app.patch('/api/taxonomy/:field', async request => { const field = z.enum(['categories', 'tags']).parse((request.params as { field: string }).field); const body = z.object({ action: z.enum(['rename', 'delete']), name: z.string().min(1), replacement: z.string().optional() }).parse(request.body); return success(await context.updateTaxonomy(field, body.action, body.name, body.replacement)); });
 app.get('/api/media', async request => { const query = request.query as { postPath?: string }; if (!query.postPath) throw new AppError('INVALID_PATH', '缺少文章路径。'); return success(await context.mediaFor(query.postPath)); });
 app.post('/api/media/upload', async request => {
   const data = await request.file(); if (!data) throw new AppError('NO_FILE', '请选择需要上传的文件。');

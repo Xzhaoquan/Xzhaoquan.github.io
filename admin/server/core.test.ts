@@ -70,6 +70,33 @@ describe('ProjectContext', () => {
     expect((await context.getContent('post', created.path)).title).toBe('Recover me');
   });
 
+  it('moves drafts to posts and keeps the Markdown content', async () => {
+    const { context } = await fixture();
+    const draft = await context.createContent('draft', { title: 'Publish me', body: '# Ready' });
+    const post = await context.transitionContent('draft', 'post', draft.path);
+    expect(post.kind).toBe('post');
+    expect(post.body).toContain('# Ready');
+    await expect(context.getContent('draft', draft.path)).rejects.toBeDefined();
+  });
+
+  it('permanently removes an item from the recycle bin only when requested', async () => {
+    const { context } = await fixture();
+    const created = await context.createContent('post', { title: 'Discard me' });
+    const removed = await context.moveToRecycle('post', created.path, true);
+    await context.deleteRecycle(removed.ticket);
+    await expect(context.listRecycle()).resolves.toEqual([]);
+  });
+
+  it('renames and removes taxonomy references without deleting posts', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Taxonomy', data: { categories: ['Old'], tags: ['legacy'] } });
+    await expect(context.updateTaxonomy('categories', 'rename', 'Old', 'New')).resolves.toMatchObject({ affected: 1 });
+    await expect(context.updateTaxonomy('tags', 'delete', 'legacy')).resolves.toMatchObject({ affected: 1 });
+    const saved = await context.getContent('post', post.path);
+    expect(saved.data.categories).toEqual(['New']);
+    expect(saved.data.tags).toEqual([]);
+  });
+
   it('redacts credential-like log fragments', () => {
     expect(redact('token: abc123 password=secret')).toContain('[REDACTED]');
   });

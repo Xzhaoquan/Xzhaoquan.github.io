@@ -12,7 +12,8 @@ type Kind = 'post' | 'draft' | 'page';
 type Document = { kind: Kind; path: string; title: string; data: Record<string, unknown>; body: string; mtimeMs: number; hash: string };
 type Task = { id: string; type: string; status: string; startedAt: string; stdout: string; stderr: string };
 type Status = { root: string; theme: string; posts: number; drafts: number; pages: number; categories: number; tags: number; branch: string; changedFiles: number; preview: { port: number; url: string } | null; recentTasks: Task[] };
-type View = 'dashboard' | 'posts' | 'drafts' | 'taxonomy' | 'pages' | 'media' | 'config' | 'theme' | 'publish' | 'git' | 'logs';
+type RecycleItem = { ticket: string; kind: Kind; originalPath: string; deletedAt: string; items: string[] };
+type View = 'dashboard' | 'posts' | 'drafts' | 'taxonomy' | 'pages' | 'recycle' | 'media' | 'config' | 'theme' | 'publish' | 'git' | 'logs';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
@@ -28,6 +29,8 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 const nav: Array<[View, string, string]> = [
   ['dashboard', 'Dashboard', '◆'], ['posts', 'Posts', '▣'], ['drafts', 'Drafts', '▤'], ['taxonomy', 'Categories & tags', '◇'], ['pages', 'Pages', '▧'], ['media', 'Media', '▦'], ['config', 'Configuration', '⚙'], ['theme', 'Theme', '◈'], ['publish', 'Publish', '↗'], ['git', 'Git', '◌'], ['logs', 'Activity log', '◫']
 ];
+
+nav.splice(5, 0, ['recycle', 'Recycle bin', 'R']);
 
 function MarkdownEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const host = useRef<HTMLDivElement>(null);
@@ -51,6 +54,7 @@ function App() {
   const [status, setStatus] = useState<Status | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [editor, setEditor] = useState<Document | null>(null);
+  const [recycleItems, setRecycleItems] = useState<RecycleItem[]>([]);
   const [taxonomy, setTaxonomy] = useState<{ categories: Array<{ name: string; count: number }>; tags: Array<{ name: string; count: number }> } | null>(null);
   const [taxonomyPosts, setTaxonomyPosts] = useState<Document[]>([]);
   const [rawConfig, setRawConfig] = useState('');
@@ -80,6 +84,10 @@ function App() {
     }
   };
   const loadContent = async (kind: Kind, closeEditor = true) => { setDocuments(await api<Document[]>(`/content/${kind}`)); if (closeEditor) setEditor(null); };
+  const loadTaxonomy = async () => {
+    const [nextTaxonomy, posts] = await Promise.all([api<{ categories: Array<{ name: string; count: number }>; tags: Array<{ name: string; count: number }> }>('/taxonomy'), api<Document[]>('/content/post')]);
+    setTaxonomy(nextTaxonomy); setTaxonomyPosts(posts);
+  };
   const action = async (work: () => Promise<void>) => { try { setBusy(true); await work(); await refreshStatus(); } catch (error) { setNotice(error instanceof Error ? error.message : 'Operation failed.'); } finally { setBusy(false); } };
 
   useEffect(() => { action(async () => { await refreshStatus(); await loadContent('post'); }); }, []);
@@ -87,10 +95,8 @@ function App() {
     if (view === 'posts') action(() => loadContent('post'));
     if (view === 'drafts') action(() => loadContent('draft'));
     if (view === 'pages') action(() => loadContent('page'));
-    if (view === 'taxonomy') action(async () => {
-      const [nextTaxonomy, posts] = await Promise.all([api<{ categories: Array<{ name: string; count: number }>; tags: Array<{ name: string; count: number }> }>('/taxonomy'), api<Document[]>('/content/post')]);
-      setTaxonomy(nextTaxonomy); setTaxonomyPosts(posts);
-    });
+    if (view === 'recycle') action(async () => setRecycleItems(await api<RecycleItem[]>('/recycle')));
+    if (view === 'taxonomy') action(loadTaxonomy);
     if (view === 'config') action(async () => setRawConfig((await api<{ raw: string }>('/config')).raw));
     if (view === 'theme') action(async () => setRawConfig((await api<{ config: { raw: string } }>('/theme')).config.raw));
     if (view === 'git') action(async () => setGit(await api('/git/status')));
@@ -116,6 +122,20 @@ function App() {
     await action(async () => { const created = await api<Document>(`/content/${currentKind}`, { method: 'POST', body: JSON.stringify({ title, data: currentKind !== 'page' ? { categories: [], tags: [] } : {} }) }); await loadContent(currentKind, false); setEditor(created); });
   };
   const recycle = async (item: Document) => { if (!window.confirm(`Move “${item.title}” to the recycle bin?`)) return; await action(async () => { await api(`/content/${item.kind}/recycle`, { method: 'POST', body: JSON.stringify({ path: item.path, includeAssets: true }) }); await loadContent(item.kind); }); };
+  const transition = async (item: Document) => {
+    const to: 'post' | 'draft' = item.kind === 'draft' ? 'post' : 'draft';
+    if (!window.confirm(item.kind === 'draft' ? `Publish “${item.title}” as a post?` : `Move “${item.title}” back to drafts?`)) return;
+    await action(async () => { await api(`/content/${item.kind}/transition`, { method: 'POST', body: JSON.stringify({ path: item.path, to }) }); await loadContent(item.kind); setNotice(item.kind === 'draft' ? 'Draft published as a post.' : 'Post moved to drafts.'); });
+  };
+  const restoreRecycle = async (item: RecycleItem) => { if (!window.confirm(`Restore “${item.originalPath}”?`)) return; await action(async () => { await api(`/recycle/${item.ticket}/restore`, { method: 'POST' }); setRecycleItems(await api<RecycleItem[]>('/recycle')); setNotice('Item restored.'); }); };
+  const deleteRecycle = async (item: RecycleItem) => { if (!window.confirm(`Permanently delete “${item.originalPath}”? This cannot be undone.`)) return; await action(async () => { await api(`/recycle/${item.ticket}`, { method: 'DELETE' }); setRecycleItems(await api<RecycleItem[]>('/recycle')); setNotice('Recycle-bin item permanently deleted.'); }); };
+  const manageTaxonomy = async (type: 'category' | 'tag', operation: 'rename' | 'delete', name: string) => {
+    const replacement = operation === 'rename' ? window.prompt(`Rename ${type} “${name}” to:`)?.trim() : undefined;
+    if (operation === 'rename' && !replacement) return;
+    const label = operation === 'rename' ? `Rename ${type} “${name}” to “${replacement}”?` : `Remove ${type} “${name}” from all posts? Posts will not be deleted.`;
+    if (!window.confirm(label)) return;
+    await action(async () => { const result = await api<{ affected: number }>(`/taxonomy/${type === 'category' ? 'categories' : 'tags'}`, { method: 'PATCH', body: JSON.stringify({ action: operation, name, replacement }) }); await loadTaxonomy(); setNotice(`${type} ${operation === 'rename' ? 'renamed' : 'removed'} in ${result.affected} post(s).`); });
+  };
   const runTask = async (type: 'clean' | 'generate' | 'deploy' | 'preview') => { if (busy) return; const confirmed = type !== 'deploy' || window.confirm('Deploy will publish generated files to the configured deployment branch (main). Continue?'); if (!confirmed) return; await action(async () => { const task = await api<Task>(`/tasks/${type}`, { method: 'POST', body: JSON.stringify({ confirmed, port: 4000 }) }); watchedTask.current = { id: task.id, type }; setNotice(`${type} task started.`); }); };
   const upload = async (file: File) => {
     if (!editor) return setNotice('Open a post before uploading media.');
@@ -128,8 +148,9 @@ function App() {
     <main className="main"><header><div><h1>{nav.find(item => item[0] === view)?.[1]}</h1><p>{status?.root ?? 'Reading Hexo project...'}</p></div><div className="header-actions"><button onClick={() => refreshStatus()} disabled={busy}>Refresh</button>{(['posts', 'drafts', 'pages'] as View[]).includes(view) && <button className="primary" onClick={create}>New</button>}</div></header>
       {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice('')}>×</button></div>}
       {view === 'dashboard' && <Dashboard status={status} onTask={runTask} onView={setView} />}
-      {(['posts', 'drafts', 'pages'] as View[]).includes(view) && <ContentView items={filtered} query={query} onQuery={setQuery} onOpen={item => action(async () => setEditor(await api<Document>(`/content/${item.kind}/read?path=${encodeURIComponent(item.path)}`)))} onRecycle={recycle} />}
-      {view === 'taxonomy' && <Taxonomy data={taxonomy} posts={taxonomyPosts} onOpen={item => action(async () => setEditor(await api<Document>(`/content/post/read?path=${encodeURIComponent(item.path)}`)))} />}
+      {(['posts', 'drafts', 'pages'] as View[]).includes(view) && <ContentView items={filtered} query={query} onQuery={setQuery} onOpen={item => action(async () => setEditor(await api<Document>(`/content/${item.kind}/read?path=${encodeURIComponent(item.path)}`)))} onRecycle={recycle} onTransition={transition} />}
+      {view === 'recycle' && <RecycleBin items={recycleItems} onRestore={restoreRecycle} onDelete={deleteRecycle} />}
+      {view === 'taxonomy' && <Taxonomy data={taxonomy} posts={taxonomyPosts} onOpen={item => action(async () => setEditor(await api<Document>(`/content/post/read?path=${encodeURIComponent(item.path)}`)))} onManage={manageTaxonomy} />}
       {view === 'media' && <Media editor={editor} onUpload={upload} />}
       {(view === 'config' || view === 'theme') && <ConfigEditor raw={rawConfig} onChange={setRawConfig} onSave={() => action(async () => { await api(view === 'config' ? '/config' : '/theme', { method: 'PUT', body: JSON.stringify({ raw: rawConfig }) }); setNotice('YAML validated, backed up, and saved.'); })} />}
       {view === 'publish' && <Publish status={status} tasks={tasks} busy={busy} onTask={runTask} onStop={() => action(async () => { await api('/preview/stop', { method: 'POST' }); setNotice('Preview stopped successfully.'); })} />}
@@ -145,13 +166,14 @@ function Dashboard({ status, onTask, onView }: { status: Status | null; onTask: 
   return <><section className="stats">{cards.map(([label, value, target]) => <button className="stat" key={label} onClick={() => onView(target as View)}><span>{label}</span><strong>{value}</strong></button>)}</section><section className="grid two"><article className="card"><h2>Quick actions</h2><div className="actions"><button className="primary" onClick={() => onView('posts')}>New post</button><button onClick={() => onTask('generate')}>Generate</button><button onClick={() => onTask('preview')}>Preview</button><button className="danger" onClick={() => onTask('deploy')}>Deploy</button></div></article><article className="card"><h2>Project status</h2><dl><dt>Theme</dt><dd>{status?.theme || '—'}</dd><dt>Source branch</dt><dd>{status?.branch || '—'}</dd><dt>Local preview</dt><dd>{status?.preview ? <a href={status.preview.url} target="_blank">{status.preview.url}</a> : 'Not running'}</dd></dl></article></section></>;
 }
 
-function ContentView({ items, query, onQuery, onOpen, onRecycle }: { items: Document[]; query: string; onQuery: (value: string) => void; onOpen: (item: Document) => void; onRecycle: (item: Document) => void }) { return <section className="card"><div className="toolbar"><input value={query} onChange={event => onQuery(event.target.value)} placeholder="Search titles" /><span>{items.length} items</span></div><table><thead><tr><th>Title</th><th>Categories / tags</th><th>Updated</th><th /></tr></thead><tbody>{items.map(item => <tr key={item.path}><td><button className="text-button" onClick={() => onOpen(item)}>{item.title}</button><small>{item.path}</small></td><td>{[...(Array.isArray(item.data.categories) ? item.data.categories : item.data.categories ? [item.data.categories] : []), ...(Array.isArray(item.data.tags) ? item.data.tags : item.data.tags ? [item.data.tags] : [])].map(String).map(tag => <span className="chip" key={tag}>{tag}</span>)}</td><td>{new Date(item.mtimeMs).toLocaleString()}</td><td><button className="icon danger" onClick={() => onRecycle(item)}>Delete</button></td></tr>)}</tbody></table></section>; }
-function Taxonomy({ data, posts, onOpen }: { data: { categories: Array<{ name: string; count: number }>; tags: Array<{ name: string; count: number }> } | null; posts: Document[]; onOpen: (item: Document) => void }) {
+function ContentView({ items, query, onQuery, onOpen, onRecycle, onTransition }: { items: Document[]; query: string; onQuery: (value: string) => void; onOpen: (item: Document) => void; onRecycle: (item: Document) => void; onTransition: (item: Document) => void }) { return <section className="card"><div className="toolbar"><input value={query} onChange={event => onQuery(event.target.value)} placeholder="Search titles" /><span>{items.length} items</span></div><table><thead><tr><th>Title</th><th>Categories / tags</th><th>Updated</th><th /></tr></thead><tbody>{items.map(item => <tr key={item.path}><td><button className="text-button" onClick={() => onOpen(item)}>{item.title}</button><small>{item.path}</small></td><td>{[...(Array.isArray(item.data.categories) ? item.data.categories : item.data.categories ? [item.data.categories] : []), ...(Array.isArray(item.data.tags) ? item.data.tags : item.data.tags ? [item.data.tags] : [])].map(String).map(tag => <span className="chip" key={tag}>{tag}</span>)}</td><td>{new Date(item.mtimeMs).toLocaleString()}</td><td><div className="actions"><button onClick={() => onOpen(item)}>Edit</button>{item.kind !== 'page' && <button onClick={() => onTransition(item)}>{item.kind === 'draft' ? 'Publish' : 'To draft'}</button>}<button className="danger" onClick={() => onRecycle(item)}>Delete</button></div></td></tr>)}</tbody></table></section>; }
+function RecycleBin({ items, onRestore, onDelete }: { items: RecycleItem[]; onRestore: (item: RecycleItem) => void; onDelete: (item: RecycleItem) => void }) { return <section className="card"><div className="toolbar"><h2>Recycle bin</h2><span>{items.length} item(s)</span></div>{items.length ? <table><thead><tr><th>Original path</th><th>Deleted</th><th>Files</th><th /></tr></thead><tbody>{items.map(item => <tr key={item.ticket}><td><b>{item.kind}</b><small>{item.originalPath}</small></td><td>{new Date(item.deletedAt).toLocaleString()}</td><td>{item.items.join(', ')}</td><td><div className="actions"><button onClick={() => onRestore(item)}>Restore</button><button className="danger" onClick={() => onDelete(item)}>Delete permanently</button></div></td></tr>)}</tbody></table> : <p>No recycled content.</p>}</section>; }
+function Taxonomy({ data, posts, onOpen, onManage }: { data: { categories: Array<{ name: string; count: number }>; tags: Array<{ name: string; count: number }> } | null; posts: Document[]; onOpen: (item: Document) => void; onManage: (type: 'category' | 'tag', action: 'rename' | 'delete', name: string) => void }) {
   const [selection, setSelection] = useState<{ type: 'category' | 'tag'; name: string } | null>(null);
   const values = (item: Document, key: 'categories' | 'tags') => Array.isArray(item.data[key]) ? item.data[key].map(String) : item.data[key] ? [String(item.data[key])] : [];
   const related = selection ? posts.filter(item => values(item, selection.type === 'category' ? 'categories' : 'tags').includes(selection.name)) : [];
   const select = (type: 'category' | 'tag', name: string) => setSelection(current => current?.type === type && current.name === name ? null : { type, name });
-  return <><section className="grid two"><article className="card"><h2>Categories</h2>{data?.categories.map(item => <button className="list-row taxonomy-button" key={item.name} onClick={() => select('category', item.name)}><span>{item.name}</span><b>{item.count}</b></button>)}</article><article className="card"><h2>Tags</h2><div>{data?.tags.map(item => <button className={selection?.type === 'tag' && selection.name === item.name ? 'chip active-chip' : 'chip'} key={item.name} onClick={() => select('tag', item.name)}>{item.name} {item.count}</button>)}</div></article></section><section className="card taxonomy-results"><div className="toolbar"><div><h2>{selection ? `${selection.type === 'category' ? 'Category' : 'Tag'}: ${selection.name}` : 'Related posts'}</h2><p className="muted">{selection ? `${related.length} post(s) use this ${selection.type}.` : 'Select a category or tag to view its posts.'}</p></div>{selection && <button onClick={() => setSelection(null)}>Clear filter</button>}</div>{selection && (related.length ? <div className="related-posts">{related.map(item => <button className="related-post" key={item.path} onClick={() => onOpen(item)}><b>{item.title}</b><small>{item.path}</small></button>)}</div> : <p className="muted">No published posts match this item.</p>)}</section></>;
+  return <><section className="grid two"><article className="card"><h2>Categories</h2>{data?.categories.map(item => <button className="list-row taxonomy-button" key={item.name} onClick={() => select('category', item.name)}><span>{item.name}</span><b>{item.count}</b></button>)}</article><article className="card"><h2>Tags</h2><div>{data?.tags.map(item => <button className={selection?.type === 'tag' && selection.name === item.name ? 'chip active-chip' : 'chip'} key={item.name} onClick={() => select('tag', item.name)}>{item.name} {item.count}</button>)}</div></article></section><section className="card taxonomy-results"><div className="toolbar"><div><h2>{selection ? `${selection.type === 'category' ? 'Category' : 'Tag'}: ${selection.name}` : 'Related posts'}</h2><p className="muted">{selection ? `${related.length} post(s) use this ${selection.type}.` : 'Select a category or tag to view its posts.'}</p></div>{selection && <div className="actions"><button onClick={() => onManage(selection.type, 'rename', selection.name)}>Rename</button><button className="danger" onClick={() => onManage(selection.type, 'delete', selection.name)}>Remove</button><button onClick={() => setSelection(null)}>Clear filter</button></div>}</div>{selection && (related.length ? <div className="related-posts">{related.map(item => <button className="related-post" key={item.path} onClick={() => onOpen(item)}><b>{item.title}</b><small>{item.path}</small></button>)}</div> : <p className="muted">No published posts match this item.</p>)}</section></>;
 }
 function Media({ editor, onUpload }: { editor: Document | null; onUpload: (file: File) => void }) { return <section className="card"><h2>Post media assets</h2>{editor ? <><p>Open post: <b>{editor.title}</b></p><label className="dropzone">Choose an image or attachment<input type="file" onChange={event => event.target.files?.[0] && onUpload(event.target.files[0])} /></label></> : <p>Open a post in the content list first; uploaded media will be stored with that post’s assets.</p>}</section>; }
 function ConfigEditor({ raw, onChange, onSave }: { raw: string; onChange: (value: string) => void; onSave: () => void }) { return <section className="card editor-card"><div className="toolbar"><span>YAML is validated and backed up before saving.</span><button className="primary" onClick={onSave}>Validate and save</button></div><textarea value={raw} onChange={event => onChange(event.target.value)} spellCheck={false} /></section>; }
