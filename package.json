@@ -6,7 +6,11 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "server": "hexo server"
+    "server": "hexo server",
+    "admin:dev": "npm --prefix admin run dev",
+    "admin:build": "npm --prefix admin run build",
+    "admin:start": "npm --prefix admin run start",
+    "admin:test": "npm --prefix admin run test"
   },
   "hexo": {
     "version": "6.2.0"
