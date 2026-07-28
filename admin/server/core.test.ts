@@ -107,6 +107,13 @@ describe('ProjectContext', () => {
     await expect(context.getContent('draft', draft.path)).rejects.toBeDefined();
   });
 
+  it('lists media from all posts with their owning post metadata', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Media owner' });
+    await context.uploadMedia(post.path, 'diagram.png', Buffer.from('image-bytes'));
+    await expect(context.mediaLibrary()).resolves.toMatchObject([{ name: 'diagram.png', postPath: post.path, postTitle: 'Media owner', used: false }]);
+  });
+
   it('copies content and safely renames a page path', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Original', body: 'Keep body' });
