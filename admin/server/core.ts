@@ -514,7 +514,15 @@ export class ProjectContext {
     // first use and will still reject a changed key afterwards.
     const knownHosts = path.join(this.metaRoot, 'ssh', 'known_hosts').replace(/\\/g, '/');
     await ensureDirectory(path.dirname(knownHosts));
-    const environment = { ...process.env, GIT_SSH_COMMAND: `ssh -o UserKnownHostsFile="${knownHosts}" -o StrictHostKeyChecking=accept-new` };
+    const remote = await this.command('git', ['config', '--get', 'remote.origin.url']);
+    const githubSsh = /^(?:git@|ssh:\/\/git@)(?:github\.com|ssh\.github\.com)[:/]/i.test(remote.stdout.trim());
+    const githubTunnel = githubSsh
+      ? ' -o HostName=ssh.github.com -p 443 -o HostKeyAlias=github.com'
+      : '';
+    const environment = {
+      ...process.env,
+      GIT_SSH_COMMAND: `ssh -o UserKnownHostsFile="${knownHosts}" -o StrictHostKeyChecking=accept-new${githubTunnel}`,
+    };
     return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args], false, environment);
   }
 
