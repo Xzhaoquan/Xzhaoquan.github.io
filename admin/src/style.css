@@ -127,7 +127,8 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .vditor-shell.vditor { border: 0; border-radius: 0; }
 .typora-canvas .vditor-toolbar, .typora-canvas .vditor-outline, .typora-canvas .vditor-counter { display: none; }
 .typora-canvas .vditor-content { min-height: 0; overflow: auto; background: #fff; }
-.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: min(900px, 100%); min-height: 100%; margin: 0 auto; padding: 56px clamp(28px, 7vw, 84px) 96px; color: #1f2937; font-size: 17px; line-height: 1.85; }
+.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: min(1280px, 100%); min-height: 100%; margin: 0 auto; padding: 48px clamp(28px, 4vw, 64px) 96px; color: #1f2937; font-size: 17px; line-height: 1.85; }
+.typora-canvas .vditor-wysiwyg > .vditor-reset { padding: 0 !important; }
 .typora-canvas .vditor-wysiwyg > .vditor-reset > h1::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h2::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h3::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h4::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h5::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h6::before, .typora-canvas .vditor-wysiwyg div.vditor-wysiwyg__block::before { display: none; content: none; }
 .typora-canvas .vditor-wysiwyg h1, .typora-canvas .vditor-wysiwyg h2, .typora-canvas .vditor-wysiwyg h3 { line-height: 1.35; }
 .typora-canvas .vditor-wysiwyg h1 { margin-top: 0; font-size: 2em; }
