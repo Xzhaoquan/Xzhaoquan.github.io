@@ -359,6 +359,35 @@ export class ProjectContext {
     return this.seoDocument(await this.getContent(kind, relativePath));
   }
 
+  async fixSeoArticle(kind: Extract<ContentKind, 'post' | 'draft'>, relativePath: string, action: 'summary' | 'date' | 'image-alt') {
+    const document = await this.getContent(kind, relativePath);
+    const data = { ...document.data };
+    let body = document.body;
+    if (action === 'summary') {
+      const paragraphs = body.split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^```/.test(part));
+      const text = (paragraphs.find(part => !/^>/.test(part)) ?? paragraphs[0] ?? '').replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!text) throw new AppError('SEO_FIX_UNAVAILABLE', 'A summary cannot be generated from an empty article.');
+      // Pure renders post.excerpt as HTML on index pages. Store one escaped
+      // paragraph so an admin-generated summary stays readable there while
+      // preserving the article's Markdown source unchanged.
+      const escaped = text.slice(0, 160).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      data.excerpt = `<p>${escaped}</p>`;
+    }
+    if (action === 'date') data.date = String(data.date ?? '').trim() || hexoDate();
+    if (action === 'image-alt') {
+      let changed = 0;
+      body = body.replace(/!\[\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_match, source: string) => {
+        changed += 1;
+        const name = path.basename(source.split(/[?#]/, 1)[0]).replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim();
+        return `![${name || 'image'}](${source})`;
+      });
+      if (!changed) throw new AppError('SEO_FIX_UNAVAILABLE', 'No image without alternative text was found.');
+    }
+    const saved = await this.saveContent(kind, relativePath, { data, body, hash: document.hash });
+    await this.appendLog('seo.fix', 'succeeded', { kind, path: relativePath, action });
+    return { document: saved, article: this.seoDocument(saved), action };
+  }
+
   async copyContent(kind: ContentKind, relativePath: string, input: { title: string; filename?: string }) {
     const source = await this.getContent(kind, relativePath);
     const data: Record<string, unknown> = { ...source.data, title: input.title };
@@ -462,11 +491,28 @@ export class ProjectContext {
     const suffix = mode === 'thumbnail' ? '-thumb' : '-optimized';
     const outputName = `${path.parse(safeName).name}${suffix}.webp`;
     const target = path.join(directory, outputName);
+    if (await exists(target)) throw new AppError('MEDIA_OUTPUT_EXISTS', `The generated file ${outputName} already exists. Rename or remove it before processing again.`);
     const width = mode === 'thumbnail' ? 480 : 1920;
     await sharp(source).rotate().resize({ width, withoutEnlargement: true }).webp({ quality: Math.min(95, Math.max(40, quality)) }).toFile(target);
+    const sourceBytes = (await fs.stat(source)).size;
     const bytes = (await fs.stat(target)).size;
     await this.appendLog('media.process', 'succeeded', { postPath, filename: safeName, outputName, mode, bytes });
-    return { name: outputName, path: path.relative(this.root, target).replace(/\\/g, '/'), bytes, markdown: `![${path.parse(outputName).name}](${outputName})` };
+    return { name: outputName, path: path.relative(this.root, target).replace(/\\/g, '/'), bytes, sourceBytes, savedBytes: sourceBytes - bytes, savedPercent: sourceBytes ? Math.round((1 - bytes / sourceBytes) * 100) : 0, markdown: `![${path.parse(outputName).name}](${outputName})` };
+  }
+
+  async processMediaBatch(items: Array<{ postPath: string; name: string }>, mode: 'webp' | 'thumbnail', quality = 82) {
+    const processed: Array<{ postPath: string; name: string; output: string; path: string; bytes: number; sourceBytes: number; savedBytes: number; savedPercent: number; markdown: string }> = [];
+    const failed: Array<{ postPath: string; name: string; message: string }> = [];
+    for (const item of items.slice(0, 100)) {
+      try {
+        const result = await this.processMedia(item.postPath, item.name, mode, quality);
+        processed.push({ postPath: item.postPath, name: item.name, output: result.name, path: result.path, bytes: result.bytes, sourceBytes: result.sourceBytes, savedBytes: result.savedBytes, savedPercent: result.savedPercent, markdown: result.markdown });
+      } catch (error) {
+        failed.push({ postPath: item.postPath, name: item.name, message: error instanceof Error ? error.message : String(error) });
+      }
+    }
+    await this.appendLog('media.process.batch', failed.length ? 'failed' : 'succeeded', { mode, processed: processed.length, failed: failed.length });
+    return { processed, failed };
   }
 
   async deleteMedia(postPath: string, filename: string) {
@@ -524,6 +570,30 @@ export class ProjectContext {
       GIT_SSH_COMMAND: `ssh -o UserKnownHostsFile="${knownHosts}" -o StrictHostKeyChecking=accept-new${githubTunnel}`,
     };
     return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args], false, environment);
+  }
+
+  async gitOverview() {
+    const [status, branch, remotes, upstream, branches, log] = await Promise.all([
+      this.git(['status', '--porcelain=v1']), this.git(['branch', '--show-current']), this.git(['remote', 'get-url', 'origin']),
+      this.git(['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}']), this.git(['branch', '--format=%(refname:short)']),
+      this.git(['log', '-8', '--pretty=format:%h%x09%s%x09%ci'])
+    ]);
+    const changes = status.stdout.split('\n').filter(Boolean);
+    const conflictCodes = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);
+    const conflicts = changes.filter(line => conflictCodes.has(line.slice(0, 2))).map(line => line.slice(3));
+    const current = branch.stdout.trim();
+    const tracking = upstream.code === 0 ? upstream.stdout.trim() : '';
+    let ahead = 0; let behind = 0;
+    if (tracking) {
+      const divergence = await this.git(['rev-list', '--left-right', '--count', `${tracking}...HEAD`]);
+      const [behindValue, aheadValue] = divergence.stdout.trim().split(/\s+/).map(Number);
+      behind = Number.isFinite(behindValue) ? behindValue : 0;
+      ahead = Number.isFinite(aheadValue) ? aheadValue : 0;
+    }
+    const remoteRaw = remotes.code === 0 ? remotes.stdout.trim() : '';
+    let remote = remoteRaw;
+    try { const parsed = new URL(remoteRaw); if (parsed.password) { parsed.password = ''; remote = parsed.toString(); } } catch { /* SSH URLs do not expose a password here. */ }
+    return { branch: current, tracking, remote, ahead, behind, branches: branches.stdout.split('\n').filter(Boolean), changes, conflicts, log: log.stdout.split('\n').filter(Boolean).map(line => { const [hash, message, date] = line.split('\t'); return { hash, message, date }; }) };
   }
 
   async command(command: string, args: string[], detached = false, environment: NodeJS.ProcessEnv = process.env) {

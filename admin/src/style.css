@@ -21,6 +21,7 @@ header p, .muted, small { margin: 0; color: #68758a; font-size: 13px; }
 button { padding: 8px 11px; color: #253247; font: inherit; font-size: 14px; border: 1px solid #d4dce9; border-radius: 7px; background: #fff; cursor: pointer; }
 button:hover { border-color: #7ba5eb; }
 .primary { color: #fff; border-color: #2563d9; background: #2563d9; }
+.small-button { padding: 3px 7px; margin: 4px 0 2px; font-size: 12px; }
 .danger { color: #bd3445; }
 .text-button { padding: 0; color: #165cc2; font-weight: 600; text-align: left; border: 0; background: transparent; }
 .notice { display: flex; justify-content: space-between; padding: 10px 12px; margin-bottom: 16px; color: #1f4d94; border-radius: 8px; background: #e7f0ff; }
@@ -88,8 +89,18 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .git-change input { width: 15px; height: 15px; }
 .git-change code { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .git-conflict { padding: 9px; color: #a62d3d; border-radius: 7px; background: #fff0f1; }
-.git-diff { grid-column: 1 / -1; }
+.git-conflict ul { padding-left: 20px; margin: 8px 0; }
+.git-summary { align-self: start; }
+.git-summary .toolbar { align-items: flex-start; }
+.git-summary .toolbar h2 { margin-bottom: 6px; }
+.git-summary dl { grid-template-columns: 120px minmax(0, 1fr); }
+.git-summary dd { overflow-wrap: anywhere; }
+.git-summary + .card .actions { padding-top: 14px; margin-top: 10px; border-top: 1px solid #e6ebf2; }
+.git-diff { display: none; }
 .git-diff pre { max-height: 420px; padding: 12px; overflow: auto; color: #d8e4f5; white-space: pre-wrap; border-radius: 7px; background: #121a27; }
+.git-diff-viewer { min-height: calc(100vh - 180px); }
+.git-diff-viewer pre { height: calc(100vh - 285px); min-height: 520px; padding: 18px; overflow: auto; color: #d8e4f5; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; line-height: 1.55; white-space: pre; border-radius: 8px; background: #121a27; }
+.git-diff-viewer pre::selection { color: #fff; background: #2563d9; }
 .modal { position: fixed; inset: 0; z-index: 5; padding: 24px; background: rgba(10, 18, 32, .45); }
 .editor-modal { display: flex; flex-direction: column; height: calc(100vh - 48px); overflow: hidden; border-radius: 12px; background: #fff; }
 .modal-head { padding: 14px 18px; border-bottom: 1px solid #e1e7f0; }
@@ -107,6 +118,14 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .markdown-shell { display: flex; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
 .markdown-toolbar { display: flex; flex-wrap: wrap; gap: 5px; padding: 7px 14px; border-bottom: 1px solid #e1e7f0; background: #fff; }
 .markdown-toolbar button { padding: 4px 8px; font-size: 12px; }
+.markdown-shell:fullscreen { width: 100vw; height: 100vh; background: #fff; }
+.dark .markdown-shell:fullscreen { background: #101827; }
+.editor-outline { max-height: 130px; padding: 6px 14px; overflow: auto; border-bottom: 1px solid #e1e7f0; background: #f8fafc; }
+.editor-outline summary { color: #56657a; font-size: 12px; cursor: pointer; }
+.editor-outline button { display: block; width: 100%; padding-top: 3px; padding-bottom: 3px; color: #315c9d; font-size: 12px; text-align: left; border: 0; border-radius: 0; background: transparent; }
+.editor-outline button:hover { color: #165cc2; background: #edf3ff; }
+.dark .editor-outline { border-color: #34445d; background: #172033; }
+.dark .editor-outline button { color: #b7d0ff; }
 .markdown { flex: 1; min-width: 0; overflow: auto; background: #fff; }
 .markdown .cm-editor { height: 100%; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; line-height: 1.6; }
 .markdown .cm-scroller { overflow: auto; }

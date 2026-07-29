@@ -1,10 +1,14 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { mkdtemp, readFile, readdir, rm, writeFile, mkdir } from 'node:fs/promises';
+import { execFile as execFileCallback } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { promisify } from 'node:util';
 import { AppError, ProjectContext, redact } from './core.js';
 
 const fixtures: string[] = [];
+const execFile = promisify(execFileCallback);
+async function git(root: string, args: string[]) { await execFile('git', args, { cwd: root, windowsHide: true }); }
 async function fixture() {
   const root = await mkdtemp(path.join(tmpdir(), 'hexo-admin-'));
   fixtures.push(root);
@@ -225,6 +229,49 @@ describe('ProjectContext', () => {
     expect(report.warnings).toBeGreaterThan(0);
     expect(report.suggestions).toBeGreaterThan(0);
     expect((await context.getContent('post', post.path)).body).toContain('Short body.');
+  });
+
+  it('applies only safe SEO fixes while preserving unknown Front Matter and body', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'SEO fix', data: { custom: 'keep' }, body: 'A useful paragraph for the generated summary.\n\n![](diagram.png)' });
+    await context.fixSeoArticle('post', post.path, 'summary');
+    await context.fixSeoArticle('post', post.path, 'date');
+    const fixed = await context.fixSeoArticle('post', post.path, 'image-alt');
+    expect(fixed.document.data).toMatchObject({ custom: 'keep', excerpt: expect.any(String), date: expect.stringMatching(/^\d{4}-/) });
+    expect(fixed.document.body).toContain('![diagram](diagram.png)');
+  });
+
+  it('processes image batches, keeps originals, and reports output conflicts', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Batch images' });
+    const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+    await context.uploadMedia(post.path, 'pixel.png', pixel);
+    const first = await context.processMediaBatch([{ postPath: post.path, name: 'pixel.png' }], 'webp');
+    expect(first.processed[0]).toMatchObject({ output: 'pixel-optimized.webp', sourceBytes: pixel.byteLength, markdown: '![pixel-optimized](pixel-optimized.webp)' });
+    expect((await context.mediaFor(post.path)).map(asset => asset.name)).toEqual(expect.arrayContaining(['pixel.png', 'pixel-optimized.webp']));
+    const duplicate = await context.processMediaBatch([{ postPath: post.path, name: 'pixel.png' }], 'webp');
+    expect(duplicate.failed[0]?.message).toContain('already exists');
+  });
+
+  it('reports Git branch, remote, divergence, and conflicted files without changing the repository', async () => {
+    const { root, context } = await fixture();
+    await git(root, ['init']);
+    await git(root, ['config', 'user.email', 'admin@example.test']);
+    await git(root, ['config', 'user.name', 'Hexo Admin Test']);
+    await writeFile(path.join(root, 'conflict.txt'), 'base\n');
+    await git(root, ['add', '.']); await git(root, ['commit', '-m', 'base']);
+    await git(root, ['checkout', '-b', 'feature']);
+    await writeFile(path.join(root, 'conflict.txt'), 'feature\n');
+    await git(root, ['commit', '-am', 'feature']);
+    await git(root, ['checkout', '-']);
+    await writeFile(path.join(root, 'conflict.txt'), 'current\n');
+    await git(root, ['commit', '-am', 'current']);
+    await git(root, ['merge', 'feature']).catch(() => undefined);
+    await git(root, ['remote', 'add', 'origin', 'https://user:secret@example.test/blog.git']);
+    const overview = await context.gitOverview();
+    expect(overview.branches.length).toBeGreaterThan(1);
+    expect(overview.conflicts).toContain('conflict.txt');
+    expect(overview.remote).not.toContain('secret');
   });
 
   it('redacts credential-like log fragments', () => {
