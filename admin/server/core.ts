@@ -5,6 +5,7 @@ import { createServer } from 'node:net';
 import path from 'node:path';
 import matter from 'gray-matter';
 import YAML from 'yaml';
+import sharp from 'sharp';
 import type { ContentDocument, ContentKind, TaskRecord } from './types.js';
 
 const META_DIR = '.hexo-admin';
@@ -375,6 +376,24 @@ export class ProjectContext {
     const markdown = `![${path.parse(safeName).name}](${safeName})`;
     await this.appendLog('media.upload', 'succeeded', { postPath, filename: safeName, bytes: bytes.byteLength });
     return { path: path.relative(this.root, target).replace(/\\/g, '/'), markdown };
+  }
+
+  async processMedia(postPath: string, filename: string, mode: 'webp' | 'thumbnail', quality = 82) {
+    const full = await this.resolve(postPath);
+    this.assertContentPath('post', full);
+    const safeName = path.basename(filename);
+    if (!safeName || safeName !== filename || !/\.(png|jpe?g|webp)$/i.test(safeName)) throw new AppError('UNSUPPORTED_IMAGE', 'Only PNG, JPEG, and WebP images can be processed.');
+    const directory = path.join(path.dirname(full), path.basename(full, '.md'));
+    const source = path.join(directory, safeName);
+    if (!await exists(source)) throw new AppError('MEDIA_NOT_FOUND', 'The media file no longer exists.');
+    const suffix = mode === 'thumbnail' ? '-thumb' : '-optimized';
+    const outputName = `${path.parse(safeName).name}${suffix}.webp`;
+    const target = path.join(directory, outputName);
+    const width = mode === 'thumbnail' ? 480 : 1920;
+    await sharp(source).rotate().resize({ width, withoutEnlargement: true }).webp({ quality: Math.min(95, Math.max(40, quality)) }).toFile(target);
+    const bytes = (await fs.stat(target)).size;
+    await this.appendLog('media.process', 'succeeded', { postPath, filename: safeName, outputName, mode, bytes });
+    return { name: outputName, path: path.relative(this.root, target).replace(/\\/g, '/'), bytes, markdown: `![${path.parse(outputName).name}](${outputName})` };
   }
 
   async deleteMedia(postPath: string, filename: string) {

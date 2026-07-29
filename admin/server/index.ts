@@ -66,6 +66,7 @@ app.post('/api/media/upload', async request => {
 });
 app.delete('/api/media', async request => { const query = z.object({ postPath: z.string().min(1), name: z.string().min(1) }).parse(request.query); await context.deleteMedia(query.postPath, query.name); return success({ deleted: true }); });
 app.post('/api/media/rename', async request => { const body = z.object({ postPath: z.string().min(1), name: z.string().min(1), newName: z.string().min(1) }).parse(request.body); return success(await context.renameMedia(body.postPath, body.name, body.newName)); });
+app.post('/api/media/process', async request => { const body = z.object({ postPath: z.string().min(1), name: z.string().min(1), mode: z.enum(['webp', 'thumbnail']), quality: z.number().int().min(40).max(95).optional() }).parse(request.body); return success(await context.processMedia(body.postPath, body.name, body.mode, body.quality)); });
 app.get('/api/media/file', async (request, reply) => { const query = z.object({ postPath: z.string().min(1), name: z.string().min(1) }).parse(request.query); const media = await context.readMedia(query.postPath, query.name); const extension = path.extname(media.name).toLowerCase(); const types: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.pdf': 'application/pdf' }; return reply.type(types[extension] ?? 'application/octet-stream').send(media.bytes); });
 
 app.get('/api/config', async () => success(await context.readYaml('_config.yml')));

@@ -170,6 +170,16 @@ describe('ProjectContext', () => {
     await expect(context.mediaFor(post.path)).resolves.toEqual([]);
   });
 
+  it('creates WebP and thumbnail variants while keeping the original image', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Process image' });
+    const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+    await context.uploadMedia(post.path, 'pixel.png', pixel);
+    await expect(context.processMedia(post.path, 'pixel.png', 'webp')).resolves.toMatchObject({ name: 'pixel-optimized.webp' });
+    await expect(context.processMedia(post.path, 'pixel.png', 'thumbnail')).resolves.toMatchObject({ name: 'pixel-thumb.webp' });
+    await expect(context.mediaFor(post.path)).resolves.toEqual(expect.arrayContaining([expect.objectContaining({ name: 'pixel.png' }), expect.objectContaining({ name: 'pixel-optimized.webp' }), expect.objectContaining({ name: 'pixel-thumb.webp' })]));
+  });
+
   it('reads media only from the selected post asset directory', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Read asset' });
