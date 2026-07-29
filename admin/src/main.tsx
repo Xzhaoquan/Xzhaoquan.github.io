@@ -100,20 +100,22 @@ function SourceMarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: 
   return <div className="markdown-shell"><div className="markdown-toolbar"><button title="Heading 1" onClick={() => prefixLine('# ')}>H1</button><button title="Heading 2" onClick={() => prefixLine('## ')}>H2</button><button title="Heading 3" onClick={() => prefixLine('### ')}>H3</button><button onClick={() => insert('**', '**')}>Bold</button><button onClick={() => insert('*', '*')}>Italic</button><button onClick={() => insert('~~', '~~')}>Strike</button><button onClick={() => prefixLine('> ')}>Quote</button><button onClick={() => prefixLine('- [ ] ')}>Task</button><button onClick={() => prefixLine('- ')}>List</button><button onClick={() => insert('[', '](https://)')}>Link</button><button onClick={() => insert('![alt text](', ')')}>Image</button><button onClick={() => insert('\n```text\n', '\n```\n')}>Code</button><button onClick={() => insert('\n| Column | Value |\n| --- | --- |\n| ', ' | |\n')}>Table</button><button onClick={() => void copy()}>Copy</button><button onClick={() => void toggleFullscreen()}>Fullscreen</button></div>{outline.length ? <details className="editor-outline"><summary>Outline ({outline.length})</summary>{outline.map(entry => <button key={`${entry.line}-${entry.title}`} style={{ paddingLeft: `${Math.max(0, entry.level - 1) * 12}px` }} onClick={() => jump(entry.line)}>{entry.title}</button>)}</details> : null}<div className="markdown" ref={host} aria-label="Markdown editor" /></div>;
 }
 
-function VditorIrEditor({ value, onChange, onSave }: { value: string; onChange: (value: string) => void; onSave?: () => void }) {
+function VditorWysiwygEditor({ value, onChange, onSave }: { value: string; onChange: (value: string) => void; onSave?: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const instance = useRef<Vditor | null>(null);
   const latest = useRef(value);
   const callback = useRef(onChange);
   const saveCallback = useRef(onSave);
+  const inputReady = useRef(false);
   callback.current = onChange;
   saveCallback.current = onSave;
   useEffect(() => {
     if (!host.current) return;
     let disposed = false;
+    inputReady.current = false;
     let editor: Vditor | null = null;
     editor = new Vditor(host.current, {
-      mode: 'ir',
+      mode: 'wysiwyg',
       lang: 'zh_CN',
       i18n: (window as Window & { VditorI18n?: object }).VditorI18n,
       _lutePath: lutePath,
@@ -121,20 +123,25 @@ function VditorIrEditor({ value, onChange, onSave }: { value: string; onChange: 
       value: latest.current,
       minHeight: 480,
       height: '100%',
-      toolbarConfig: { pin: true },
-      counter: { enable: true, type: 'markdown' },
-      outline: { enable: true, position: 'left' },
-      preview: { delay: 250, mode: 'editor' },
-      toolbar: ['headings', 'bold', 'italic', 'strike', 'link', '|', 'list', 'ordered-list', 'check', 'quote', 'line', 'code', 'inline-code', '|', 'table', 'undo', 'redo', '|', 'outline', 'fullscreen', 'edit-mode'],
+      toolbar: [],
+      counter: { enable: false },
+      outline: { enable: false },
       input(markdownValue) {
-        if (disposed) return;
+        // Vditor normalizes its initial DOM and can emit an input event while
+        // opening a document. Never treat that internal conversion as a user
+        // change: opening an article must not rewrite its Markdown file.
+        if (disposed || !inputReady.current) return;
         latest.current = markdownValue;
         callback.current(markdownValue);
       },
       ctrlEnter() { saveCallback.current?.(); },
-      after() { if (!disposed) instance.current = editor; }
+      after() {
+        if (disposed) return;
+        instance.current = editor;
+        window.setTimeout(() => { if (!disposed) inputReady.current = true; }, 80);
+      }
     });
-    return () => { disposed = true; if (instance.current === editor) instance.current = null; editor?.destroy(); };
+    return () => { disposed = true; inputReady.current = false; if (instance.current === editor) instance.current = null; editor?.destroy(); };
   }, []);
   useEffect(() => {
     const editor = instance.current;
@@ -142,13 +149,13 @@ function VditorIrEditor({ value, onChange, onSave }: { value: string; onChange: 
     latest.current = value;
     editor.setValue(value, true);
   }, [value]);
-  return <div className="vditor-shell" ref={host} aria-label="即时渲染 Markdown 编辑器" />;
+  return <div className="vditor-shell typora-canvas" ref={host} aria-label="所见即所得 Markdown 编辑器" />;
 }
 
 function MarkdownEditor(props: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
   const [sourceMode, setSourceMode] = useState(false);
   const hasHexoTags = /\{%[\s\S]*?%\}/.test(props.value);
-  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>即时渲染</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '所见即所得编辑；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。即时渲染可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor {...props} /> : <VditorIrEditor value={props.value} onChange={props.onChange} onSave={props.onSave} />}</div>;
+  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>沉浸编辑</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '接近 Typora 的居中写作画布；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。所见即所得模式可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor {...props} /> : <VditorWysiwygEditor value={props.value} onChange={props.onChange} onSave={props.onSave} />}</div>;
 }
 
 function App() {
