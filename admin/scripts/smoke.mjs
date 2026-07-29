@@ -6,6 +6,8 @@ const endpoints = [
   '/api/project/status',
   '/api/content/post',
   '/api/content/draft',
+  '/api/schedule',
+  '/api/seo',
   '/api/content/page',
   '/api/taxonomy',
   '/api/media/library',

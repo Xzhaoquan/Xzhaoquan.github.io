@@ -198,6 +198,35 @@ describe('ProjectContext', () => {
     await expect(context.mediaFor(post.path)).resolves.toMatchObject([{ name: 'new.png', used: true }]);
   });
 
+  it('schedules, cancels, and publishes due drafts with their asset folder', async () => {
+    const { context } = await fixture();
+    const future = await context.createContent('draft', { title: 'Future draft' });
+    await context.scheduleDraft(future.path, '2099-01-01 00:00:00');
+    await expect(context.scheduledDrafts()).resolves.toMatchObject([{ path: future.path, publishAt: '2099-01-01 00:00:00' }]);
+    await context.scheduleDraft(future.path);
+    await expect(context.scheduledDrafts()).resolves.toEqual([]);
+
+    const due = await context.createContent('draft', { title: 'Due draft', data: { publish_at: '2020-01-01 12:00:00' }, body: '# Ready' });
+    await context.uploadMedia(due.path, 'diagram.png', Buffer.from('asset'));
+    const result = await context.publishDueDrafts(new Date('2021-01-01T00:00:00Z'));
+    expect(result.published).toEqual([due.path.replace('_drafts', '_posts')]);
+    const post = await context.getContent('post', due.path.replace('_drafts', '_posts'));
+    expect(post.data).toMatchObject({ date: '2020-01-01 12:00:00', published: true });
+    expect(post.data.publish_at).toBeUndefined();
+    await expect(context.mediaFor(post.path)).resolves.toMatchObject([{ name: 'diagram.png' }]);
+  });
+
+  it('reports SEO warnings and suggestions without changing content', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'SEO check', body: 'Short body.\n\n![](image.png)\n\n[empty]()' });
+    const report = await context.seo('post');
+    const article = report.articles.find(item => item.path === post.path);
+    expect(article?.issues.map(issue => issue.rule)).toEqual(expect.arrayContaining(['description', 'categories', 'tags', 'cover', 'length', 'image-alt', 'links']));
+    expect(report.warnings).toBeGreaterThan(0);
+    expect(report.suggestions).toBeGreaterThan(0);
+    expect((await context.getContent('post', post.path)).body).toContain('Short body.');
+  });
+
   it('redacts credential-like log fragments', () => {
     expect(redact('token: abc123 password=secret')).toContain('[REDACTED]');
   });

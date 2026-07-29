@@ -25,6 +25,11 @@ const commonConfigSchema = z.object({ values: z.object({ title: z.string().optio
 
 function kind(value: unknown): ContentKind { return kindSchema.parse(value); }
 function success(data: unknown) { return { ok: true, data }; }
+async function publishDueSchedules() {
+  const result = await context.publishDueDrafts();
+  if (result.published.length || result.failed.length) app.log.info({ scheduledPublish: result }, 'scheduled drafts checked');
+  return result;
+}
 
 app.setErrorHandler((error, _request, reply) => {
   if (error instanceof AppError) return reply.code(error.code === 'EXTERNAL_MODIFICATION' ? 409 : 400).send({ ok: false, error: { code: error.code, message: error.message, changed: error.changed, recovery: error.recovery } });
@@ -39,6 +44,7 @@ app.post('/api/project/open', async request => {
   if (current.preview) throw new AppError('PREVIEW_RUNNING', 'Stop the local preview before changing projects.');
   const next = await ProjectContext.open(root);
   context = next;
+  void publishDueSchedules();
   return success(await context.status());
 });
 app.get('/api/content/:kind', async request => success(await context.listContent(kind((request.params as { kind: string }).kind))));
@@ -53,6 +59,11 @@ app.post('/api/recycle/clear', async () => success(await context.clearRecycle())
 app.post('/api/recycle/:ticket/restore', async request => success(await context.restoreRecycle((request.params as { ticket: string }).ticket)));
 app.delete('/api/recycle/:ticket', async request => { await context.deleteRecycle((request.params as { ticket: string }).ticket); return success({ deleted: true }); });
 app.post('/api/content/:kind/transition', async request => { const params = request.params as { kind: string }; const from = kind(params.kind); const body = z.object({ path: z.string(), to: z.enum(['post', 'draft']) }).parse(request.body); if (from === 'page' || from === body.to) throw new AppError('INVALID_CONTENT_TRANSITION', 'Only posts and drafts can be moved between these states.'); return success(await context.transitionContent(from, body.to, body.path)); });
+app.get('/api/schedule', async () => success(await context.scheduledDrafts()));
+app.post('/api/schedule', async request => { const body = z.object({ path: z.string(), publishAt: z.string().optional() }).parse(request.body); return success(await context.scheduleDraft(body.path, body.publishAt)); });
+app.post('/api/schedule/check', async () => success(await context.publishDueDrafts()));
+app.get('/api/seo', async request => { const query = request.query as { kind?: string }; return success(await context.seo(query.kind === 'draft' ? 'draft' : query.kind === 'post' ? 'post' : undefined)); });
+app.get('/api/seo/article', async request => { const query = z.object({ kind: z.enum(['post', 'draft']), path: z.string().min(1) }).parse(request.query); return success(await context.seoArticle(query.kind, query.path)); });
 
 app.get('/api/taxonomy', async () => success(await context.taxonomy()));
 app.patch('/api/taxonomy/:field', async request => { const field = z.enum(['categories', 'tags']).parse((request.params as { field: string }).field); const body = z.object({ action: z.enum(['rename', 'delete']), name: z.string().min(1), replacement: z.string().optional() }).parse(request.body); return success(await context.updateTaxonomy(field, body.action, body.name, body.replacement)); });
@@ -99,5 +110,11 @@ try {
   app.get('/*', async (_request, reply) => reply.type('text/html; charset=utf-8').send(await fs.readFile(path.join(clientDist, 'index.html'), 'utf8')));
 } catch { /* Vite dev server serves the client. */ }
 
+// Scheduled publishing is deliberately local: a closed admin panel does not
+// create an operating-system task. The startup check publishes overdue drafts.
+await publishDueSchedules();
+const scheduleTimer = setInterval(() => { void publishDueSchedules(); }, 60_000);
+scheduleTimer.unref();
+app.addHook('onClose', async () => clearInterval(scheduleTimer));
 await app.listen({ host: '127.0.0.1', port: Number(process.env.HEXO_ADMIN_PORT ?? 4190) });
 console.log(`Hexo Admin API: http://127.0.0.1:${process.env.HEXO_ADMIN_PORT ?? 4190}`);

@@ -27,6 +27,12 @@ function hexoDate(value = new Date()) {
   return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())} ${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
 }
 
+function scheduledDate(value: unknown) {
+  if (typeof value !== 'string' || !value.trim()) return undefined;
+  const date = new Date(value.includes('T') ? value : value.replace(' ', 'T'));
+  return Number.isNaN(date.valueOf()) ? undefined : date;
+}
+
 export class AppError extends Error {
   constructor(public readonly code: string, message: string, public readonly changed = false, public readonly recovery?: string) { super(message); }
 }
@@ -80,6 +86,12 @@ export class ProjectContext {
       const relative = path.relative(expectedBase, full).replace(/\\/g, '/');
       if (relative.startsWith('_posts/') || relative.startsWith('_drafts/')) throw new AppError('CONTENT_KIND_MISMATCH', 'Posts and drafts cannot be edited through the pages API.');
     }
+  }
+
+  private assertArticlePath(full: string) {
+    const postBase = path.resolve(this.root, CONTENT_DIRS.post);
+    const draftBase = path.resolve(this.root, CONTENT_DIRS.draft);
+    if ((!full.startsWith(postBase + path.sep) && full !== postBase) && (!full.startsWith(draftBase + path.sep) && full !== draftBase)) throw new AppError('CONTENT_KIND_MISMATCH', 'The file does not belong to a post or draft.');
   }
 
   async writeAtomic(target: string, content: string) {
@@ -286,6 +298,67 @@ export class ProjectContext {
     return this.parseDocument(to, destination);
   }
 
+  async scheduleDraft(relativePath: string, publishAt?: string) {
+    const draft = await this.getContent('draft', relativePath);
+    const data = { ...draft.data };
+    if (publishAt) {
+      if (!scheduledDate(publishAt)) throw new AppError('INVALID_SCHEDULE', 'The scheduled publication time is invalid.');
+      data.publish_at = publishAt;
+      data.published = false;
+    } else delete data.publish_at;
+    const saved = await this.saveContent('draft', relativePath, { data, body: draft.body, hash: draft.hash });
+    await this.appendLog('content.schedule', 'succeeded', { path: relativePath, publishAt: publishAt ?? null });
+    return saved;
+  }
+
+  async scheduledDrafts() {
+    return (await this.listContent('draft')).filter(draft => scheduledDate(draft.data.publish_at)).map(draft => ({ path: draft.path, title: draft.title, publishAt: String(draft.data.publish_at) })).sort((left, right) => left.publishAt.localeCompare(right.publishAt));
+  }
+
+  async publishDueDrafts(now = new Date()) {
+    const due = (await this.listContent('draft')).filter(draft => { const date = scheduledDate(draft.data.publish_at); return date && date <= now; });
+    const published: string[] = []; const failed: Array<{ path: string; message: string }> = [];
+    for (const draft of due) try {
+      const publishAt = String(draft.data.publish_at);
+      const post = await this.transitionContent('draft', 'post', draft.path);
+      const data: Record<string, unknown> = { ...post.data, date: publishAt, published: true }; delete data.publish_at;
+      await this.saveContent('post', post.path, { data, body: post.body, hash: post.hash });
+      published.push(post.path);
+      await this.appendLog('content.schedule.publish', 'succeeded', { from: draft.path, path: post.path, publishAt });
+    } catch (error) { failed.push({ path: draft.path, message: error instanceof Error ? error.message : String(error) }); }
+    return { checkedAt: now.toISOString(), published, failed };
+  }
+
+  private seoDocument(document: ContentDocument) {
+    const issues: Array<{ rule: string; level: 'warning' | 'suggestion'; message: string; suggestion: string }> = [];
+    const values = (field: string) => Array.isArray(document.data[field]) ? document.data[field] : document.data[field] ? [document.data[field]] : [];
+    if (!document.title.trim()) issues.push({ rule: 'title', level: 'warning', message: 'Missing title.', suggestion: 'Add a concise article title.' });
+    const description = String(document.data.description ?? document.data.excerpt ?? '').trim();
+    if (description.length < 50) issues.push({ rule: 'description', level: 'warning', message: 'Description or excerpt is missing or too short.', suggestion: 'Add a 50–160 character summary.' });
+    if (!values('categories').length) issues.push({ rule: 'categories', level: 'suggestion', message: 'No category assigned.', suggestion: 'Assign a relevant category.' });
+    if (!values('tags').length) issues.push({ rule: 'tags', level: 'suggestion', message: 'No tags assigned.', suggestion: 'Add one or more precise tags.' });
+    if (!String(document.data.cover ?? '').trim()) issues.push({ rule: 'cover', level: 'suggestion', message: 'No cover image set.', suggestion: 'Add a cover image for social sharing.' });
+    if (document.body.trim().length < 300) issues.push({ rule: 'length', level: 'suggestion', message: 'Article body is short.', suggestion: 'Add more useful explanatory content.' });
+    const headings = [...document.body.matchAll(/^(#{1,6})\s+/gm)].map(match => match[1].length);
+    if (headings.some((level, index) => index > 0 && level > headings[index - 1] + 1)) issues.push({ rule: 'headings', level: 'suggestion', message: 'Heading levels skip hierarchy.', suggestion: 'Use headings in order without skipping levels.' });
+    if (/!\[\s*\]\([^)]*\)/.test(document.body)) issues.push({ rule: 'image-alt', level: 'warning', message: 'An image has empty alternative text.', suggestion: 'Describe each informative image.' });
+    if (/\]\(\s*\)/.test(document.body)) issues.push({ rule: 'links', level: 'warning', message: 'An empty Markdown link was found.', suggestion: 'Add a valid destination or remove the link.' });
+    if (document.kind !== 'page' && !String(document.data.date ?? '').trim()) issues.push({ rule: 'date', level: 'warning', message: 'Publication date is missing.', suggestion: 'Set a publication date.' });
+    return { path: document.path, title: document.title, kind: document.kind, issues };
+  }
+
+  async seo(kind?: Extract<ContentKind, 'post' | 'draft'>) {
+    const documents = kind ? await this.listContent(kind) : [...await this.listContent('post'), ...await this.listContent('draft')];
+    const articles = documents.map(document => this.seoDocument(document));
+    const warnings = articles.reduce((total, article) => total + article.issues.filter(issue => issue.level === 'warning').length, 0);
+    const suggestions = articles.reduce((total, article) => total + article.issues.filter(issue => issue.level === 'suggestion').length, 0);
+    return { warnings, suggestions, articles };
+  }
+
+  async seoArticle(kind: Extract<ContentKind, 'post' | 'draft'>, relativePath: string) {
+    return this.seoDocument(await this.getContent(kind, relativePath));
+  }
+
   async copyContent(kind: ContentKind, relativePath: string, input: { title: string; filename?: string }) {
     const source = await this.getContent(kind, relativePath);
     const data: Record<string, unknown> = { ...source.data, title: input.title };
@@ -351,7 +424,7 @@ export class ProjectContext {
 
   async mediaFor(postPath: string) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const assets = path.join(path.dirname(full), path.basename(full, '.md'));
     if (!await exists(assets)) return [];
     const markdown = await fs.readFile(full, 'utf8');
@@ -367,7 +440,7 @@ export class ProjectContext {
 
   async uploadMedia(postPath: string, filename: string, bytes: Buffer) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const base = path.join(path.dirname(full), path.basename(full, '.md'));
     await ensureDirectory(base);
     const safeName = path.basename(filename).replace(/[<>:"/\\|?*]/g, '-');
@@ -380,7 +453,7 @@ export class ProjectContext {
 
   async processMedia(postPath: string, filename: string, mode: 'webp' | 'thumbnail', quality = 82) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const safeName = path.basename(filename);
     if (!safeName || safeName !== filename || !/\.(png|jpe?g|webp)$/i.test(safeName)) throw new AppError('UNSUPPORTED_IMAGE', 'Only PNG, JPEG, and WebP images can be processed.');
     const directory = path.join(path.dirname(full), path.basename(full, '.md'));
@@ -398,7 +471,7 @@ export class ProjectContext {
 
   async deleteMedia(postPath: string, filename: string) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const safeName = path.basename(filename);
     if (!safeName || safeName !== filename) throw new AppError('INVALID_MEDIA_PATH', 'The media filename is invalid.');
     const target = path.join(path.dirname(full), path.basename(full, '.md'), safeName);
@@ -409,7 +482,7 @@ export class ProjectContext {
 
   async renameMedia(postPath: string, filename: string, newFilename: string) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const oldName = path.basename(filename); const newName = path.basename(newFilename).replace(/[<>:"/\\|?*]/g, '-');
     if (!oldName || oldName !== filename || !newName || newName !== newFilename) throw new AppError('INVALID_MEDIA_PATH', 'The media filename is invalid.');
     const base = path.join(path.dirname(full), path.basename(full, '.md'));
@@ -425,7 +498,7 @@ export class ProjectContext {
 
   async readMedia(postPath: string, filename: string) {
     const full = await this.resolve(postPath);
-    this.assertContentPath('post', full);
+    this.assertArticlePath(full);
     const safeName = path.basename(filename);
     if (!safeName || safeName !== filename) throw new AppError('INVALID_MEDIA_PATH', 'The media filename is invalid.');
     const target = path.join(path.dirname(full), path.basename(full, '.md'), safeName);
@@ -568,7 +641,8 @@ export class ProjectContext {
     const [posts, drafts, gitStatus] = await Promise.all([this.listContent('post'), this.listContent('draft'), this.git(['status', '--porcelain=v1'])]);
     const deploy = (config.value as Record<string, unknown>).deploy;
     const deploymentConfigured = Array.isArray(deploy) ? deploy.length > 0 : Boolean(deploy && typeof deploy === 'object' && Object.keys(deploy).length);
-    return { configurationValid: true, frontMatterValid: true, deploymentConfigured, posts: posts.length, drafts: drafts.length, changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length };
+    const seo = await this.seo('post');
+    return { configurationValid: true, frontMatterValid: true, deploymentConfigured, posts: posts.length, drafts: drafts.length, changedFiles: gitStatus.stdout.split('\n').filter(Boolean).length, seoWarnings: seo.warnings, seoSuggestions: seo.suggestions };
   }
 
   async status() {
