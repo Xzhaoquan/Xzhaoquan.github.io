@@ -5,7 +5,7 @@ cd /d "%~dp0"
 
 rem Always rebuild. Stop a previous local admin first so its backend reloads.
 rem Do not terminate an unrelated service using port 4190.
-powershell.exe -NoProfile -Command "$connection = Get-NetTCPConnection -LocalPort 4190 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($null -eq $connection) { exit 3 }; $process = Get-CimInstance Win32_Process -Filter ('ProcessId = ' + $connection.OwningProcess); if ($null -eq $process -or $process.Name -notmatch '^node(\.exe)?$' -or $process.CommandLine -notmatch 'dist-server[\\/]index\.js') { exit 2 }; Stop-Process -Id $connection.OwningProcess -Force -ErrorAction Stop; exit 0"
+powershell.exe -NoProfile -Command "$connection = Get-NetTCPConnection -LocalPort 4190 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($null -eq $connection) { exit 3 }; $process = Get-CimInstance Win32_Process -Filter ('ProcessId = ' + $connection.OwningProcess); if ($null -eq $process -or $process.Name -notmatch '^node(\.exe)?$' -or $process.CommandLine -notmatch 'dist-server[\\/]index\.js') { exit 2 }; & taskkill.exe /PID $connection.OwningProcess /T /F | Out-Null; if ($LASTEXITCODE -ne 0) { exit 1 }; exit 0"
 if errorlevel 3 goto :build
 if errorlevel 2 goto :port_in_use
 if errorlevel 1 goto :stop_error

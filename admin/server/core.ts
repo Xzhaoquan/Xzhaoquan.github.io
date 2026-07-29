@@ -584,7 +584,11 @@ export class ProjectContext {
 
   async runTask(type: TaskRecord['type'], confirmed = false, port = 4000) {
     if (type === 'deploy' && !confirmed) throw new AppError('CONFIRMATION_REQUIRED', 'Deploy pushes the static site and requires explicit confirmation.');
-    if (type === 'preview' && this.preview) throw new AppError('PREVIEW_RUNNING', `Preview is already running on port ${this.preview.port}.`);
+    if (type === 'preview' && this.preview) {
+      const existing = this.tasks.get(this.preview.taskId);
+      if (existing) return existing;
+      throw new AppError('PREVIEW_RUNNING', `Preview is already running on port ${this.preview.port}.`);
+    }
     /* Legacy localized messages retained only to avoid invalid source encoding.
     if (type === 'deploy' && !confirmed) throw new AppError('CONFIRMATION_REQUIRED', '部署会推送静态站点，必须明确确认后才能执行。');
     if (type === 'preview' && this.preview) throw new AppError('PREVIEW_RUNNING', `预览服务已在 ${this.preview.port} 端口运行。');
@@ -601,7 +605,9 @@ export class ProjectContext {
     const invocation = this.hexoInvocation(args);
     const child = spawn(invocation.command, invocation.args, { cwd: this.root, shell: false, windowsHide: true });
     const append = (field: 'stdout' | 'stderr', value: Buffer) => {
-      const output = redact(value.toString());
+      // Hexo can emit ANSI colour sequences even when it is not attached to a
+      // terminal. Remove them before storing output or checking readiness.
+      const output = redact(value.toString()).replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, '');
       task[field] += output;
       // Hexo forks the HTTP server after the child process exists. Do not tell
       // the UI that preview is ready until its own startup message is seen.
