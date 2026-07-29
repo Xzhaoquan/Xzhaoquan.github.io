@@ -106,6 +106,8 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .modal-head { padding: 14px 18px; border-bottom: 1px solid #e1e7f0; }
 .modal-head small { display: block; margin-top: 3px; }
 .editor-layout { display: grid; flex: 1; grid-template-columns: 220px minmax(0, 1fr); min-height: 0; }
+.editor-modal.properties-collapsed .editor-layout { grid-template-columns: minmax(0, 1fr); }
+.editor-modal.properties-collapsed .properties { display: none; }
 .properties { padding: 16px; overflow: auto; border-right: 1px solid #e1e7f0; }
 .properties label { display: grid; gap: 5px; margin-bottom: 13px; color: #56657a; font-size: 12px; }
 .properties .checkbox-field { display: flex; grid-template-columns: auto 1fr; align-items: center; gap: 8px; }
@@ -127,7 +129,7 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .vditor-shell.vditor { border: 0; border-radius: 0; }
 .typora-canvas .vditor-toolbar, .typora-canvas .vditor-outline, .typora-canvas .vditor-counter { display: none; }
 .typora-canvas, .typora-canvas .vditor-content { min-height: 0; overflow: auto; background: #fff; }
-.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: 100%; min-height: 100%; margin: 0; padding: 36px 48px 96px; color: #1f2937; font-size: 17px; line-height: 1.85; background: #fff; }
+.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: 100%; min-height: 100%; margin: 0; padding: 36px 48px 40px; color: #1f2937; font-size: 17px; line-height: 1.85; background: #fff; }
 .typora-canvas .vditor-wysiwyg > .vditor-reset { padding: 0 !important; }
 .typora-canvas .vditor-wysiwyg > .vditor-reset > h1::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h2::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h3::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h4::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h5::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h6::before, .typora-canvas .vditor-wysiwyg div.vditor-wysiwyg__block::before { display: none; content: none; }
 .typora-canvas .vditor-wysiwyg h1, .typora-canvas .vditor-wysiwyg h2, .typora-canvas .vditor-wysiwyg h3 { line-height: 1.35; }

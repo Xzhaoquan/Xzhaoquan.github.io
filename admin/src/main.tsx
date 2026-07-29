@@ -154,8 +154,14 @@ function VditorWysiwygEditor({ value, onChange, onSave }: { value: string; onCha
 
 function MarkdownEditor(props: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
   const [sourceMode, setSourceMode] = useState(false);
+  const [propertiesCollapsed, setPropertiesCollapsed] = useState(false);
   const hasHexoTags = /\{%[\s\S]*?%\}/.test(props.value);
-  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>沉浸编辑</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '接近 Typora 的居中写作画布；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。所见即所得模式可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor {...props} /> : <VditorWysiwygEditor value={props.value} onChange={props.onChange} onSave={props.onSave} />}</div>;
+  useEffect(() => {
+    const modal = document.querySelector('.editor-modal');
+    modal?.classList.toggle('properties-collapsed', propertiesCollapsed);
+    return () => modal?.classList.remove('properties-collapsed');
+  }, [propertiesCollapsed]);
+  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>沉浸编辑</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button><button onClick={() => setPropertiesCollapsed(value => !value)}>{propertiesCollapsed ? '展开属性' : '收起属性'}</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '接近 Typora 的写作画布；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。所见即所得模式可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor {...props} /> : <VditorWysiwygEditor value={props.value} onChange={props.onChange} onSave={props.onSave} />}</div>;
 }
 
 function App() {
