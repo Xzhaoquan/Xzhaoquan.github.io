@@ -6,6 +6,10 @@ import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Vditor from 'vditor';
+import 'vditor/dist/js/i18n/zh_CN.js';
+import 'vditor/dist/index.css';
+import lutePath from 'vditor/dist/js/lute/lute.min.js?url';
 import './style.css';
 
 type Kind = 'post' | 'draft' | 'page';
@@ -57,7 +61,7 @@ nav.splice(4, 0, ['schedule', 'Scheduled publish', 'T']);
 nav.splice(8, 0, ['seo', 'SEO checks', 'S']);
 nav.push(['system', 'System settings', 'S']);
 
-function MarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
+function SourceMarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
   const host = useRef<HTMLDivElement>(null);
   const editorView = useRef<EditorView | null>(null);
   const latest = useRef(value);
@@ -94,6 +98,57 @@ function MarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string
   const copy = async () => { try { await navigator.clipboard.writeText(value); } catch { window.prompt('Copy Markdown', value); } };
   const toggleFullscreen = async () => { const shell = host.current?.closest('.markdown-shell'); if (!shell) return; if (document.fullscreenElement) await document.exitFullscreen(); else await shell.requestFullscreen(); };
   return <div className="markdown-shell"><div className="markdown-toolbar"><button title="Heading 1" onClick={() => prefixLine('# ')}>H1</button><button title="Heading 2" onClick={() => prefixLine('## ')}>H2</button><button title="Heading 3" onClick={() => prefixLine('### ')}>H3</button><button onClick={() => insert('**', '**')}>Bold</button><button onClick={() => insert('*', '*')}>Italic</button><button onClick={() => insert('~~', '~~')}>Strike</button><button onClick={() => prefixLine('> ')}>Quote</button><button onClick={() => prefixLine('- [ ] ')}>Task</button><button onClick={() => prefixLine('- ')}>List</button><button onClick={() => insert('[', '](https://)')}>Link</button><button onClick={() => insert('![alt text](', ')')}>Image</button><button onClick={() => insert('\n```text\n', '\n```\n')}>Code</button><button onClick={() => insert('\n| Column | Value |\n| --- | --- |\n| ', ' | |\n')}>Table</button><button onClick={() => void copy()}>Copy</button><button onClick={() => void toggleFullscreen()}>Fullscreen</button></div>{outline.length ? <details className="editor-outline"><summary>Outline ({outline.length})</summary>{outline.map(entry => <button key={`${entry.line}-${entry.title}`} style={{ paddingLeft: `${Math.max(0, entry.level - 1) * 12}px` }} onClick={() => jump(entry.line)}>{entry.title}</button>)}</details> : null}<div className="markdown" ref={host} aria-label="Markdown editor" /></div>;
+}
+
+function VditorIrEditor({ value, onChange, onSave }: { value: string; onChange: (value: string) => void; onSave?: () => void }) {
+  const host = useRef<HTMLDivElement>(null);
+  const instance = useRef<Vditor | null>(null);
+  const latest = useRef(value);
+  const callback = useRef(onChange);
+  const saveCallback = useRef(onSave);
+  callback.current = onChange;
+  saveCallback.current = onSave;
+  useEffect(() => {
+    if (!host.current) return;
+    let disposed = false;
+    let editor: Vditor | null = null;
+    editor = new Vditor(host.current, {
+      mode: 'ir',
+      lang: 'zh_CN',
+      i18n: (window as Window & { VditorI18n?: object }).VditorI18n,
+      _lutePath: lutePath,
+      cache: { enable: false },
+      value: latest.current,
+      minHeight: 480,
+      height: '100%',
+      toolbarConfig: { pin: true },
+      counter: { enable: true, type: 'markdown' },
+      outline: { enable: true, position: 'left' },
+      preview: { delay: 250, mode: 'editor' },
+      toolbar: ['headings', 'bold', 'italic', 'strike', 'link', '|', 'list', 'ordered-list', 'check', 'quote', 'line', 'code', 'inline-code', '|', 'table', 'undo', 'redo', '|', 'outline', 'fullscreen', 'edit-mode'],
+      input(markdownValue) {
+        if (disposed) return;
+        latest.current = markdownValue;
+        callback.current(markdownValue);
+      },
+      ctrlEnter() { saveCallback.current?.(); },
+      after() { if (!disposed) instance.current = editor; }
+    });
+    return () => { disposed = true; if (instance.current === editor) instance.current = null; editor?.destroy(); };
+  }, []);
+  useEffect(() => {
+    const editor = instance.current;
+    if (!editor || value === latest.current) return;
+    latest.current = value;
+    editor.setValue(value, true);
+  }, [value]);
+  return <div className="vditor-shell" ref={host} aria-label="即时渲染 Markdown 编辑器" />;
+}
+
+function MarkdownEditor(props: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
+  const [sourceMode, setSourceMode] = useState(false);
+  const hasHexoTags = /\{%[\s\S]*?%\}/.test(props.value);
+  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>即时渲染</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '所见即所得编辑；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。即时渲染可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor {...props} /> : <VditorIrEditor value={props.value} onChange={props.onChange} onSave={props.onSave} />}</div>;
 }
 
 function App() {
