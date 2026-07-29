@@ -126,8 +126,8 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .vditor-shell { flex: 1; min-height: 0; min-width: 0; overflow: hidden; }
 .vditor-shell.vditor { border: 0; border-radius: 0; }
 .typora-canvas .vditor-toolbar, .typora-canvas .vditor-outline, .typora-canvas .vditor-counter { display: none; }
-.typora-canvas .vditor-content { min-height: 0; overflow: auto; background: #fff; }
-.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: min(1280px, 100%); min-height: 100%; margin: 0 auto; padding: 48px clamp(28px, 4vw, 64px) 96px; color: #1f2937; font-size: 17px; line-height: 1.85; }
+.typora-canvas, .typora-canvas .vditor-content { min-height: 0; overflow: auto; background: #fff; }
+.typora-canvas .vditor-wysiwyg { box-sizing: border-box; width: 100%; min-height: 100%; margin: 0; padding: 36px 48px 96px; color: #1f2937; font-size: 17px; line-height: 1.85; background: #fff; }
 .typora-canvas .vditor-wysiwyg > .vditor-reset { padding: 0 !important; }
 .typora-canvas .vditor-wysiwyg > .vditor-reset > h1::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h2::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h3::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h4::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h5::before, .typora-canvas .vditor-wysiwyg > .vditor-reset > h6::before, .typora-canvas .vditor-wysiwyg div.vditor-wysiwyg__block::before { display: none; content: none; }
 .typora-canvas .vditor-wysiwyg h1, .typora-canvas .vditor-wysiwyg h2, .typora-canvas .vditor-wysiwyg h3 { line-height: 1.35; }
@@ -156,5 +156,5 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .dark .editor-mode-bar { color: #dce5f5; border-color: #34445d; background: #172033; }
 .dark .editor-mode-bar small { color: #a7b6cc; }
 .dark .hexo-tag-notice { color: #f8d58a; border-color: #7b5d22; background: #382f1d; }
-.dark .typora-canvas .vditor-content, .dark .typora-canvas .vditor-wysiwyg { color: #dce5f5; background: #101827; }
+.dark .typora-canvas .vditor-wysiwyg { color: #1f2937; background: #fff; }
 @media (max-width: 620px) { .main { padding: 16px; } .grid.two, .config-fields { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } .editor-layout { grid-template-columns: 1fr; } .properties { display: none; } .modal { padding: 8px; } .editor-modal { height: calc(100vh - 16px); } .sidebar { padding: 14px 7px; } }
