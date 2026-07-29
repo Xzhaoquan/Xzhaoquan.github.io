@@ -154,6 +154,13 @@ describe('ProjectContext', () => {
     expect(saved.data.tags).toEqual([]);
   });
 
+  it('merges an existing taxonomy name without duplicate references', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Merge taxonomy', data: { tags: ['Old', 'New'] } });
+    await context.updateTaxonomy('tags', 'rename', 'Old', 'New');
+    expect((await context.getContent('post', post.path)).data.tags).toEqual(['New']);
+  });
+
   it('stores and deletes media only within the selected post asset directory', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Assets' });
