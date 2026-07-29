@@ -357,6 +357,18 @@ function GitView({ data, diff, onDiff, onRefresh, onPull, onCommit, onPush }: { 
 function TaskLogs({ tasks }: { tasks: Task[] }) { return <section className="card task-log"><h2>Task logs</h2>{tasks.length ? tasks.map(task => <details key={task.id}><summary><b>{task.type}</b> · {task.status} · {new Date(task.startedAt).toLocaleTimeString()}</summary><pre>{task.stdout || task.stderr || 'Awaiting output...'}</pre></details>) : <p>No tasks yet.</p>}</section>; }
 function Editor({ item, onChange, onSave, onRename, onClose, onUpload }: { item: Document; onChange: (item: Document) => void; onSave: () => void; onRename: (item: Document) => void; onClose: () => void; onUpload: (file: File) => void }) {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
+  useEffect(() => {
+    // An editor is a focused workspace: never let wheel/touch scrolling leak
+    // through the fixed dialog to the article list underneath it.
+    const bodyOverflow = document.body.style.overflow;
+    const documentOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = documentOverflow;
+    };
+  }, []);
   const setData = (key: string, value: unknown) => onChange({ ...item, data: { ...item.data, [key]: value } });
   const arrayField = (key: 'categories' | 'tags') => (Array.isArray(item.data[key]) ? item.data[key] : item.data[key] ? [item.data[key]] : []).join(', ');
   const importImage = (files: FileList) => { const file = [...files].find(candidate => candidate.type.startsWith('image/')); if (file) onUpload(file); };
