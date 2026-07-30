@@ -247,6 +247,7 @@ describe('ProjectContext', () => {
     const fixed = await context.fixSeoArticle('post', post.path, 'all');
     expect(fixed.applied).toEqual(expect.arrayContaining(['summary', 'date', 'image-alt']));
     expect(fixed.document.data).toMatchObject({ custom: 'keep', excerpt: expect.any(String), date: expect.stringMatching(/^\d{4}-/) });
+    expect(String(fixed.document.data.excerpt).length).toBeGreaterThanOrEqual(50);
     expect(fixed.document.body).toContain('![diagram](diagram.png)');
   });
 

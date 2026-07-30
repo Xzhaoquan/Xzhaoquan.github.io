@@ -366,8 +366,11 @@ export class ProjectContext {
     const applied: Array<'summary' | 'date' | 'image-alt'> = [];
     const description = String(data.description ?? data.excerpt ?? '').trim();
     if (action === 'summary' || (action === 'all' && description.length < 50)) {
-      const paragraphs = body.split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^```/.test(part));
-      const text = (paragraphs.find(part => !/^>/.test(part)) ?? paragraphs[0] ?? '').replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim();
+      const paragraphs = body.replace(/```[\s\S]*?```/g, ' ').split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^>/.test(part));
+      // The previous implementation used only the first paragraph, which
+      // often produced a too-short excerpt and left the same SEO warning in
+      // place. Combine readable prose (including the title) up to 160 chars.
+      const text = [document.title, ...paragraphs].map(part => part.replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join(' ').slice(0, 160).trim();
       if (!text && action === 'summary') throw new AppError('SEO_FIX_UNAVAILABLE', 'A summary cannot be generated from an empty article.');
       // Pure renders post.excerpt as HTML on index pages. Store one escaped
       // paragraph so an admin-generated summary stays readable there while
