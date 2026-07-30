@@ -359,33 +359,43 @@ export class ProjectContext {
     return this.seoDocument(await this.getContent(kind, relativePath));
   }
 
-  async fixSeoArticle(kind: Extract<ContentKind, 'post' | 'draft'>, relativePath: string, action: 'summary' | 'date' | 'image-alt') {
+  async fixSeoArticle(kind: Extract<ContentKind, 'post' | 'draft'>, relativePath: string, action: 'summary' | 'date' | 'image-alt' | 'all') {
     const document = await this.getContent(kind, relativePath);
     const data = { ...document.data };
     let body = document.body;
-    if (action === 'summary') {
+    const applied: Array<'summary' | 'date' | 'image-alt'> = [];
+    const description = String(data.description ?? data.excerpt ?? '').trim();
+    if (action === 'summary' || (action === 'all' && description.length < 50)) {
       const paragraphs = body.split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^```/.test(part));
       const text = (paragraphs.find(part => !/^>/.test(part)) ?? paragraphs[0] ?? '').replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim();
-      if (!text) throw new AppError('SEO_FIX_UNAVAILABLE', 'A summary cannot be generated from an empty article.');
+      if (!text && action === 'summary') throw new AppError('SEO_FIX_UNAVAILABLE', 'A summary cannot be generated from an empty article.');
       // Pure renders post.excerpt as HTML on index pages. Store one escaped
       // paragraph so an admin-generated summary stays readable there while
       // preserving the article's Markdown source unchanged.
-      const escaped = text.slice(0, 160).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      data.excerpt = `<p>${escaped}</p>`;
+      if (text) {
+        const escaped = text.slice(0, 160).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        data.excerpt = `<p>${escaped}</p>`;
+        applied.push('summary');
+      }
     }
-    if (action === 'date') data.date = String(data.date ?? '').trim() || hexoDate();
-    if (action === 'image-alt') {
+    if (action === 'date' || (action === 'all' && !String(data.date ?? '').trim())) {
+      data.date = String(data.date ?? '').trim() || hexoDate();
+      applied.push('date');
+    }
+    if (action === 'image-alt' || action === 'all') {
       let changed = 0;
       body = body.replace(/!\[\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_match, source: string) => {
         changed += 1;
         const name = path.basename(source.split(/[?#]/, 1)[0]).replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim();
         return `![${name || 'image'}](${source})`;
       });
-      if (!changed) throw new AppError('SEO_FIX_UNAVAILABLE', 'No image without alternative text was found.');
+      if (!changed && action === 'image-alt') throw new AppError('SEO_FIX_UNAVAILABLE', 'No image without alternative text was found.');
+      if (changed) applied.push('image-alt');
     }
+    if (!applied.length) throw new AppError('SEO_FIX_UNAVAILABLE', 'No automatically fixable SEO issues were found.');
     const saved = await this.saveContent(kind, relativePath, { data, body, hash: document.hash });
-    await this.appendLog('seo.fix', 'succeeded', { kind, path: relativePath, action });
-    return { document: saved, article: this.seoDocument(saved), action };
+    await this.appendLog('seo.fix', 'succeeded', { kind, path: relativePath, action, applied });
+    return { document: saved, article: this.seoDocument(saved), action, applied };
   }
 
   async copyContent(kind: ContentKind, relativePath: string, input: { title: string; filename?: string }) {

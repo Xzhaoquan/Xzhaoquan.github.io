@@ -241,6 +241,15 @@ describe('ProjectContext', () => {
     expect(fixed.document.body).toContain('![diagram](diagram.png)');
   });
 
+  it('applies every available safe SEO fix in one atomic article save', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'SEO one click', data: { custom: 'keep', date: '' }, body: 'A useful paragraph for the generated summary.\n\n![](diagram.png)' });
+    const fixed = await context.fixSeoArticle('post', post.path, 'all');
+    expect(fixed.applied).toEqual(expect.arrayContaining(['summary', 'date', 'image-alt']));
+    expect(fixed.document.data).toMatchObject({ custom: 'keep', excerpt: expect.any(String), date: expect.stringMatching(/^\d{4}-/) });
+    expect(fixed.document.body).toContain('![diagram](diagram.png)');
+  });
+
   it('processes image batches, keeps originals, and reports output conflicts', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Batch images' });
