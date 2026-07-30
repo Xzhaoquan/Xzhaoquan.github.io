@@ -157,6 +157,33 @@ export class ProjectContext {
     return this.themes();
   }
 
+  async themeProfile() {
+    const themes = await this.themes();
+    const config = await this.readYaml(`themes/${themes.current}/_config.yml`);
+    const profile = ((config.value as Record<string, unknown>).profile ?? {}) as Record<string, unknown>;
+    return {
+      enabled: profile.enabled === undefined ? true : Boolean(profile.enabled),
+      articleSelfBlock: Boolean(profile.articleSelfBlock),
+      avatar: String(profile.avatar ?? ''),
+      gravatar: String(profile.gravatar ?? ''),
+      author: String(profile.author ?? ''),
+      author_title: String(profile.author_title ?? ''),
+      author_description: String(profile.author_description ?? ''),
+      location: String(profile.location ?? '')
+    };
+  }
+
+  async saveThemeProfile(values: { enabled: boolean; articleSelfBlock: boolean; avatar: string; gravatar: string; author: string; author_title: string; author_description: string; location: string }) {
+    const themes = await this.themes();
+    const relative = `themes/${themes.current}/_config.yml`;
+    const config = await this.readYaml(relative);
+    const current = (config.value as Record<string, unknown>).profile;
+    const profile = { ...(current && typeof current === 'object' ? current as Record<string, unknown> : {}), ...values };
+    await this.saveYaml(relative, YAML.stringify({ ...(config.value as Record<string, unknown>), profile }));
+    await this.appendLog('theme.profile.save', 'succeeded', { theme: themes.current });
+    return this.themeProfile();
+  }
+
   async walk(directory: string): Promise<string[]> {
     if (!await exists(directory)) return [];
     const entries = await fs.readdir(directory, { withFileTypes: true });

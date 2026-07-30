@@ -71,11 +71,15 @@ td small { display: block; max-width: 280px; margin-top: 4px; overflow: hidden; 
 .editor-card textarea { width: 100%; height: 62vh; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; }
 .config-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .config-fields label { display: grid; gap: 5px; color: #56657a; font-size: 13px; }
+.config-fields .config-field-full { grid-column: 1 / -1; }
+.config-fields .checkbox-label { display: flex; align-items: center; gap: 8px; min-height: 37px; color: #253247; }
+.config-fields .checkbox-label input { width: 16px; height: 16px; }
 .theme-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .dark { color: #dce5f5; background: #101827; }
 .dark .main, .dark .markdown, .dark .preview, .dark .editor-modal { background: #101827; }
 .dark .card, .dark .stat, .dark button, .dark input, .dark textarea, .dark select { color: #dce5f5; border-color: #34445d; background: #172033; }
 .dark .stat span, .dark header p, .dark .muted, .dark small, .dark .toolbar span, .dark th, .dark .card dt { color: #9eafc7; }
+.dark .config-fields label, .dark .config-fields .checkbox-label { color: #dce5f5; }
 .dark .list-row, .dark th, .dark td, .dark .task-log details { border-color: #34445d; }
 .dark .text-button { color: #8ab4ff; }
 .dark .chip { color: #b7d0ff; background: #253b60; }

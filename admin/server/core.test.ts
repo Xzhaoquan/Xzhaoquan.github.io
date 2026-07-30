@@ -231,6 +231,16 @@ describe('ProjectContext', () => {
     expect((await context.getContent('post', post.path)).body).toContain('Short body.');
   });
 
+  it('reads and saves the current theme profile without dropping theme settings', async () => {
+    const { root, context } = await fixture();
+    await mkdir(path.join(root, 'themes', 'pure'), { recursive: true });
+    await writeFile(path.join(root, 'themes', 'pure', '_config.yml'), 'menu: []\nprofile:\n  enabled: true\n  author: Old name\n', 'utf8');
+    expect(await context.themeProfile()).toMatchObject({ enabled: true, author: 'Old name', articleSelfBlock: false });
+    await context.saveThemeProfile({ enabled: false, articleSelfBlock: true, avatar: 'images/avatar.jpg', gravatar: '', author: 'New name', author_title: 'Writer', author_description: 'About me', location: 'Shenzhen' });
+    const saved = await context.readYaml('themes/pure/_config.yml');
+    expect(saved.value).toMatchObject({ menu: [], profile: { enabled: false, articleSelfBlock: true, author: 'New name', location: 'Shenzhen' } });
+  });
+
   it('applies only safe SEO fixes while preserving unknown Front Matter and body', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'SEO fix', data: { custom: 'keep' }, body: 'A useful paragraph for the generated summary.\n\n![](diagram.png)' });

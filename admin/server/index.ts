@@ -22,6 +22,7 @@ const kindSchema = z.enum(['post', 'draft', 'page']);
 const contentSchema = z.object({ data: z.record(z.unknown()), body: z.string(), hash: z.string().optional() });
 const createSchema = z.object({ title: z.string().min(1).max(160), filename: z.string().max(180).optional(), data: z.record(z.unknown()).optional(), body: z.string().optional() });
 const commonConfigSchema = z.object({ values: z.object({ title: z.string().optional(), subtitle: z.string().optional(), description: z.string().optional(), author: z.string().optional(), language: z.string().optional(), timezone: z.string().optional(), url: z.string().optional(), root: z.string().optional(), permalink: z.string().optional(), per_page: z.string().optional() }) });
+const themeProfileSchema = z.object({ enabled: z.boolean(), articleSelfBlock: z.boolean(), avatar: z.string().max(500), gravatar: z.string().max(320), author: z.string().max(160), author_title: z.string().max(240), author_description: z.string().max(2000), location: z.string().max(240) });
 
 function kind(value: unknown): ContentKind { return kindSchema.parse(value); }
 function success(data: unknown) { return { ok: true, data }; }
@@ -90,6 +91,8 @@ app.put('/api/config/common', async request => success(await context.saveCommonC
 app.get('/api/theme', async () => { const themes = await context.themes(); return success({ theme: themes.current, themes: themes.installed, config: await context.readYaml(`themes/${themes.current}/_config.yml`) }); });
 app.put('/api/theme', async request => { const config = await context.readYaml('_config.yml'); const body = z.object({ raw: z.string() }).parse(request.body); const relative = `themes/${String(config.value.theme ?? '')}/_config.yml`; await context.saveYaml(relative, body.raw); return success(await context.readYaml(relative)); });
 app.post('/api/theme/select', async request => success(await context.selectTheme(z.object({ theme: z.string().min(1) }).parse(request.body).theme)));
+app.get('/api/theme/profile', async () => success(await context.themeProfile()));
+app.put('/api/theme/profile', async request => success(await context.saveThemeProfile(themeProfileSchema.parse(request.body))));
 
 app.get('/api/logs', async request => { const query = request.query as { limit?: string }; const limit = Math.min(500, Math.max(1, Number(query.limit ?? 100) || 100)); return success(await context.listOperationLogs(limit)); });
 
