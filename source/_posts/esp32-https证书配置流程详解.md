@@ -2,10 +2,7 @@
 title: esp32_https证书配置流程详解
 categories: 嵌入式开发
 date: 2025-03-19 22:38:20
-tags: "ESP32 TLS\r"
-excerpt: <p>esp32 https证书配置流程详解 ESP32 使用 mbedTLS 作为底层 TLS/SSL 协议栈来实现 HTTPS
-  加密通信。其证书验证机制基于 X.509 标准，确保服务器的身份安全，防止中间人攻击 MITM 。 - 验证服务器证书的签名 （确保该证书由受信任的 CA
-  签发） - 验证证书的有效期 （证书是</p>
+tags: ESP32 TLS
 ---
 
 ## **一、ESP32 证书校验的原理**

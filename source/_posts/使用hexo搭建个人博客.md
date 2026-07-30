@@ -2,10 +2,7 @@
 title: 使用hexo搭建个人博客
 categories: 博客搭建
 date: 2022-09-09 00:21:19
-tags: "Hexo\r"
-excerpt: <p>使用hexo搭建个人博客 - 安装git（按照默认操作即可） - 安装node.js - 安装hexo - 生成博客文件 -
-  预览博客文件 - 在gitee创建一个仓库，创建仓库名称使用gitee用户名。（如果不适用用户名，需要再仓库名后面加.gitee.io） -
-  仓库创建成功后，复制HTTP 链接网址。 - 配置博</p>
+tags: Hexo
 ---
 
 ## 使用hexo搭建个人博客

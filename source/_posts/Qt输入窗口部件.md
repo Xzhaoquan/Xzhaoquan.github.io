@@ -2,10 +2,7 @@
 title: Qt输入窗口部件
 categories: Qt
 date: 2023-09-12 17:26:46
-tags: "Qt\r"
-excerpt: <p>Qt输入窗口部件 QComboBox提供下拉组合框的组件。 - 声明&lt;QComboBox&gt; - 实例化
-  QComboBox组件，和初始化QComboBox组件 - 实现信号和槽的连接 - 实现QComboBox的槽函数 QFontComboBox
-  类提供了下拉选择字体系列的组合框小部件。 - 引入&lt;QFontCombo</p>
+tags: Qt
 ---
 
 ## Qt窗口输入部件

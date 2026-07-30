@@ -2,10 +2,7 @@
 title: Linux应用编程-信号
 categories: Linux
 date: 2022-10-26 20:54:06
-tags: "Linux应用开发\r"
-excerpt: <p>Linux应用编程-信号 信号的处理方式（实时信号 非实时信号） 捕获信号API函数： - signal函数 - sigaction函数
-  发送信号API函数： - kill函数 - raise函数 - alarm函数 - 屏蔽信号集：屏蔽某些信号 -
-  未处理信号集：如果信号集被屏蔽，则记录在未处理信号集中，直到屏蔽信号</p>
+tags: Linux应用开发
 ---
 
 ## Linux应用编程-信号

@@ -2,10 +2,7 @@
 title: Qt文件读写
 categories: Qt
 date: 2023-09-21 16:17:49
-tags: "Qt\r"
-excerpt: <p>Qt文件读写 QFile 是一个读写文本、二进制文件和资源的 I/O 设备。 QFile 可以自己使用，也可以更方便地与
-  QTextStream 或 QDataStream 一起使用。 - exists 检查文件是否存在 - remove 删除文件 - open 打开文件 -
-  close 关闭文件 - flush 刷新</p>
+tags: Qt
 ---
 
 ## Qt文件读写

@@ -2,10 +2,7 @@
 title: Qt布局管理
 categories: Qt
 date: 2023-09-20 09:39:49
-tags: "Qt\r"
-excerpt: <p>Qt布局管理 QBoxLayout 继承 QLayout。 QBoxLayout 类提供水平或垂直地排列子部件。 QBoxLayout
-  获取从它的父布局或从 parentWidget 中所获得的空间，将其分成一列框，并使每个托管小部件填充一个框。 QGridLayout
-  类提供了布局管理器里的一种以网格（二维）的方式管</p>
+tags: Qt
 ---
 
 ## Qt布局管理

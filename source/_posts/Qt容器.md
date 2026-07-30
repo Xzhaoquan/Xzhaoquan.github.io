@@ -2,10 +2,7 @@
 title: Qt容器
 categories: Qt
 date: 2023-09-20 13:27:12
-tags: "Qt\r"
-excerpt: <p>Qt容器 QGroupBox 小部件提供一个带有标题的组框框架。 一般与一组或者是同类型的部件一起使用。 QScrollArea
-  类提供到另一个小部件的滚动视图 QToolBox（工具盒类）提供了一种列状的层叠窗体，中文译为工具箱，类似抽屉。 QTabWidget 继承
-  QWidget， QTabWidget 类提供了</p>
+tags: Qt
 ---
 
 ## Qt容器

@@ -2,10 +2,7 @@
 title: Linux应用编程-IPC信号量
 categories: Linux
 date: 2022-10-28 20:30:16
-tags: "Linux应用开发\r"
-excerpt: <p>Linux应用编程-IPC信号量 信号量只能进行两种操作：等待和发送信号，即 P 操作和 V 操作，锁行为就是 P 操作，解锁就是 V
-  操作，可以直接理解为 P 操作是申请资源， V 操作是释放资源。 ipcs -l 查看ipc信息 信号量的P操作： 信号量的V操作： 在信号量进行 PV
-  操作时都为原子操作（因为它需要</p>
+tags: Linux应用开发
 ---
 
 ## Linux应用编程-信号量

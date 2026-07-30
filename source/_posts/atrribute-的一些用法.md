@@ -2,10 +2,7 @@
 title: __atrribute__的一些用法
 categories: C/C++
 date: 2023-01-27 20:00:31
-tags: "C语言\r"
-excerpt: <p>atrribute 的一些用法 GNU 通过 atttribute 扩展的 format 属性，用来 指定变参函数的参数格式检查 。 -
-  archetype：指定格式类型 - string-index：格式字符串的位置在所有参数列表中的索引 -
-  first-to-check：编译器帮忙检查的参数，在所有的参数列表里索引</p>
+tags: C语言
 ---
 
 # __attribute__用法

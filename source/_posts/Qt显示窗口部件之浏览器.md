@@ -2,10 +2,7 @@
 title: Qt显示窗口部件之浏览器
 categories: Qt
 date: 2023-09-14 16:03:01
-tags: "Qt\r"
-excerpt: <p>Qt显示窗口部件之浏览器 QTextBrowser 继承 QTextEdit， QTextBrowser
-  类提供了一个具有超文本导航的文本浏览器。该类扩展了 QTextEdit 在只读模式下 ，添加了一些导航功能，以便用户可以跟踪超文本文档中的链接。 -
-  新建一个带ui的工程 - 声明和实例化QTextBrowser</p>
+tags: Qt
 ---
 
 ## Qt显示窗口部件

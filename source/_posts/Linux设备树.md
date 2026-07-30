@@ -2,11 +2,7 @@
 title: Linux设备树
 categories: Linux
 date: 2022-11-27 19:04:04
-tags: "Linux驱动开发\r"
-excerpt: <p>Linux设备树
-  设备树是用来描述硬件平台的硬件资源信息，设备树可以被bootloader（uboot）传递到内核，使内内核可以从设备树中获取硬件信息。
-  带.dtsi后缀的文件表示的使设备树文件，需要使用设备树文件的话，直接包含设备树文件即可。#include xxx
-  一般位于/arch/arm/boot/dts目录下</p>
+tags: Linux驱动开发
 ---
 
 ## Linux设备树

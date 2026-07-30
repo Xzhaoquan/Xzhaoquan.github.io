@@ -2,10 +2,7 @@
 title: ECDHE密钥交换的原理
 categories: 嵌入式开发
 date: 2025-03-19 22:35:38
-tags: "ESP32 TLS\r"
-excerpt: <p>ECDHE密钥交换的原理 密钥交换的核心在于： 客户端和服务器通过不同的路径计算，最终能得到相同的共享密钥 。这背后的原理来自于
-  椭圆曲线 Diffie-Hellman ECDH 算法的数学特性。 ECDHE（Elliptic Curve Diffie-Hellman
-  Ephemeral）基于椭圆曲线密码学 ECC 的</p>
+tags: ESP32 TLS
 ---
 
 ## **🔹 ECDHE 密钥交换的原理 — 为什么客户端和服务器计算的密钥是一样的？**

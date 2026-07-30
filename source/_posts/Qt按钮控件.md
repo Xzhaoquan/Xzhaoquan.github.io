@@ -2,10 +2,7 @@
 title: Qt按钮控件
 categories: Qt
 date: 2023-09-12 17:26:21
-tags: "Qt\r"
-excerpt: <p>Qt按钮控件 - pushButton （下压按钮） - ToolButton （工具按钮） - RadioButton （选择按钮）
-  - CheckBox （检查框） - Command Link Button （命令连接按钮） - Dialog Button Box （对话框按钮） -
-  引入&lt;QpushButton</p>
+tags: Qt
 ---
 
 ## Qt按钮控件的使用

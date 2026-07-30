@@ -2,10 +2,7 @@
 title: esp32_https连接-证书验证-握手成功详解
 categories: 嵌入式开发
 date: 2025-03-19 22:37:23
-tags: "ESP32 TLS\r"
-excerpt: <p>esp32 https连接-证书验证-握手成功详解 TLS（Transport Layer Security）协议在 ESP32
-  HTTPS 通信中至关重要。完整的 TLS 握手过程包含 TCP 连接建立 、 ServerHello 、 证书验证 和 密钥协商 等环节。以下将结合
-  ESP32 mbedTLS 的具体流程</p>
+tags: ESP32 TLS
 ---
 
 ## **ESP32 HTTPS 通信中的 TLS 握手及证书验证详解**

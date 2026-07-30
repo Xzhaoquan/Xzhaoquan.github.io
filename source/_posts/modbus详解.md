@@ -2,10 +2,7 @@
 title: modbus详解
 categories: 网络通信
 date: 2025-03-23 14:54:36
-tags: "Modbus\r"
-excerpt: <p>modbus详解 Modbus RTU
-  采用主从架构（Master-Slave），主机（Master）发送请求，从机（Slave）响应数据。数据通过串口（RS-485/RS-232）以 二进制格式
-  传输，并采用 CRC16 校验。 一个标准的 Modbus RTU 数据帧结构如下： | 字节 | 内容 | 说明 | |</p>
+tags: Modbus
 ---
 
 ## **Modbus RTU 常用功能码详解（发送 & 接收）**
