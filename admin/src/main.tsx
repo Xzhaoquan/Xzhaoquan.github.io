@@ -6,6 +6,10 @@ import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Vditor from 'vditor';
+import 'vditor/dist/js/i18n/zh_CN.js';
+import 'vditor/dist/index.css';
+import lutePath from 'vditor/dist/js/lute/lute.min.js?url';
 import './style.css';
 
 type Kind = 'post' | 'draft' | 'page';
@@ -57,7 +61,7 @@ nav.splice(4, 0, ['schedule', 'Scheduled publish', 'T']);
 nav.splice(8, 0, ['seo', 'SEO checks', 'S']);
 nav.push(['system', 'System settings', 'S']);
 
-function MarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
+function SourceMarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
   const host = useRef<HTMLDivElement>(null);
   const editorView = useRef<EditorView | null>(null);
   const latest = useRef(value);
@@ -94,6 +98,84 @@ function MarkdownEditor({ value, onChange, onSave, jumpToLine }: { value: string
   const copy = async () => { try { await navigator.clipboard.writeText(value); } catch { window.prompt('Copy Markdown', value); } };
   const toggleFullscreen = async () => { const shell = host.current?.closest('.markdown-shell'); if (!shell) return; if (document.fullscreenElement) await document.exitFullscreen(); else await shell.requestFullscreen(); };
   return <div className="markdown-shell"><div className="markdown-toolbar"><button title="Heading 1" onClick={() => prefixLine('# ')}>H1</button><button title="Heading 2" onClick={() => prefixLine('## ')}>H2</button><button title="Heading 3" onClick={() => prefixLine('### ')}>H3</button><button onClick={() => insert('**', '**')}>Bold</button><button onClick={() => insert('*', '*')}>Italic</button><button onClick={() => insert('~~', '~~')}>Strike</button><button onClick={() => prefixLine('> ')}>Quote</button><button onClick={() => prefixLine('- [ ] ')}>Task</button><button onClick={() => prefixLine('- ')}>List</button><button onClick={() => insert('[', '](https://)')}>Link</button><button onClick={() => insert('![alt text](', ')')}>Image</button><button onClick={() => insert('\n```text\n', '\n```\n')}>Code</button><button onClick={() => insert('\n| Column | Value |\n| --- | --- |\n| ', ' | |\n')}>Table</button><button onClick={() => void copy()}>Copy</button><button onClick={() => void toggleFullscreen()}>Fullscreen</button></div>{outline.length ? <details className="editor-outline"><summary>Outline ({outline.length})</summary>{outline.map(entry => <button key={`${entry.line}-${entry.title}`} style={{ paddingLeft: `${Math.max(0, entry.level - 1) * 12}px` }} onClick={() => jump(entry.line)}>{entry.title}</button>)}</details> : null}<div className="markdown" ref={host} aria-label="Markdown editor" /></div>;
+}
+
+function VditorWysiwygEditor({ value, postPath, onChange, onSave }: { value: string; postPath?: string; onChange: (value: string) => void; onSave?: () => void }) {
+  const host = useRef<HTMLDivElement>(null);
+  const instance = useRef<Vditor | null>(null);
+  const latest = useRef(value);
+  const mediaReferences = useRef(new Map<string, string>());
+  const callback = useRef(onChange);
+  const saveCallback = useRef(onSave);
+  const inputReady = useRef(false);
+  callback.current = onChange;
+  saveCallback.current = onSave;
+  const displayMarkdown = (markdownValue: string) => markdownValue.replace(/(!\[[^\]]*\]\()([^\s)]+)(\))/g, (full, prefix, source, suffix) => {
+    const currentPostPath = postPath ?? document.querySelector('.modal-head small')?.textContent ?? '';
+    const mediaUrl = previewMediaUrl(source, currentPostPath);
+    if (mediaUrl === source) return full;
+    mediaReferences.current.set(mediaUrl, source);
+    return `${prefix}${mediaUrl}${suffix}`;
+  });
+  const sourceMarkdown = (markdownValue: string) => {
+    let restored = markdownValue;
+    for (const [mediaUrl, source] of mediaReferences.current) restored = restored.split(mediaUrl).join(source);
+    return restored;
+  };
+  useEffect(() => {
+    if (!host.current) return;
+    let disposed = false;
+    inputReady.current = false;
+    let editor: Vditor | null = null;
+    editor = new Vditor(host.current, {
+      mode: 'wysiwyg',
+      lang: 'zh_CN',
+      i18n: (window as Window & { VditorI18n?: object }).VditorI18n,
+      _lutePath: lutePath,
+      cache: { enable: false },
+      value: displayMarkdown(latest.current),
+      minHeight: 480,
+      height: '100%',
+      toolbar: [],
+      counter: { enable: false },
+      outline: { enable: false },
+      input(markdownValue) {
+        // Vditor normalizes its initial DOM and can emit an input event while
+        // opening a document. Never treat that internal conversion as a user
+        // change: opening an article must not rewrite its Markdown file.
+        if (disposed || !inputReady.current) return;
+        const restored = sourceMarkdown(markdownValue);
+        latest.current = restored;
+        callback.current(restored);
+      },
+      ctrlEnter() { saveCallback.current?.(); },
+      after() {
+        if (disposed) return;
+        instance.current = editor;
+        window.setTimeout(() => { if (!disposed) inputReady.current = true; }, 80);
+      }
+    });
+    return () => { disposed = true; inputReady.current = false; if (instance.current === editor) instance.current = null; editor?.destroy(); };
+  }, []);
+  useEffect(() => {
+    const editor = instance.current;
+    if (!editor || value === latest.current) return;
+    latest.current = value;
+    editor.setValue(displayMarkdown(value), true);
+  }, [value, postPath]);
+  return <div className="vditor-shell typora-canvas" ref={host} aria-label="所见即所得 Markdown 编辑器" />;
+}
+
+function MarkdownEditor(props: { value: string; postPath?: string; onChange: (value: string) => void; onSave?: () => void; jumpToLine?: number }) {
+  const [sourceMode, setSourceMode] = useState(false);
+  const [propertiesCollapsed, setPropertiesCollapsed] = useState(false);
+  const hasHexoTags = /\{%[\s\S]*?%\}/.test(props.value);
+  useEffect(() => {
+    const modal = document.querySelector('.editor-modal');
+    modal?.classList.toggle('properties-collapsed', propertiesCollapsed);
+    return () => modal?.classList.remove('properties-collapsed');
+  }, [propertiesCollapsed]);
+  return <div className="live-markdown-editor"><div className="editor-mode-bar"><div><button className="properties-toggle" aria-label={propertiesCollapsed ? '展开属性' : '收起属性'} title={propertiesCollapsed ? '展开属性' : '收起属性'} onClick={() => setPropertiesCollapsed(value => !value)}>{propertiesCollapsed ? '▶' : '◀'}</button><button className={!sourceMode ? 'active' : ''} onClick={() => setSourceMode(false)}>沉浸编辑</button><button className={sourceMode ? 'active' : ''} onClick={() => setSourceMode(true)}>源码兼容模式</button></div><small>{sourceMode ? '直接编辑 Markdown 源码。' : '接近 Typora 的写作画布；保存的仍是 Markdown 源码。'}</small></div>{hasHexoTags && !sourceMode ? <p className="hexo-tag-notice">检测到 Hexo 标签插件语法。所见即所得模式可能无法完整展示，请保存后使用 Hexo 预览确认；需要精确修改标签时可切换到“源码兼容模式”。</p> : null}{sourceMode ? <SourceMarkdownEditor value={props.value} onChange={props.onChange} onSave={props.onSave} jumpToLine={props.jumpToLine} /> : <VditorWysiwygEditor value={props.value} postPath={props.postPath} onChange={props.onChange} onSave={props.onSave} />}</div>;
 }
 
 function App() {
@@ -289,6 +371,18 @@ function GitView({ data, diff, onDiff, onRefresh, onPull, onCommit, onPush }: { 
 function TaskLogs({ tasks }: { tasks: Task[] }) { return <section className="card task-log"><h2>Task logs</h2>{tasks.length ? tasks.map(task => <details key={task.id}><summary><b>{task.type}</b> · {task.status} · {new Date(task.startedAt).toLocaleTimeString()}</summary><pre>{task.stdout || task.stderr || 'Awaiting output...'}</pre></details>) : <p>No tasks yet.</p>}</section>; }
 function Editor({ item, onChange, onSave, onRename, onClose, onUpload }: { item: Document; onChange: (item: Document) => void; onSave: () => void; onRename: (item: Document) => void; onClose: () => void; onUpload: (file: File) => void }) {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
+  useEffect(() => {
+    // An editor is a focused workspace: never let wheel/touch scrolling leak
+    // through the fixed dialog to the article list underneath it.
+    const bodyOverflow = document.body.style.overflow;
+    const documentOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = documentOverflow;
+    };
+  }, []);
   const setData = (key: string, value: unknown) => onChange({ ...item, data: { ...item.data, [key]: value } });
   const arrayField = (key: 'categories' | 'tags') => (Array.isArray(item.data[key]) ? item.data[key] : item.data[key] ? [item.data[key]] : []).join(', ');
   const importImage = (files: FileList) => { const file = [...files].find(candidate => candidate.type.startsWith('image/')); if (file) onUpload(file); };
