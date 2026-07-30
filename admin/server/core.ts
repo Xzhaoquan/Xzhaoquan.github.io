@@ -329,21 +329,26 @@ export class ProjectContext {
     return { checkedAt: now.toISOString(), published, failed };
   }
 
+  private seoSummaryText(document: ContentDocument) {
+    const paragraphs = document.body.replace(/```[\s\S]*?```/g, ' ').split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^>/.test(part));
+    return [document.title, ...paragraphs].map(part => part.replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join(' ').slice(0, 160).trim();
+  }
+
   private seoDocument(document: ContentDocument) {
-    const issues: Array<{ rule: string; level: 'warning' | 'suggestion'; message: string; suggestion: string }> = [];
+    const issues: Array<{ rule: string; level: 'warning' | 'suggestion'; message: string; suggestion: string; autoFixable?: boolean }> = [];
     const values = (field: string) => Array.isArray(document.data[field]) ? document.data[field] : document.data[field] ? [document.data[field]] : [];
     if (!document.title.trim()) issues.push({ rule: 'title', level: 'warning', message: 'Missing title.', suggestion: 'Add a concise article title.' });
     const description = String(document.data.description ?? document.data.excerpt ?? '').trim();
-    if (description.length < 50) issues.push({ rule: 'description', level: 'warning', message: 'Description or excerpt is missing or too short.', suggestion: 'Add a 50–160 character summary.' });
+    if (description.length < 50) issues.push({ rule: 'description', level: 'warning', message: 'Description or excerpt is missing or too short.', suggestion: 'Add a 50–160 character summary.', autoFixable: this.seoSummaryText(document).length >= 50 });
     if (!values('categories').length) issues.push({ rule: 'categories', level: 'suggestion', message: 'No category assigned.', suggestion: 'Assign a relevant category.' });
     if (!values('tags').length) issues.push({ rule: 'tags', level: 'suggestion', message: 'No tags assigned.', suggestion: 'Add one or more precise tags.' });
     if (!String(document.data.cover ?? '').trim()) issues.push({ rule: 'cover', level: 'suggestion', message: 'No cover image set.', suggestion: 'Add a cover image for social sharing.' });
     if (document.body.trim().length < 300) issues.push({ rule: 'length', level: 'suggestion', message: 'Article body is short.', suggestion: 'Add more useful explanatory content.' });
     const headings = [...document.body.matchAll(/^(#{1,6})\s+/gm)].map(match => match[1].length);
     if (headings.some((level, index) => index > 0 && level > headings[index - 1] + 1)) issues.push({ rule: 'headings', level: 'suggestion', message: 'Heading levels skip hierarchy.', suggestion: 'Use headings in order without skipping levels.' });
-    if (/!\[\s*\]\([^)]*\)/.test(document.body)) issues.push({ rule: 'image-alt', level: 'warning', message: 'An image has empty alternative text.', suggestion: 'Describe each informative image.' });
+    if (/!\[\s*\]\([^)]*\)/.test(document.body)) issues.push({ rule: 'image-alt', level: 'warning', message: 'An image has empty alternative text.', suggestion: 'Describe each informative image.', autoFixable: true });
     if (/\]\(\s*\)/.test(document.body)) issues.push({ rule: 'links', level: 'warning', message: 'An empty Markdown link was found.', suggestion: 'Add a valid destination or remove the link.' });
-    if (document.kind !== 'page' && !String(document.data.date ?? '').trim()) issues.push({ rule: 'date', level: 'warning', message: 'Publication date is missing.', suggestion: 'Set a publication date.' });
+    if (document.kind !== 'page' && !String(document.data.date ?? '').trim()) issues.push({ rule: 'date', level: 'warning', message: 'Publication date is missing.', suggestion: 'Set a publication date.', autoFixable: true });
     return { path: document.path, title: document.title, kind: document.kind, issues };
   }
 
@@ -366,11 +371,10 @@ export class ProjectContext {
     const applied: Array<'summary' | 'date' | 'image-alt'> = [];
     const description = String(data.description ?? data.excerpt ?? '').trim();
     if (action === 'summary' || (action === 'all' && description.length < 50)) {
-      const paragraphs = body.replace(/```[\s\S]*?```/g, ' ').split(/\n\s*\n/).map(part => part.trim()).filter(part => part && !/^#{1,6}\s/.test(part) && !/^[-=]{3,}$/.test(part) && !/^>/.test(part));
       // The previous implementation used only the first paragraph, which
       // often produced a too-short excerpt and left the same SEO warning in
       // place. Combine readable prose (including the title) up to 160 chars.
-      const text = [document.title, ...paragraphs].map(part => part.replace(/!\[[^\]]*\]\([^)]*\)|`[^`]*`|[*_~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join(' ').slice(0, 160).trim();
+      const text = this.seoSummaryText(document);
       if (!text && action === 'summary') throw new AppError('SEO_FIX_UNAVAILABLE', 'A summary cannot be generated from an empty article.');
       // Pure renders post.excerpt as HTML on index pages. Store one escaped
       // paragraph so an admin-generated summary stays readable there while
@@ -407,7 +411,7 @@ export class ProjectContext {
     const failed: Array<{ kind: Extract<ContentKind, 'post' | 'draft'>; path: string; message: string }> = [];
     for (const document of documents) {
       const issues = this.seoDocument(document).issues;
-      if (!issues.some(issue => ['description', 'date', 'image-alt'].includes(issue.rule))) continue;
+      if (!issues.some(issue => Boolean(issue.autoFixable) && ['description', 'date', 'image-alt'].includes(issue.rule))) continue;
       try {
         const result = await this.fixSeoArticle(document.kind as Extract<ContentKind, 'post' | 'draft'>, document.path, 'all');
         fixed.push({ kind: document.kind as Extract<ContentKind, 'post' | 'draft'>, path: document.path, applied: result.applied });

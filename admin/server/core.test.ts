@@ -261,6 +261,15 @@ describe('ProjectContext', () => {
     expect(report.issues.map(issue => issue.rule)).not.toEqual(expect.arrayContaining(['description', 'date', 'image-alt']));
   });
 
+  it('reports code-only missing summaries without exposing them to safe bulk fixes', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'Short', body: '```c\nint main(void) { return 0; }\n```' });
+    const article = await context.seoArticle('post', post.path);
+    expect(article.issues.find(issue => issue.rule === 'description')).toMatchObject({ autoFixable: false });
+    const result = await context.fixAllSeo();
+    expect(result.fixed.some(item => item.path === post.path)).toBe(false);
+  });
+
   it('processes image batches, keeps originals, and reports output conflicts', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Batch images' });
