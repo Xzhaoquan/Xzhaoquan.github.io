@@ -3,6 +3,8 @@ title: esp32_tls密钥交换详解
 categories: 嵌入式开发
 date: 2025-03-19 22:43:27
 tags: ESP32 TLS
+excerpt: <p>在 TLS 握手过程中，密钥交换是最核心的环节之一，负责生成共享密钥以实现安全的加密通信。ESP32 使用
+  来实现密钥交换，支持多种加密算法（如 RSA、ECDHE、PSK 等）。</p>
 ---
 
 ## **ESP32 TLS 握手中的密钥交换机制详解**

@@ -2,7 +2,10 @@
 title: Linux应用编程-信号
 categories: Linux
 date: 2022-10-26 20:54:06
-tags: Linux应用开发
+tags: "Linux应用开发\r"
+excerpt: <p>以下是常用的一些信号： SIGHUP 1 关闭终端 终止 SIGINT 2 ctrl+c 终止 SIGQUIT 3 ctrl+\
+  终止+转储 SIGABRT 6 abort 停止+转储 SIGPE 8 算术错误 终止 SIGKILL 9 kill -9 pid 终止，不可捕获/忽略
+  SIGUSR1 10 自定义 忽略 </p>
 ---
 
 ## Linux应用编程-信号

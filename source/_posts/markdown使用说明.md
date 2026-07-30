@@ -3,6 +3,10 @@ title: markdown使用说明
 categories: 博客搭建
 date: 2022-08-25 23:17:46
 tags: Markdown
+excerpt: <p>撤销：&lt;kbd&gt;Ctrl/Command&lt;/kbd&gt; + &lt;kbd&gt;Z&lt;/kbd&gt;
+  重做：&lt;kbd&gt;Ctrl/Command&lt;/kbd&gt; + &lt;kbd&gt;Y&lt;/kbd&gt;
+  加粗：&lt;kbd&gt;Ctrl/Command&lt;/kbd&gt; + &lt;kbd&gt;B&lt;/kbd&gt;
+  斜体：&lt;kbd&gt;Ctrl/Command&lt;/kbd&gt; + &lt;kbd&gt;</p>
 ---
 
 ## markdown 使用说明

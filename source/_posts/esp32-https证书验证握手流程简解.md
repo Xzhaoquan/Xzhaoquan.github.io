@@ -3,6 +3,8 @@ title: esp32_https证书验证握手流程简解
 categories: 嵌入式开发
 date: 2025-03-19 22:40:11
 tags: ESP32 TLS
+excerpt: <p>ESP32 通过 进行 TLS/SSL 加密通信，证书验证是其中的关键环节。以下将结合
+  代码深入讲解证书验证的内部机制，帮助理解其背后的原理和流程。</p>
 ---
 
 ### **ESP32 证书验证的详细过程 (mbedTLS 内部机制)**

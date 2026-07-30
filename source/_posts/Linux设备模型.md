@@ -3,6 +3,8 @@ title: Linux设备模型
 categories: Linux
 date: 2022-11-23 20:31:45
 tags: Linux驱动开发
+excerpt: <p>- device（设备）：挂载在某个的物理设备 - dirver（驱动）：初始化物理设备和提供一些操作方式 -
+  bus（总线）：管理挂载在bus上面的设备和驱动 - class （类）：管理相同功能的设备类别，进行统一管理</p>
 ---
 
 ## Linux 设备模型

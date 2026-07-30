@@ -2,7 +2,9 @@
 title: Linux应用编程-进程
 categories: Linux
 date: 2022-10-25 22:48:47
-tags: Linux应用开发
+tags: "Linux应用开发\r"
+excerpt: <p>fork 进程函数用于从一个已存在的进程中去启动一个新进程，新进程成为子进程，原来的进程称为父进程。fork
+  函数的本质是直接将父进程的内容复制一份，但是子进程与父进程也有不一样的地方。</p>
 ---
 
 ## Linux应用编程-进程

@@ -3,6 +3,7 @@ title: Qt容器
 categories: Qt
 date: 2023-09-20 13:27:12
 tags: Qt
+excerpt: <p>QGroupBox 小部件提供一个带有标题的组框框架。 一般与一组或者是同类型的部件一起使用。</p>
 ---
 
 ## Qt容器

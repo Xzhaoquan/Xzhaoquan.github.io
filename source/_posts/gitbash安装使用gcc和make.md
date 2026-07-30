@@ -3,6 +3,8 @@ title: gitbash安装使用gcc和make
 categories: 开发工具
 date: 2022-09-24 19:50:14
 tags: Git
+excerpt: <p>http://www.equation.com/servlet/equation.cmd?fa=fortra
+  https://link.zhihu.com/?target=http%3A//www.equation.com/servlet/equation.cmd%3Ffa%3Dfortran</p>
 ---
 
 ## Git安装gcc编译器和make工具

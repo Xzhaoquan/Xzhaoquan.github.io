@@ -3,6 +3,9 @@ title: Qt项目控件组
 categories: Qt
 date: 2023-09-21 14:03:41
 tags: Qt
+excerpt: <p>QListWidget 类提供了一个基于项的列表小部件。 QListWidget 是一个便捷的类，它提供了一个类似于
+  QListView（下一小节将讲到）提供的列表视图，但是提供了一个用于添加和删除项目的基于项目的经典接口。 QListWidget
+  使用内部模型来管理列表中的每个 QListWidgetItem。</p>
 ---
 
 ## Qt项目控件组

@@ -3,6 +3,7 @@ title: git如何在主仓库中添加子仓库
 categories: 开发工具
 date: 2025-05-07 20:03:28
 tags: Git
+excerpt: <p>假设你已经有一个主仓库（main-repo），想在其中添加一个子仓库（libs/lib-repo）。</p>
 ---
 
 # 🔧 添加子模块（子仓库）的步骤：

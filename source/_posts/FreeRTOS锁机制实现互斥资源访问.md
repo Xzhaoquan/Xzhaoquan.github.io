@@ -3,6 +3,8 @@ title: FreeRTOS锁机制实现互斥资源访问
 categories: 嵌入式开发
 date: 2025-03-23 12:32:49
 tags: FreeRTOS
+excerpt: <p>在 FreeRTOS 中，信号量（Semaphore）、互斥锁（Mutex）和递归互斥信号量（Recursive
+  Mutex）是用于任务间同步和资源管理的重要机制。以下是它们的详细解释和实际应用对比：</p>
 ---
 
 在 FreeRTOS 中，信号量（Semaphore）、互斥锁（Mutex）和递归互斥信号量（Recursive Mutex）是用于任务间同步和资源管理的重要机制。以下是它们的详细解释和实际应用对比：

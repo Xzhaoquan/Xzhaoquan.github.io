@@ -3,6 +3,7 @@ title: __atrribute__的一些用法
 categories: C/C++
 date: 2023-01-27 20:00:31
 tags: C语言
+excerpt: <p>GNU 通过 atttribute 扩展的 format 属性，用来 指定变参函数的参数格式检查 。</p>
 ---
 
 # __attribute__用法

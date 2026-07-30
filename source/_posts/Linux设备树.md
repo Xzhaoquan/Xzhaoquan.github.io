@@ -3,6 +3,7 @@ title: Linux设备树
 categories: Linux
 date: 2022-11-27 19:04:04
 tags: Linux驱动开发
+excerpt: <p>设备树是用来描述硬件平台的硬件资源信息，设备树可以被bootloader（uboot）传递到内核，使内内核可以从设备树中获取硬件信息。</p>
 ---
 
 ## Linux设备树
