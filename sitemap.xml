@@ -605,13 +605,6 @@
 
   
   <url>
-    <loc>http://example.com/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/ESP32-TLS/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -619,14 +612,21 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/</loc>
+    <loc>http://example.com/tags/FreeRTOS/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://example.com/tags/FreeRTOS/</loc>
+    <loc>http://example.com/tags/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/Linux%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -696,7 +696,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/NR-Micro-Shell/</loc>
+    <loc>http://example.com/tags/Modbus/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -710,7 +710,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Modbus/</loc>
+    <loc>http://example.com/tags/NR-Micro-Shell/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -718,13 +718,6 @@
   
   <url>
     <loc>http://example.com/tags/PID/</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/tags/%E5%8D%95%E7%89%87%E6%9C%BA/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -752,6 +745,13 @@
   </url>
   
   <url>
+    <loc>http://example.com/tags/%E5%8D%95%E7%89%87%E6%9C%BA/</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -761,14 +761,14 @@
 
   
   <url>
-    <loc>http://example.com/categories/Linux/</loc>
+    <loc>http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/</loc>
+    <loc>http://example.com/categories/Linux/</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
