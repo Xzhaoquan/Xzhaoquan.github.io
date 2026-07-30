@@ -2,9 +2,10 @@
 title: esp32_https证书详解
 categories: 嵌入式开发
 date: 2025-03-19 22:39:01
-tags: ESP32 TLS
-excerpt: <p>在 HTTPS 通信中，服务器会向客户端提供一个 服务器证书 。客户端要验证该证书的合法性，确保它是由 可信的证书颁发机构 CA,
-  Certificate Authority 签发的。这个验证过程依赖于 证书链 Certificate Chain 。</p>
+tags: "ESP32 TLS\r"
+excerpt: <p>esp32 https证书详解 在 HTTPS 通信中，服务器会向客户端提供一个 服务器证书 。客户端要验证该证书的合法性，确保它是由
+  可信的证书颁发机构 CA, Certificate Authority 签发的。这个验证过程依赖于 证书链 Certificate Chain 。
+  证书链通常包含以下几部分： 1. 服</p>
 ---
 
 ## **一、HTTPS 证书验证机制概述**

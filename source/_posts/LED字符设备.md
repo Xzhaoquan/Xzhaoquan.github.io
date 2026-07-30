@@ -2,7 +2,7 @@
 title: LED字符设备
 categories: Linux
 date: 2022-09-14 22:01:58
-tags: Linux驱动开发
+tags: "Linux驱动开发\r"
 excerpt: <p>LED字符设备 - 虚拟地址映射 - 虚拟地址映射的取消 - 虚拟地址的读写 - file operations 结构体的实现 -
   操作接口函数的实现 - copy from user拷贝用户空间的数据 - copy to user将内核空间数据拷贝到用户空间 - 使用register
   chrdev函数添加LED字符设</p>

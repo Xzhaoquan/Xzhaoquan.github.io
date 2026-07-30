@@ -2,7 +2,7 @@
 title: Qt项目视图组
 categories: Qt
 date: 2023-09-20 16:03:13
-tags: Qt
+tags: "Qt\r"
 excerpt: <p>Qt项目视图组 QListView 类提供模型上的列表或图标视图。 QListView
   以简单的非分层列表或图标集合的形式显示存储在模型中的项。 QT 提供了一些现成的 models 用于处理数据项（这些是 Qt
   处理数据模型的精华，如果用到Qt 数据模型，下面这些是经常要用到的）： - QStringListMode</p>

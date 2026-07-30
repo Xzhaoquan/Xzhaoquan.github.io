@@ -2,7 +2,7 @@
 title: Qt显示窗口部件
 categories: Qt
 date: 2023-09-14 13:30:35
-tags: Qt
+tags: "Qt\r"
 excerpt: <p>Qt显示窗口部件 QLabel 提供了一种用于文本或图像显示的小部件 QCalendarWidget
   类提供了一个基于月的日历小部件，允许用户选择日期。 QLCDNumber 小部件显示一个类似于 lcd 的数字。QLCDNumber
   小部件可以显示任意大小的数字。它可以显示十进制、十六进制、八进制或二进制数字。使用</p>

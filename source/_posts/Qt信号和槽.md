@@ -2,7 +2,7 @@
 title: Qt信号和槽
 categories: Qt
 date: 2023-09-12 17:27:00
-tags: Qt
+tags: "Qt\r"
 excerpt: <p>Qt信号和槽 信号（signal）：在特定情况下被发送的事件
   槽（slot）：对信号响应的函数，槽函数可以与一个信号关联，当信号被发送时，槽函数自动执行。 信号与槽关联使用QObject::connect 函数实现：
   - 在mainwindow.h里面引入 &lt;QPushButton&gt; - 声明一个信号 - 直接在mai</p>

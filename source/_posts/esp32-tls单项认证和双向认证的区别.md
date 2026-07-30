@@ -2,8 +2,10 @@
 title: esp32_tls单项认证和双向认证的区别
 categories: 嵌入式开发
 date: 2025-03-19 22:41:27
-tags: ESP32 TLS
-excerpt: <p>TLS（Transport Layer Security）是网络安全中最重要的加密协议之一。根据验证方式的不同，TLS 认证可分为：</p>
+tags: "ESP32 TLS\r"
+excerpt: <p>esp32 tls单项认证和双向认证的区别 TLS（Transport Layer
+  Security）是网络安全中最重要的加密协议之一。根据验证方式的不同，TLS 认证可分为： ✅ 单向认证 One-way Authentication ✅
+  双向认证 Mutual Authentication, mTLS 以下将从 原</p>
 ---
 
 ## **🔹 TLS 单向认证 vs 双向认证详解**

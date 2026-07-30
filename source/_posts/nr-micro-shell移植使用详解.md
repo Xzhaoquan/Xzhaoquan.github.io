@@ -2,7 +2,7 @@
 title: nr_micro_shell移植使用详解
 categories: 嵌入式开发
 date: 2024-12-02 17:32:24
-tags: NR Micro Shell
+tags: "NR Micro Shell\r"
 excerpt: <p>nr micro shell移植使用详解 1、点击下载链接下载nr micro shell的源文件。
   https://github.com/Nrusher/nr micro shell 2、下载完成之后获取nr micro shell
   master文件夹，将文件夹nr micro shell master文件夹拷贝到工</p>

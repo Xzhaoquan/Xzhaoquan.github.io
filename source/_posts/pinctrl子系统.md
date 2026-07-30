@@ -2,7 +2,7 @@
 title: pinctrl子系统
 categories: Linux
 date: 2022-12-05 14:09:03
-tags: Linux驱动开发
+tags: "Linux驱动开发\r"
 excerpt: <p>pinctrl子系统 pinctrl 子系统主要用于管理芯片的引脚 -
   compatible：与平台驱动做匹配的名字，这里是与pinctrl平台做匹配的名字 - reg：表示的是引脚配置寄存器的基地址 -
   pinctrl-names：指定pin的状态列表，默认设置为"default" - pinctrl-0 = &lt;&amp;p</p>

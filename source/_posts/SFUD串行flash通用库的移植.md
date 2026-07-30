@@ -2,7 +2,7 @@
 title: SFUD串行flash通用库的移植
 categories: 嵌入式开发
 date: 2024-12-01 18:24:17
-tags: Flash
+tags: "Flash\r"
 excerpt: "<p>SFUD串行flash通用库的移植 1、点击链接下载sufd串行flash通用库。 GitHub - armink/SFUD: An
   using JEDEC's SFDP standard serial SPI flash universal driver library | 一款使用
   JEDEC SFDP 标准的串行</p>"

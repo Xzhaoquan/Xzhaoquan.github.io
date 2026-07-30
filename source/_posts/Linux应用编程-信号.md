@@ -3,9 +3,9 @@ title: Linux应用编程-信号
 categories: Linux
 date: 2022-10-26 20:54:06
 tags: "Linux应用开发\r"
-excerpt: <p>以下是常用的一些信号： SIGHUP 1 关闭终端 终止 SIGINT 2 ctrl+c 终止 SIGQUIT 3 ctrl+\
-  终止+转储 SIGABRT 6 abort 停止+转储 SIGPE 8 算术错误 终止 SIGKILL 9 kill -9 pid 终止，不可捕获/忽略
-  SIGUSR1 10 自定义 忽略 </p>
+excerpt: <p>Linux应用编程-信号 信号的处理方式（实时信号 非实时信号） 捕获信号API函数： - signal函数 - sigaction函数
+  发送信号API函数： - kill函数 - raise函数 - alarm函数 - 屏蔽信号集：屏蔽某些信号 -
+  未处理信号集：如果信号集被屏蔽，则记录在未处理信号集中，直到屏蔽信号</p>
 ---
 
 ## Linux应用编程-信号

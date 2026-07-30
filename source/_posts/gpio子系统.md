@@ -2,9 +2,10 @@
 title: gpio子系统
 categories: Linux
 date: 2022-12-05 14:59:46
-tags: Linux驱动开发
-excerpt: <p>/home/dirivers/clone/imx kernel 4.19.35/ebf linux kernel 6ull
-  depth1/arch/arm/boot/dts/imx6ull.dtsi文件中的 GPIO 子节点记录着 GPIO 控制器的寄存器地址 ，</p>
+tags: "Linux驱动开发\r"
+excerpt: <p>gpio子系统 /home/dirivers/clone/imx kernel 4.19.35/ebf linux kernel
+  6ull depth1/arch/arm/boot/dts/imx6ull.dtsi文件中的 GPIO 子节点记录着 GPIO 控制器的寄存器地址 ， -
+  compatible：与GPIO子</p>
 ---
 
 ## gpio子系统

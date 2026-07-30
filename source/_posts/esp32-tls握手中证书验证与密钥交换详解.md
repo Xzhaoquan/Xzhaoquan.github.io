@@ -2,9 +2,10 @@
 title: esp32_tls握手中证书验证与密钥交换详解
 categories: 嵌入式开发
 date: 2025-03-19 22:44:17
-tags: ESP32 TLS
-excerpt: <p>在 TLS（Transport Layer Security）握手中， 证书验证 和 密钥交换 是确保通信安全的两个关键环节。以下将结合
-  源码及 ESP32 实际应用，深入剖析这两个步骤的具体机制、代码实现以及关键点。</p>
+tags: "ESP32 TLS\r"
+excerpt: <p>esp32 tls握手中证书验证与密钥交换详解 在 TLS（Transport Layer Security）握手中， 证书验证 和
+  密钥交换 是确保通信安全的两个关键环节。以下将结合 源码及 ESP32 实际应用，深入剖析这两个步骤的具体机制、代码实现以及关键点。 服务器在 后发送
+  消息，客户端（ESP32）需完成以</p>
 ---
 
 ## **ESP32 TLS 握手中证书验证与密钥交换详解**

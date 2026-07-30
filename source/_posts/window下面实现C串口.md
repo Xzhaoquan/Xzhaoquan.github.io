@@ -3,7 +3,6 @@ title: window下面实现C串口
 categories: C/C++
 date: 2023-09-19 20:59:20
 tags: C语言
-excerpt: <p>window下面实现C串口 代码示例如下 SerialC.h SerialC.c</p>
 ---
 
 ## 在windows下面实现C串口
