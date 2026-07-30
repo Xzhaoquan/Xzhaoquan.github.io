@@ -587,7 +587,7 @@ export class ProjectContext {
     return { name: safeName, bytes: await fs.readFile(target) };
   }
 
-  async git(args: string[]) {
+  private async githubSshEnvironment() {
     // Keep Unicode filenames readable and avoid a broken global excludes-file
     // from leaking warnings into the local management UI.  Git's normal SSH
     // known_hosts file can be inaccessible to a locally sandboxed process, so
@@ -600,10 +600,14 @@ export class ProjectContext {
     const githubTunnel = githubSsh
       ? ' -o HostName=ssh.github.com -p 443 -o HostKeyAlias=github.com'
       : '';
-    const environment = {
+    return {
       ...process.env,
       GIT_SSH_COMMAND: `ssh -o UserKnownHostsFile="${knownHosts}" -o StrictHostKeyChecking=accept-new${githubTunnel}`,
     };
+  }
+
+  async git(args: string[]) {
+    const environment = await this.githubSshEnvironment();
     return this.command('git', ['-c', 'core.quotepath=false', '-c', 'core.excludesFile=/dev/null', ...args], false, environment);
   }
 
@@ -652,9 +656,13 @@ export class ProjectContext {
     return { command: path.join(this.root, 'node_modules', '.bin', 'hexo'), args };
   }
 
-  private runHexo(args: string[]) {
+  private async runHexo(args: string[]) {
     const invocation = this.hexoInvocation(args);
-    return this.command(invocation.command, invocation.args);
+    // Hexo deploy starts its own Git client in .deploy_git. Give it the same
+    // GitHub SSH-over-443 transport used by the management Git page; direct
+    // port 22 is blocked on some local networks.
+    const environment = args.includes('deploy') ? await this.githubSshEnvironment() : process.env;
+    return this.command(invocation.command, invocation.args, false, environment);
   }
 
   private async portAvailable(port: number) {
