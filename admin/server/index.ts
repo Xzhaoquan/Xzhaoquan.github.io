@@ -65,6 +65,7 @@ app.post('/api/schedule/check', async () => success(await context.publishDueDraf
 app.get('/api/seo', async request => { const query = request.query as { kind?: string }; return success(await context.seo(query.kind === 'draft' ? 'draft' : query.kind === 'post' ? 'post' : undefined)); });
 app.get('/api/seo/article', async request => { const query = z.object({ kind: z.enum(['post', 'draft']), path: z.string().min(1) }).parse(request.query); return success(await context.seoArticle(query.kind, query.path)); });
 app.patch('/api/seo/article', async request => { const body = z.object({ kind: z.enum(['post', 'draft']), path: z.string().min(1), action: z.enum(['summary', 'date', 'image-alt', 'all']) }).parse(request.body); return success(await context.fixSeoArticle(body.kind, body.path, body.action)); });
+app.post('/api/seo/fix-all', async () => success(await context.fixAllSeo()));
 
 app.get('/api/taxonomy', async () => success(await context.taxonomy()));
 app.patch('/api/taxonomy/:field', async request => { const field = z.enum(['categories', 'tags']).parse((request.params as { field: string }).field); const body = z.object({ action: z.enum(['rename', 'delete']), name: z.string().min(1), replacement: z.string().optional() }).parse(request.body); return success(await context.updateTaxonomy(field, body.action, body.name, body.replacement)); });

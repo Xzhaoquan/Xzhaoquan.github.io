@@ -250,6 +250,16 @@ describe('ProjectContext', () => {
     expect(fixed.document.body).toContain('![diagram](diagram.png)');
   });
 
+  it('fixes every article with safe SEO issues while leaving other checks alone', async () => {
+    const { context } = await fixture();
+    const post = await context.createContent('post', { title: 'SEO global', data: { date: '' }, body: 'A useful paragraph for the generated summary.\n\n![](diagram.png)' });
+    const result = await context.fixAllSeo();
+    expect(result.fixed).toEqual(expect.arrayContaining([expect.objectContaining({ path: post.path, applied: expect.arrayContaining(['summary', 'date', 'image-alt']) })]));
+    expect(result.failed).toEqual([]);
+    const report = await context.seoArticle('post', post.path);
+    expect(report.issues.map(issue => issue.rule)).not.toEqual(expect.arrayContaining(['description', 'date', 'image-alt']));
+  });
+
   it('processes image batches, keeps originals, and reports output conflicts', async () => {
     const { context } = await fixture();
     const post = await context.createContent('post', { title: 'Batch images' });

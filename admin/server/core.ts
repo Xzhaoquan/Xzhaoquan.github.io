@@ -398,6 +398,24 @@ export class ProjectContext {
     return { document: saved, article: this.seoDocument(saved), action, applied };
   }
 
+  async fixAllSeo() {
+    const documents = [...await this.listContent('post'), ...await this.listContent('draft')];
+    const fixed: Array<{ kind: Extract<ContentKind, 'post' | 'draft'>; path: string; applied: Array<'summary' | 'date' | 'image-alt'> }> = [];
+    const failed: Array<{ kind: Extract<ContentKind, 'post' | 'draft'>; path: string; message: string }> = [];
+    for (const document of documents) {
+      const issues = this.seoDocument(document).issues;
+      if (!issues.some(issue => ['description', 'date', 'image-alt'].includes(issue.rule))) continue;
+      try {
+        const result = await this.fixSeoArticle(document.kind as Extract<ContentKind, 'post' | 'draft'>, document.path, 'all');
+        fixed.push({ kind: document.kind as Extract<ContentKind, 'post' | 'draft'>, path: document.path, applied: result.applied });
+      } catch (error) {
+        failed.push({ kind: document.kind as Extract<ContentKind, 'post' | 'draft'>, path: document.path, message: error instanceof Error ? error.message : 'Unknown error' });
+      }
+    }
+    await this.appendLog('seo.fix-all', failed.length ? 'failed' : 'succeeded', { fixed: fixed.length, failed: failed.length });
+    return { fixed, failed };
+  }
+
   async copyContent(kind: ContentKind, relativePath: string, input: { title: string; filename?: string }) {
     const source = await this.getContent(kind, relativePath);
     const data: Record<string, unknown> = { ...source.data, title: input.title };
