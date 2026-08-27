@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2026-07-30T03:17:27.616Z</updated>
+  <updated>2026-08-27T07:29:06.541Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>心电图Ⅰ、Ⅱ、Ⅲ肢体导联入门：从新手疑问出发</title>
+    <link href="http://example.com/2026/08/27/%E5%BF%83%E7%94%B5%E5%9B%BE%E2%85%A0%E2%85%A1%E2%85%A2%E8%82%A2%E4%BD%93%E5%AF%BC%E8%81%94%E5%85%A5%E9%97%A8/"/>
+    <id>http://example.com/2026/08/27/%E5%BF%83%E7%94%B5%E5%9B%BE%E2%85%A0%E2%85%A1%E2%85%A2%E8%82%A2%E4%BD%93%E5%AF%BC%E8%81%94%E5%85%A5%E9%97%A8/</id>
+    <published>2026-08-27T02:00:00.000Z</published>
+    <updated>2026-08-27T07:29:06.541Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文用于帮助理解心电图的测量原理和导联标识，不能替代医生对心电图或症状的诊断。</p></blockquote><p>第一次看到心电图的Ⅰ、Ⅱ、Ⅲ导联时，很多人会问：导联到底是不是一根线？为什么总说“从负极指向正极”？基线是不是最低的一条线？本文从这些问题开始，认识最基础的三个双极肢体导联。</p><h2 id="一、学习目标"><a href="#一、学习目标" class="headerlink" title="一、学习目标"></a>一、学习目标</h2><p>读完本文，你应能回答：</p><ul><li>什么是“导联”；</li><li>Ⅰ、Ⅱ、Ⅲ导联各使用哪两个电极；</li><li>为什么导联方向是测量方向，而不是电流方向；</li><li>基线代表什么；</li><li>为什么Ⅱ导联常用于心律观察。</li></ul><h2 id="二、先认识四肢电极"><a href="#二、先认识四肢电极" class="headerlink" title="二、先认识四肢电极"></a>二、先认识四肢电极</h2><p>标准12导联心电图会在四肢放置电极。下表的颜色是常见的 IEC 配色；不同设备或地区的色标可能不同，因此接线时应优先核对设备标识，而不要只凭颜色判断。</p><table><thead><tr><th>缩写</th><th>英文全称</th><th>常用中文说法</th><th>常见 IEC 颜色</th></tr></thead><tbody><tr><td>RA</td><td>Right Arm</td><td>右上肢（右手&#x2F;右臂）</td><td>红</td></tr><tr><td>LA</td><td>Left Arm</td><td>左上肢（左手&#x2F;左臂）</td><td>黄</td></tr><tr><td>LL</td><td>Left Leg</td><td>左下肢（左腿）</td><td>绿</td></tr><tr><td>RL</td><td>Right Leg</td><td>右下肢（右腿）</td><td>黑</td></tr></tbody></table><p>RL 通常作为参考&#x2F;驱动右腿电极，主要帮助抑制共模干扰；它<strong>不参与</strong>Ⅰ、Ⅱ、Ⅲ这三个双极肢体导联的电压差计算。</p><h2 id="三、什么是“导联”？"><a href="#三、什么是“导联”？" class="headerlink" title="三、什么是“导联”？"></a>三、什么是“导联”？</h2><p>导联不是某一根导线，而是一个规定好的<strong>电压差测量视角</strong>。心脏的除极、复极会在体表形成随时间改变的电位分布；不同导联从不同方向比较两个位置的电位，因此看到的波形也不同。</p><p>对于双极肢体导联，可以把记录值写成：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">导联波形 = 正极所在位置的体表电位 − 负极所在位置的体表电位</span><br></pre></td></tr></table></figure><p>这个式子说明了两件事：</p><ol><li>正、负极是“相减顺序”的定义；</li><li>导联反映的是两处体表电位的差，不是某一根线中的电流方向。</li></ol><h2 id="四、Ⅰ、Ⅱ、Ⅲ导联怎么连接？"><a href="#四、Ⅰ、Ⅱ、Ⅲ导联怎么连接？" class="headerlink" title="四、Ⅰ、Ⅱ、Ⅲ导联怎么连接？"></a>四、Ⅰ、Ⅱ、Ⅲ导联怎么连接？</h2><p>记忆规则：<strong>导联轴（导联方向）按约定由负极指向正极。</strong></p><table><thead><tr><th>导联</th><th>负极</th><th>正极</th><th>导联轴方向</th></tr></thead><tbody><tr><td>Ⅰ</td><td>RA（右上肢）</td><td>LA（左上肢）</td><td>右 → 左</td></tr><tr><td>Ⅱ</td><td>RA（右上肢）</td><td>LL（左下肢）</td><td>右上 → 左下</td></tr><tr><td>Ⅲ</td><td>LA（左上肢）</td><td>LL（左下肢）</td><td>左上 → 左下</td></tr></tbody></table><p>可以把它们想成一个三角形的三条边，也就是 Einthoven 三角：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">         LA (+)</span><br><span class="line">        /      \</span><br><span class="line">Ⅰ      /        \      Ⅲ</span><br><span class="line">      /          \</span><br><span class="line"> RA (-) ---------- LL (+)</span><br><span class="line">            Ⅱ</span><br></pre></td></tr></table></figure><p>上图强调的是三个导联的相对关系；实际电极贴在四肢近端或躯干上时，仍按照同样的 RA、LA、LL 标识连接。</p><h3 id="Ⅰ导联：两只上肢之间"><a href="#Ⅰ导联：两只上肢之间" class="headerlink" title="Ⅰ导联：两只上肢之间"></a>Ⅰ导联：两只上肢之间</h3><ul><li>负极：RA（右上肢）</li><li>正极：LA（左上肢）</li><li>方向：右 → 左</li></ul><p>可记为：“手拉手，从右看向左”。</p><h3 id="Ⅱ导联：右上肢到左下肢"><a href="#Ⅱ导联：右上肢到左下肢" class="headerlink" title="Ⅱ导联：右上肢到左下肢"></a>Ⅱ导联：右上肢到左下肢</h3><ul><li>负极：RA（右上肢）</li><li>正极：LL（左下肢）</li><li>方向：右上 → 左下</li></ul><p>可记为：“从右手看向左腿，斜着观察心脏”。</p><h3 id="Ⅲ导联：左上肢到左下肢"><a href="#Ⅲ导联：左上肢到左下肢" class="headerlink" title="Ⅲ导联：左上肢到左下肢"></a>Ⅲ导联：左上肢到左下肢</h3><ul><li>负极：LA（左上肢）</li><li>正极：LL（左下肢）</li><li>方向：左上 → 左下</li></ul><p>可记为：“从左手看向左腿，向下看”。</p><h2 id="五、新手最容易混淆的问题"><a href="#五、新手最容易混淆的问题" class="headerlink" title="五、新手最容易混淆的问题"></a>五、新手最容易混淆的问题</h2><h3 id="1-导联方向等于电流方向吗？"><a href="#1-导联方向等于电流方向吗？" class="headerlink" title="1. 导联方向等于电流方向吗？"></a>1. 导联方向等于电流方向吗？</h3><p>不等于。导联方向是心电图系统规定的<strong>比较方向</strong>：始终从负极指向正极。它用来描述心脏瞬时电活动向量相对于该观察轴的投影。</p><p>更准确地说，临床心电图并不是在追踪一股“从某个肢体电极流向另一个肢体电极”的电流。电极主要是高输入阻抗地采样体表电位，仪器计算两者的差值。因此，也不要把“正极”理解成永远电位较高的一端，或把“负极”理解成永远电位较低的一端。</p><p>实用判断是：当心脏的净电活动向量朝向某导联的正极投影时，波形倾向向上；背离正极时，波形倾向向下；接近垂直时，波形可接近等电位或呈双向。实际形态还受心脏位置、传导过程和个体差异影响。</p><h3 id="2-负极是最低点，基线是最低线吗？"><a href="#2-负极是最低点，基线是最低线吗？" class="headerlink" title="2. 负极是最低点，基线是最低线吗？"></a>2. 负极是最低点，基线是最低线吗？</h3><p>都不是。</p><ul><li><strong>负极</strong>：只表示公式中被减去的一端，是测量参考的命名，并不保证它的瞬时电位最低。</li><li><strong>基线（等电位线）</strong>：表示该时刻在这个导联上记录到的净电位差接近零，或心脏电活动的净向量在该导联轴上的投影接近零；它不是“最低电压”。</li></ul><p>因此：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">正极电位 − 负极电位 &gt; 0  → 记录向基线上方偏转</span><br><span class="line">正极电位 − 负极电位 &lt; 0  → 记录向基线下方偏转</span><br><span class="line">正极电位 − 负极电位 ≈ 0  → 接近等电位线</span><br></pre></td></tr></table></figure><p>把基线理解为温度计的 0 ℃ 会很直观：0 ℃ 是一个参考值，不是所有温度中的最低值。</p><h3 id="3-正负极接反会怎样？"><a href="#3-正负极接反会怎样？" class="headerlink" title="3. 正负极接反会怎样？"></a>3. 正负极接反会怎样？</h3><p>同一对电极若互换，计算顺序会反过来：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原来：A − B</span><br><span class="line">接反：B − A = −(A − B)</span><br></pre></td></tr></table></figure><p>因此波形会大致上下倒置。不过，临床上看到Ⅱ导联 P 波倒置时，不能仅凭这一点就断定电极接反；也可能与节律起源、心脏位置或其他情况有关，需要结合其他导联和临床信息判断。</p><h2 id="六、为什么Ⅱ导联最常用？"><a href="#六、为什么Ⅱ导联最常用？" class="headerlink" title="六、为什么Ⅱ导联最常用？"></a>六、为什么Ⅱ导联最常用？</h2><p>正常窦性心律时，心房除极和心室除极的主要净电活动通常总体朝向左下方。Ⅱ导联的正极位于 LL，观察轴正好大致指向左下方，因此常能看到较清楚、较直立的 P 波，并且 QRS 波群通常也较明显。</p><p>这使Ⅱ导联很适合持续观察节律，例如辨认 P 波与 QRS 的关系。监护设备经常默认或优先显示Ⅱ导联，但实际选择还会受患者波形质量、设备设置和临床目的影响；有时会改选其他导联以获得更清晰的节律信息。</p><h2 id="七、速记口诀"><a href="#七、速记口诀" class="headerlink" title="七、速记口诀"></a>七、速记口诀</h2><ul><li>Ⅰ导联：右到左，手拉手。</li><li>Ⅱ导联：右上到左下，常看心律。</li><li>Ⅲ导联：左上到左下，向下看。</li><li>导联方向：负极 → 正极。</li><li>基线不是最低点，而是接近零电位差的参考线。</li></ul><h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p>Ⅰ、Ⅱ、Ⅲ是三个双极肢体导联，分别用 RA、LA、LL 三个电极两两比较。导联轴从负极指向正极，是电压差的定义和观察方向，不应与电流流向混为一谈。基线表示这个导联上的净电位差接近零，而不是最低电压。Ⅱ导联与正常心脏电活动的总体方向较一致，所以常用于心律监护。</p><h2 id="九、自测题"><a href="#九、自测题" class="headerlink" title="九、自测题"></a>九、自测题</h2><ol><li>Ⅰ导联的正极、负极各接在哪里？导联轴方向是什么？</li><li>Ⅱ导联为什么常用于观察心律？</li><li>基线代表什么？它是最低电压吗？</li><li>若Ⅱ导联的 P 波突然倒置，除了电极接错外，还需要考虑什么？</li></ol><h3 id="参考答案"><a href="#参考答案" class="headerlink" title="参考答案"></a>参考答案</h3><ol><li>Ⅰ导联：RA 为负极、LA 为正极，方向为右 → 左。</li><li>正常窦性心律的主要净电活动通常朝左下方，与Ⅱ导联的观察轴大致一致，P 波常较清楚、直立。</li><li>基线是该导联记录的净电位差接近零时的参考线，不是最低电压。</li><li>还应结合其他导联、节律和临床情况，考虑异位心房节律等可能；不能只凭一条波形自行下结论。</li></ol><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul><li><a href="https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000145144.56673.59">AHA：医院心电监护实践标准</a>——说明Ⅰ、Ⅱ、Ⅲ为两个电极之间测量电位差的双极导联，并说明监护时肢体电极可置于躯干的改良位置。</li><li><a href="https://www.ahajournals.org/doi/epdf/10.1161/CIRCULATIONAHA.108.191095">AHA&#x2F;ACCF&#x2F;HRS：心电图标准化与解读建议</a>——12导联心电图记录和解读的专业标准参考。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;本文用于帮助理解心电图的测量原理和导联标识，不能替代医生对心电图或症状的诊断。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;第一次看到心电图的Ⅰ、Ⅱ、Ⅲ导联时，很多人会问：导联到底是不是一根线？为什么总说“从负极指向正极”？基线是不是最低的一条线？本</summary>
+      
+    
+    
+    
+    <category term="医学基础" scheme="http://example.com/categories/%E5%8C%BB%E5%AD%A6%E5%9F%BA%E7%A1%80/"/>
+    
+    
+    <category term="心电图 ECG 肢体导联" scheme="http://example.com/tags/%E5%BF%83%E7%94%B5%E5%9B%BE-ECG-%E8%82%A2%E4%BD%93%E5%AF%BC%E8%81%94/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
@@ -473,30 +500,6 @@
     
     
     <category term="网络通信" scheme="http://example.com/tags/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>RS232_RS485_TTL电平标准</title>
-    <link href="http://example.com/2023/10/10/RS232-RS485-TTL%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86/"/>
-    <id>http://example.com/2023/10/10/RS232-RS485-TTL%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86/</id>
-    <published>2023-10-10T01:55:34.000Z</published>
-    <updated>2026-07-30T03:17:27.609Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="RS232-RS485-TTL电平标准"><a href="#RS232-RS485-TTL电平标准" class="headerlink" title="RS232 RS485 TTL电平标准"></a>RS232 RS485 TTL电平标准</h2><h3 id="RS232电平标准"><a href="#RS232电平标准" class="headerlink" title="RS232电平标准"></a>RS232电平标准</h3><h4 id="RS232通信模式："><a href="#RS232通信模式：" class="headerlink" title="RS232通信模式："></a>RS232通信模式：</h4><p>RS232是全双工通信。</p><h4 id="RS232的逻辑电平"><a href="#RS232的逻辑电平" class="headerlink" title="RS232的逻辑电平"></a>RS232的逻辑电平</h4><ul><li>逻辑1：-15V–5V </li><li>逻辑0：+3V–+15V</li></ul><p>RS232 的逻辑电平和TTL 不一样但是协议是一样的。</p><h2 id="RS485电平标准"><a href="#RS485电平标准" class="headerlink" title="RS485电平标准"></a>RS485电平标准</h2><h3 id="RS485通信模式"><a href="#RS485通信模式" class="headerlink" title="RS485通信模式"></a>RS485通信模式</h3><p>RS485是半双工通信</p><h3 id="RS485的逻辑电平"><a href="#RS485的逻辑电平" class="headerlink" title="RS485的逻辑电平"></a>RS485的逻辑电平</h3><ul><li>逻辑1：+2V–+6V (A - B)</li><li>逻辑0：-6V–+2V (A - B)</li><li>高阻态（控制信号未使能）</li></ul><p>这里的电平指AB两线间的电压差。</p><h2 id="TTL电平标准"><a href="#TTL电平标准" class="headerlink" title="TTL电平标准"></a>TTL电平标准</h2><h3 id="TTL通信模式‘"><a href="#TTL通信模式‘" class="headerlink" title="TTL通信模式‘"></a>TTL通信模式‘</h3><p>TTL是全双工通信</p><h3 id="TTL的逻辑电平"><a href="#TTL的逻辑电平" class="headerlink" title="TTL的逻辑电平"></a>TTL的逻辑电平</h3><ul><li>逻辑1: 2.4V–5V </li><li>逻辑0: 0V–0.5V</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;RS232-RS485-TTL电平标准&quot;&gt;&lt;a href=&quot;#RS232-RS485-TTL电平标准&quot; class=&quot;headerlink&quot; title=&quot;RS232 RS485 TTL电平标准&quot;&gt;&lt;/a&gt;RS232 RS485 TTL电平标准&lt;/h2&gt;&lt;h3 i</summary>
-      
-    
-    
-    
-    <category term="网络通信" scheme="http://example.com/categories/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/"/>
-    
-    
-    <category term="串口通信" scheme="http://example.com/tags/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/"/>
     
   </entry>
   
